@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>字靈獵人 寶可夢傳說</title>
     
-    <!-- 內建題庫資料 (完全內嵌，不需外部檔案) -->
+    <!-- 內建題庫資料 -->
     <script>
-// 教育部字典 RPG 專用題庫 (V22 資料庫版)
-// 格式：題型(1=注音找國字, 2=國字找注音) | 題目 | 正確答案 | 錯誤選項1,錯誤選項2,錯誤選項3
-
 // 👇 請將您 moe_data.js 裡面的【所有題目內容】完整複製，並貼到下方兩個反引號 `` 之間替換 👇
 window.MOE_DATA_STRING = `
 2|「骰」子|ㄊㄡˊ|ㄕㄞˇ,ㄍㄨˇ,ㄉㄡ
@@ -202,14 +199,47 @@ window.MOE_DATA_STRING = `
             .player-sprite { width: 45vmin; height: 45vmin; bottom: 2vmin; left: 15vmin; }
         }
 
-        /* 動畫特效 (屬性招式) */
+        /* ---------------- 動畫特效 ---------------- */
+        /* 基礎攻擊 */
         @keyframes attack-right { 0%, 100% { transform: scaleX(-1) translateX(0); } 20% { transform: scaleX(-1) translateX(30px); } 50% { transform: scaleX(-1) translateX(-60px); } }
         @keyframes attack-left { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-30px); } 50% { transform: translateX(60px); } }
-        @keyframes dodge-right { 0%, 100% { transform: scaleX(-1) translateX(0); opacity: 1; } 50% { transform: scaleX(-1) translateX(60px); opacity: 0.3; } }
-        @keyframes dodge-left { 0%, 100% { transform: translateX(0); opacity: 1; } 50% { transform: translateX(60px); opacity: 0.3; } }
-        @keyframes take-damage { 0% { filter: brightness(1); } 25% { filter: brightness(0) invert(1); transform: translateX(-10px); } 50% { filter: brightness(1); transform: translateX(10px); } 75% { filter: brightness(0) invert(1); transform: translateX(-10px); } 100% { filter: brightness(1); transform: translateX(0); } }
-        @keyframes level-up-flash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(2) drop-shadow(0 0 10px #f1c40f); } }
+        .anim-atk-player { animation: attack-right 0.4s ease; }
+        .anim-atk-enemy { animation: attack-left 0.4s ease; }
         
+        /* 華麗閃避 */
+        @keyframes flashy-dodge-right { 0%, 100% { transform: scaleX(-1) translateX(0) scale(1); opacity: 1; filter: blur(0); } 50% { transform: scaleX(-1) translateX(120px) scale(1.1) skewX(20deg); opacity: 0.4; filter: blur(4px) drop-shadow(0 0 20px #3498db); } }
+        @keyframes flashy-dodge-left { 0%, 100% { transform: translateX(0) scale(1); opacity: 1; filter: blur(0); } 50% { transform: translateX(120px) scale(1.1) skewX(-20deg); opacity: 0.4; filter: blur(4px) drop-shadow(0 0 20px #3498db); } }
+        .anim-dodge-player { animation: flashy-dodge-right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .anim-dodge-enemy { animation: flashy-dodge-left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        /* 受擊與華麗暴擊 */
+        @keyframes take-damage { 0% { filter: brightness(1); } 25% { filter: brightness(0) invert(1); transform: translateX(-10px); } 50% { filter: brightness(1); transform: translateX(10px); } 75% { filter: brightness(0) invert(1); transform: translateX(-10px); } 100% { filter: brightness(1); transform: translateX(0); } }
+        .anim-dmg { animation: take-damage 0.4s ease; }
+        
+        @keyframes flashy-crit { 
+            0% { filter: brightness(1); transform: scale(1); } 
+            10% { filter: brightness(3) invert(1) sepia(1) hue-rotate(300deg); transform: scale(1.5) rotate(15deg); } 
+            20% { filter: brightness(3) invert(1) sepia(1) hue-rotate(300deg); transform: scale(1.3) rotate(-15deg) translate(-20px, -20px); } 
+            30% { transform: scale(1.4) rotate(10deg) translate(20px, 20px); } 
+            100% { filter: brightness(1); transform: scale(1) rotate(0) translate(0,0); } 
+        }
+        .anim-crit-dmg { animation: flashy-crit 0.7s ease-out; box-shadow: 0 0 50px #e74c3c; border-radius: 50%; }
+
+        /* 畫面震動 (暴擊用) */
+        @keyframes screen-shake { 
+            0%, 100% { transform: translate(0, 0) rotate(0); } 
+            10%, 30%, 50%, 70%, 90% { transform: translate(-10px, -10px) rotate(-2deg); } 
+            20%, 40%, 60%, 80% { transform: translate(10px, 10px) rotate(2deg); } 
+        }
+        .anim-screen-shake { animation: screen-shake 0.5s; }
+
+        /* 升級與浮動字特效 */
+        @keyframes level-up-flash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(2) drop-shadow(0 0 10px #f1c40f); } }
+        .anim-lvl-up { animation: level-up-flash 0.8s ease 2; }
+        
+        @keyframes float-up { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 20% { transform: translate(-50%, -80%) scale(1.5); opacity: 1; } 80% { transform: translate(-50%, -120%) scale(1.2); opacity: 1; } 100% { transform: translate(-50%, -150%) scale(1); opacity: 0; } }
+        
+        /* 屬性招式背景光影 */
         @keyframes fx-normal { 0%, 100% { background: transparent; } 50% { background: rgba(255,255,255,0.6); } }
         @keyframes fx-dark { 0%, 100% { background: transparent; } 50% { background: rgba(0,0,0,0.7); } }
         @keyframes fx-ground { 0%, 100% { transform: translateY(0); } 20%, 60% { transform: translateY(-20px); background: rgba(139,69,19,0.4); } 40%, 80% { transform: translateY(20px); background: rgba(139,69,19,0.4); } }
@@ -220,13 +250,6 @@ window.MOE_DATA_STRING = `
         @keyframes fx-grass { 0%, 100% { background: rgba(46, 204, 113, 0); } 50% { background: rgba(46, 204, 113, 0.5); } }
         @keyframes fx-flying { 0%, 100% { background: rgba(255, 255, 255, 0); transform: skewX(0); } 50% { background: rgba(200, 200, 200, 0.5); transform: skewX(-30deg); } }
 
-        .anim-atk-player { animation: attack-right 0.4s ease; }
-        .anim-atk-enemy { animation: attack-left 0.4s ease; }
-        .anim-dodge-player { animation: dodge-right 0.5s ease; }
-        .anim-dodge-enemy { animation: dodge-left 0.5s ease; }
-        .anim-dmg { animation: take-damage 0.4s ease; }
-        .anim-lvl-up { animation: level-up-flash 0.8s ease 2; }
-        
         .fx-normal-run { animation: fx-normal 0.4s ease; }
         .fx-dark-run { animation: fx-dark 0.4s ease; }
         .fx-ground-run { animation: fx-ground 0.6s ease; }
@@ -248,7 +271,7 @@ window.MOE_DATA_STRING = `
 </head>
 <body>
     
-    <!-- 點擊進入畫面 (解決音訊自動播放限制) -->
+    <!-- 點擊進入畫面 -->
     <div id="splash-screen">
         <h1 style="color: var(--accent); font-size: 4rem; text-shadow: 0 0 20px var(--primary); margin-bottom: 20px; text-align: center; animation: splashPulse 1.5s infinite;">字靈獵人<br>寶可夢傳說</h1>
         <p style="font-size: 1.5rem; color: #aaa; animation: splashPulse 1.5s infinite alternate-reverse;" id="loading-text">請開啟音量並點擊進入</p>
@@ -262,6 +285,8 @@ window.MOE_DATA_STRING = `
             <div class="setting-row"><label>🎵 音量</label><input type="range" id="bgm-vol" min="0" max="1" step="0.1" value="0.25" onchange="window.AudioEngine.setBgmVolume(this.value)"></div>
             <div class="setting-row"><label>🔊 音效</label><input type="range" id="sfx-vol" min="0" max="1" step="0.1" value="0.5" onchange="window.AudioEngine.setSfxVolume(this.value)"></div>
             <div class="setting-row"><label>🧰 戰鬥後自動開寶箱</label><input type="checkbox" id="auto-open-chest-toggle" style="width: 20px; height: 20px;" onchange="window.toggleAutoOpenChest(this.checked)"></div>
+            
+            <button class="btn" style="background: #2ecc71; margin-bottom: 15px;" onclick="window.syncQuizFromFirebase(true)">⬇️ 下載更新題庫</button>
             <button class="btn" style="margin-bottom: 20px; background: #3498db;" onclick="window.requestAppFullscreen()">🔲 切換全螢幕</button>
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
@@ -282,7 +307,7 @@ window.MOE_DATA_STRING = `
                 <input type="file" id="import-file" style="display:none" accept=".txt,.js" onchange="window.importQuizData(event)">
             </div>
             <div style="display: flex; flex-direction:column; gap: 10px;">
-                <button class="btn" style="background: #2ecc71;" onclick="window.syncQuizFromFirebase(true)">⬇️ 雲端同步題庫</button>
+                <button class="btn" style="background: #2ecc71;" onclick="window.uploadQuizToFirebase()">⬆️ 上傳至雲端題庫 (Firebase)</button>
                 <button class="btn" style="background: #e67e22;" onclick="window.exportReportsFromFirebase()">📥 下載錯誤回報清單</button>
                 <button class="btn" style="background:#555; margin-top: 10px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
             </div>
@@ -521,7 +546,6 @@ window.MOE_DATA_STRING = `
         window.wait = ms => new Promise(resolve => setTimeout(resolve, ms));
         
         const TONE_MAP = { '1': '', '2': 'ˊ', '3': 'ˇ', '4': 'ˋ', '5': '˙' };
-        // 聰明的聲調轉換：只會轉換「注音符號後面跟著的數字」，絕不會誤改到純數字或一般文字
         window.formatZhuyin = (str) => { 
             if (!str) return ''; 
             return str.replace(/([ㄅ-ㄩ]+)([1-5])/g, (match, base, tone) => base + TONE_MAP[tone]); 
@@ -532,6 +556,31 @@ window.MOE_DATA_STRING = `
         window.updateHpBar = (tgt, cur, max) => { const p = Math.max(0, Math.min(100, (cur / max) * 100)); const f = document.getElementById(`${tgt}-hp-fill`); if(tgt === 'player') { document.getElementById('player-current-hp').innerText = Math.floor(cur); document.getElementById('player-max-hp').innerText = Math.floor(max); } f.style.width = p + '%'; f.style.backgroundColor = p > 50 ? '#2ecc71' : p > 20 ? '#f1c40f' : '#e74c3c'; };
         window.typeDialog = (text) => new Promise(res => { document.getElementById('battle-dialog').innerHTML = text.replace(/\n/g, '<br>'); setTimeout(res, 800); });
         window.saveData = () => { localStorage.setItem('wordHunterSave', JSON.stringify(window.player)); if(!window.db||!window.user||!window.player.name)return; try{window.setDoc(window.doc(window.db,'artifacts',window.appId,'public','data','leaderboard',window.user.uid),{name:window.player.name,avatar:window.player.avatar,level:window.player.level,timestamp:Date.now()},{merge:true});}catch(e){} };
+
+        // 浮動文字特效
+        window.showFloatingText = (text, targetId, color) => {
+            const target = document.getElementById(targetId);
+            if (!target) return;
+            const rect = target.getBoundingClientRect();
+            const battleScene = document.getElementById('battle-scene').getBoundingClientRect();
+            
+            const floatEl = document.createElement('div');
+            floatEl.innerText = text;
+            floatEl.style.position = 'absolute';
+            floatEl.style.left = (rect.left - battleScene.left + rect.width / 2) + 'px';
+            floatEl.style.top = (rect.top - battleScene.top + rect.height / 2) + 'px';
+            floatEl.style.color = color || '#fff';
+            floatEl.style.fontSize = '2.5rem';
+            floatEl.style.fontWeight = '900';
+            floatEl.style.textShadow = '0 0 15px rgba(0,0,0,0.8), 2px 2px 0 #000';
+            floatEl.style.zIndex = '100';
+            floatEl.style.transform = 'translate(-50%, -50%)';
+            floatEl.style.pointerEvents = 'none';
+            floatEl.style.animation = 'float-up 1s ease-out forwards';
+            
+            document.getElementById('fx-layer').appendChild(floatEl);
+            setTimeout(() => floatEl.remove(), 1000);
+        };
 
         // ======= 本地音樂檔案管理與音效引擎 =======
         window.AudioEngine = {
@@ -734,14 +783,44 @@ window.MOE_DATA_STRING = `
         window.getLocalQuizData = () => { const d = localStorage.getItem('wordHunterQuizData'); return (d && d.trim().length > 20) ? d : window.MOE_DATA_STRING; };
         window.saveLocalQuizData = (rawStr) => { localStorage.setItem('wordHunterQuizData', rawStr); const d = document.getElementById('db-last-update'); if(d) d.innerText = new Date().toLocaleString(); };
         window.loadQuizSystem = async () => { window.parseQuizData(window.getLocalQuizData()); window.syncQuizFromFirebase(false); };
+        
+        // 從 Firebase 下載最新題庫
         window.syncQuizFromFirebase = async (isManual=false) => {
-            if (isManual) window.AudioEngine.sfx.click(); if (!window.db || !window.user) return;
+            if (isManual) window.AudioEngine.sfx.click(); if (!window.db || !window.user) return window.showToast("無網路連線", "var(--boss)");
             try {
                 if(isManual) window.showToast("同步雲端題庫中...", "#f1c40f");
                 const docSnap = await window.getDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'quiz_db', 'main'));
-                if (docSnap.exists() && docSnap.data().content.length > 10) { window.saveLocalQuizData(docSnap.data().content); window.parseQuizData(docSnap.data().content); if(isManual) window.showToast("✅ 更新成功", "#2ecc71"); } 
-            } catch (e) {}
+                if (docSnap.exists() && docSnap.data().content.length > 10) { 
+                    window.saveLocalQuizData(docSnap.data().content); 
+                    window.parseQuizData(docSnap.data().content); 
+                    if(isManual) window.showToast("✅ 下載雲端題庫成功", "#2ecc71"); 
+                } else {
+                    if(isManual) window.showToast("雲端尚無題庫資料", "var(--boss)");
+                }
+            } catch (e) {
+                if(isManual) window.showToast("同步失敗", "var(--boss)");
+            }
         };
+
+        // 上傳目前題庫至 Firebase
+        window.uploadQuizToFirebase = async () => {
+            window.AudioEngine.sfx.click();
+            if (!window.db || !window.user) return window.showToast("無網路連線", "var(--boss)");
+            if (!window.currentRawQuizData) return window.showToast("沒有題庫資料可上傳", "var(--boss)");
+            window.showToast("正在上傳至雲端...", "#f1c40f");
+            try {
+                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'quiz_db', 'main'), {
+                    content: window.currentRawQuizData,
+                    updatedAt: Date.now(),
+                    updatedBy: window.user.uid
+                });
+                window.showToast("✅ 上傳雲端題庫成功！", "#2ecc71");
+            } catch (e) {
+                console.error(e);
+                window.showToast("上傳失敗，請檢查權限", "var(--boss)");
+            }
+        };
+
         window.exportQuizData = () => { window.AudioEngine.sfx.click(); const url = URL.createObjectURL(new Blob([window.currentRawQuizData], { type: 'text/plain;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 匯出成功", "#2ecc71"); };
         window.importQuizData = (event) => { window.AudioEngine.sfx.click(); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { window.saveLocalQuizData(e.target.result); window.parseQuizData(e.target.result); window.showToast("✅ 匯入成功！", "#2ecc71"); event.target.value = ''; }; reader.readAsText(file); };
 
@@ -1227,7 +1306,14 @@ window.MOE_DATA_STRING = `
 
             if (isCorrect && playerCanAct) {
                 const move = window.player.moves[Math.floor(Math.random() * window.player.moves.length)]; await window.typeDialog(`${window.player.name} 使用了\n【${move.name}】！`); await window.wait(600);
-                if (window.currentEnemy.isBoss && Math.random() < window.currentEnemy.dodgeRate) { window.AudioEngine.sfx.dodge(); window.playAnim('enemy-sprite', 'anim-dodge-enemy'); await window.wait(500); await window.typeDialog(`但是 ${window.currentEnemy.name} 閃避了！`); await window.wait(600); } 
+                if (window.currentEnemy.isBoss && Math.random() < window.currentEnemy.dodgeRate) { 
+                    window.AudioEngine.sfx.dodge(); 
+                    window.playAnim('enemy-sprite', 'anim-dodge-enemy'); 
+                    window.showFloatingText('💨 閃躲！', 'enemy-sprite', '#3498db');
+                    await window.wait(500); 
+                    await window.typeDialog(`但是 ${window.currentEnemy.name} 閃避了！`); 
+                    await window.wait(600); 
+                } 
                 else { await window.applyMoveEffect(move, window.player.stats, window.battleBuffs, window.currentEnemy, {atk:0, def:0}, 'player', 'enemy'); if(window.currentEnemy.hp <= 0) return window.winCombat(); }
             } else if (!isCorrect || !playerCanAct) {
                 let enemyCanAct = true;
@@ -1249,7 +1335,14 @@ window.MOE_DATA_STRING = `
                 if(enemyCanAct) {
                     const eMove = window.currentEnemy.moves[Math.floor(Math.random() * window.currentEnemy.moves.length)]; await window.typeDialog(`${window.currentEnemy.name} 使用了\n【${eMove.name}】！`); await window.wait(600);
                     let totalDodge = Math.min(60, window.player.stats.dodge + window.battleBuffs.dodge);
-                    if (totalDodge > 0 && Math.random() * 100 < totalDodge) { window.AudioEngine.sfx.dodge(); window.playAnim('player-sprite', 'anim-dodge-player'); await window.wait(500); await window.typeDialog(`💨 ${window.player.name} 敏捷地閃避了！`); await window.wait(600); } 
+                    if (totalDodge > 0 && Math.random() * 100 < totalDodge) { 
+                        window.AudioEngine.sfx.dodge(); 
+                        window.playAnim('player-sprite', 'anim-dodge-player'); 
+                        window.showFloatingText('💨 閃躲！', 'player-sprite', '#3498db');
+                        await window.wait(500); 
+                        await window.typeDialog(`💨 ${window.player.name} 敏捷地閃避了！`); 
+                        await window.wait(600); 
+                    } 
                     else { await window.applyMoveEffect(eMove, window.currentEnemy, {atk:0, def:0}, window.player.stats, window.battleBuffs, 'enemy', 'player'); if(window.player.stats.hp <= 0) return window.loseCombat(); }
                 }
             }
@@ -1265,13 +1358,23 @@ window.MOE_DATA_STRING = `
                 
                 if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600); }
 
-                window.AudioEngine.sfx.hit(); window.playAnim(`${dId}-sprite`, 'anim-dmg');
-                let atkStat = (attacker.atk || 10) + (aBuffs.atk || 0); let defStat = (defender.def || 5) + (dBuffs.def || 0); let critChance = (attacker.crit || 0) + (aBuffs.crit || 0) + (move.critBonus ? move.critBonus * 100 : 0); let isCrit = Math.random() * 100 < critChance;
+                let atkStat = (attacker.atk || 10) + (aBuffs.atk || 0); let defStat = (defender.def || 5) + (dBuffs.def || 0); let critChance = (attacker.crit || 0) + (aBuffs.crit || 0) + (move.critBonus ? move.critBonus * 100 : 0); 
+                let isCrit = Math.random() * 100 < critChance;
+                
+                if (isCrit) {
+                    window.AudioEngine.sfx.superEffective(); 
+                    window.playAnim(`${dId}-sprite`, 'anim-crit-dmg');
+                    window.playAnim('battle-scene', 'anim-screen-shake');
+                    window.showFloatingText('💥 暴擊！', `${dId}-sprite`, '#e74c3c');
+                } else {
+                    window.AudioEngine.sfx.hit(); 
+                    window.playAnim(`${dId}-sprite`, 'anim-dmg');
+                }
                 
                 let baseDmg = Math.max(1, Math.floor((atkStat * move.power / 30) - (defStat / 2))) + Math.floor(Math.random() * 5); let dmg = isCrit ? baseDmg * 2 : baseDmg;
                 defender.hp = Math.max(0, defender.hp - dmg); window.updateHpBar(dId, defender.hp, defender.maxHp || defender.hp);
                 
-                if(isCrit) { window.AudioEngine.sfx.superEffective(); await window.typeDialog(`💥 擊中要害！\n造成了 ${dmg} 點巨大傷害！`); } else await window.typeDialog(`造成了 ${dmg} 點傷害！`); await window.wait(600);
+                if(isCrit) { await window.typeDialog(`💥 擊中要害！\n造成了 ${dmg} 點巨大傷害！`); } else await window.typeDialog(`造成了 ${dmg} 點傷害！`); await window.wait(600);
                 if (move.type === 'drain' && defender.hp >= 0) { let heal = Math.max(1, Math.floor(dmg / 2)); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`吸收了 ${heal} 點 HP！`); await window.wait(600); }
             } else if (move.type === 'status') {
                 if (Math.random() < move.chance) {
