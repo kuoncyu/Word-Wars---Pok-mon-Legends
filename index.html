@@ -52,7 +52,14 @@ window.MOE_DATA_STRING = `
         window.doc = doc; window.setDoc = setDoc; window.getDocs = getDocs; window.getDoc = getDoc; window.collection = collection;
 
         try {
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { 
+              apiKey: "AIzaSyCq6m1h1lzwqyxQcpQ9nMxW25zocD5cu38",
+              authDomain: "word-warrior-e654b.firebaseapp.com",
+              projectId: "word-warrior-e654b",
+              storageBucket: "word-warrior-e654b.firebasestorage.app",
+              messagingSenderId: "831192888756",
+              appId: "1:831192888756:web:1b6ea28016bd05caf1aee1"
+            };
             const app = initializeApp(firebaseConfig);
             window.auth = getAuth(app); window.db = getFirestore(app);
             
