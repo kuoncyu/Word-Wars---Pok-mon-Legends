@@ -45,20 +45,21 @@ window.MOE_DATA_STRING = `
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         window.db = null; window.auth = null; window.user = null;
         window.appId = typeof __app_id !== 'undefined' ? __app_id : 'word-hunter-app-id';
-        window.doc = doc; window.setDoc = setDoc; window.getDocs = getDocs; window.getDoc = getDoc; window.collection = collection;
+        window.doc = doc; window.setDoc = setDoc; window.getDocs = getDocs; window.getDoc = getDoc; window.collection = collection; window.deleteDoc = deleteDoc;
 
         try {
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { 
-              apiKey: "AIzaSyCq6m1h1lzwqyxQcpQ9nMxW25zocD5cu38",
-              authDomain: "word-warrior-e654b.firebaseapp.com",
-              projectId: "word-warrior-e654b",
-              storageBucket: "word-warrior-e654b.firebasestorage.app",
-              messagingSenderId: "831192888756",
-              appId: "1:831192888756:web:1b6ea28016bd05caf1aee1"
+            // 已為您換上專屬的 Firebase 設定代碼
+            const firebaseConfig = typeof __firebase_config !== 'undefined' && __firebase_config ? JSON.parse(__firebase_config) : {
+                apiKey: "AIzaSyCq6m1h1lzwqyxQcpQ9nMxW25zocD5cu38",
+                authDomain: "word-warrior-e654b.firebaseapp.com",
+                projectId: "word-warrior-e654b",
+                storageBucket: "word-warrior-e654b.firebasestorage.app",
+                messagingSenderId: "831192888756",
+                appId: "1:831192888756:web:1b6ea28016bd05caf1aee1"
             };
             const app = initializeApp(firebaseConfig);
             window.auth = getAuth(app); window.db = getFirestore(app);
@@ -307,8 +308,9 @@ window.MOE_DATA_STRING = `
             <div style="display: flex; flex-direction:column; gap: 10px;">
                 <button class="btn" style="background: #2ecc71;" onclick="window.uploadQuizToFirebase()">⬆️ 上傳至雲端題庫 (Firebase)</button>
                 <button class="btn" style="background: #9b59b6;" onclick="window.viewPlayerAccounts()">👥 查看玩家帳密</button>
-                <button class="btn" style="background: #e67e22;" onclick="window.exportReportsFromFirebase()">📥 下載錯誤回報清單</button>
+                <button class="btn" style="background: #e67e22;" onclick="window.viewErrorReports()">📋 處理錯誤回報</button>
                 <div id="admin-account-list" style="max-height: 200px; overflow-y:auto; display:none; background:#111; padding:10px; border-radius:8px; margin-top:5px; font-size:0.9rem; color:#ccc;"></div>
+                <div id="admin-reports-list" style="max-height: 300px; overflow-y:auto; display:none; background:#111; padding:10px; border-radius:8px; margin-top:5px; font-size:0.9rem; color:#ccc; text-align:left;"></div>
                 <button class="btn" style="background:#555; margin-top: 10px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
             </div>
         </div>
@@ -913,6 +915,7 @@ window.MOE_DATA_STRING = `
         
         window.viewPlayerAccounts = async () => {
             window.AudioEngine.sfx.click(); const listDiv = document.getElementById('admin-account-list'); listDiv.style.display = 'block'; listDiv.innerHTML = "載入中...";
+            document.getElementById('admin-reports-list').style.display = 'none';
             try {
                 const snap = await window.getDocs(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'accounts'));
                 let html = '<table width="100%" style="text-align:left;"><tr><th>帳號</th><th>密碼</th><th>角色名</th></tr>';
@@ -921,13 +924,96 @@ window.MOE_DATA_STRING = `
             } catch(e) { listDiv.innerHTML = "載入失敗或無權限"; }
         };
 
-        window.exportReportsFromFirebase = async () => {
-            if (!window.db) return window.showToast("無網路連線", "var(--boss)"); window.showToast("正在獲取回報資料...", "#f1c40f");
+        window.viewErrorReports = async () => {
+            window.AudioEngine.sfx.click(); 
+            const listDiv = document.getElementById('admin-reports-list'); 
+            listDiv.style.display = 'block'; 
+            document.getElementById('admin-account-list').style.display = 'none';
+            listDiv.innerHTML = "載入中...";
+            if (!window.db) { listDiv.innerHTML = "無網路連線"; return; }
+            
             try {
-                const querySnapshot = await window.getDocs(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'reports')); let reportData = "回報時間,題目,原設定答案,玩家建議,回報者ID\n";
-                querySnapshot.forEach(doc => { const d = doc.data(); const dateStr = new Date(d.timestamp).toLocaleString(); reportData += `"${dateStr}","${d.question}","${d.originalAnswer}","${d.userSuggestion}","${d.uid}"\n`; });
-                const blob = new Blob([reportData], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫回報清單.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 回報資料匯出成功", "#2ecc71");
-            } catch (e) { window.showToast("匯出失敗", "var(--boss)"); }
+                const snap = await window.getDocs(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'reports'));
+                if (snap.empty) {
+                    listDiv.innerHTML = "目前沒有任何錯誤回報。";
+                    return;
+                }
+                let html = '';
+                snap.forEach(d => {
+                    const data = d.data();
+                    const reportId = d.id;
+                    const searchWord = data.question.replace(/[「」【】]/g, '');
+                    const link = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+                    
+                    let rawLine = '';
+                    if(window.currentRawQuizData) {
+                        const lines = window.currentRawQuizData.split('\n');
+                        for(let l of lines) {
+                            const p = l.split('|');
+                            if(p.length === 4 && window.formatZhuyin(p[1]) === data.question) {
+                                rawLine = l;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    html += `<div style="border:1px solid #e74c3c; padding:10px; margin-bottom:10px; border-radius:5px; background:#1a1a1a;">
+                        <div style="margin-bottom:5px;"><strong style="color:var(--accent);">題目:</strong> ${data.question}</div>
+                        <div style="margin-bottom:5px;"><strong style="color:#aaa;">原答案:</strong> ${data.originalAnswer}</div>
+                        <div style="margin-bottom:5px;"><strong style="color:#2ecc71;">玩家建議:</strong> ${data.userSuggestion}</div>
+                        <div style="margin-bottom:5px;"><a href="${link}" target="_blank" style="color:#3498db; text-decoration:underline;">📖 查閱教育部字典</a></div>
+                        <div style="margin-bottom:5px; color:#aaa; font-size:0.8rem;">修改為 (原始格式: 題型|題目|答案|錯項)：</div>
+                        <input type="text" id="report-edit-${reportId}" value="${rawLine}" style="width:100%; background:#000; color:#fff; padding:8px; border:1px solid #555; border-radius:4px; margin-bottom:5px;">
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="window.approveReport('${reportId}', '${data.question}')" style="flex:1; background:#2ecc71; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">✅ 確認並覆蓋雲端</button>
+                            <button onclick="window.deleteReport('${reportId}')" style="background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">🗑️ 忽略刪除</button>
+                        </div>
+                    </div>`;
+                });
+                listDiv.innerHTML = html;
+            } catch (e) { listDiv.innerHTML = "載入失敗或無權限"; }
+        };
+
+        window.approveReport = async (reportId, questionStr) => {
+            window.AudioEngine.sfx.click();
+            const inputEl = document.getElementById(`report-edit-${reportId}`);
+            const newLine = inputEl.value.trim();
+            
+            if(newLine.split('|').length !== 4) return window.showToast("格式錯誤！必須包含三個 | 分隔號", "var(--boss)");
+
+            let oldLine = '';
+            let lines = window.currentRawQuizData.split('\n');
+            for(let l of lines) {
+                const p = l.split('|');
+                if(p.length === 4 && window.formatZhuyin(p[1]) === questionStr) {
+                    oldLine = l;
+                    break;
+                }
+            }
+
+            if(!oldLine) return window.showToast("找不到原始題目，可能已被修改", "var(--boss)");
+
+            window.showToast("更新並上傳中...", "#f1c40f");
+            
+            window.currentRawQuizData = window.currentRawQuizData.replace(oldLine, newLine);
+            window.saveLocalQuizData(window.currentRawQuizData);
+            window.parseQuizData(window.currentRawQuizData);
+
+            try {
+                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'quiz_db', 'main'), { content: window.currentRawQuizData, updatedAt: Date.now(), updatedBy: window.user.uid }); 
+                await window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'reports', reportId));
+                window.showToast("✅ 已成功更新並刪除回報", "#2ecc71");
+                window.viewErrorReports();
+            } catch(e) { window.showToast("上傳失敗", "var(--boss)"); }
+        };
+
+        window.deleteReport = async (reportId) => {
+            window.AudioEngine.sfx.click();
+            try {
+                await window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'reports', reportId));
+                window.showToast("🗑️ 已刪除回報", "#2ecc71");
+                window.viewErrorReports(); 
+            } catch(e) { window.showToast("刪除失敗", "var(--boss)"); }
         };
 
         window.initAvatarSelection = () => {
