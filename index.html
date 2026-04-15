@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>字靈獵人 寶可夢傳說</title>
+    
+    <!-- 內建題庫資料 (完全內嵌，不需外部檔案) -->
+    <script>
+// 教育部字典 RPG 專用題庫 (V22 資料庫版)
+// 格式：題型(1=注音找國字, 2=國字找注音) | 題目 | 正確答案 | 錯誤選項1,錯誤選項2,錯誤選項3
+
+window.MOE_DATA_STRING = `
+2|「骰」子|ㄊㄡˊ|ㄕㄞˇ,ㄍㄨˇ,ㄉㄡ
+2|「蛤」蜊|ㄍㄜˊ|ㄍㄜˇ,ㄏㄚ,ㄌㄧˋ
+2|「創」傷|ㄔㄨㄤ|ㄔㄨㄤˋ,ㄔㄨㄤˇ,ㄘㄨㄤˋ
+2|「液」體|ㄧㄝˋ|ㄧˋ,ㄧㄝˊ,ㄧ
+2|「法」國|ㄈㄚˇ|ㄈㄚˋ,ㄈㄚ,ㄈㄜˇ
+2|主「角」|ㄐㄩㄝˊ|ㄐㄧㄠ2,ㄐㄩㄝ,ㄎㄚ
+2|牛「仔」褲|ㄗˇ|ㄗㄞˇ,ㄗㄞ,ㄗ
+2|祥「瑞」|ㄖㄨㄟ4|ㄕ4,ㄖㄨㄟ,ㄙㄨㄟ4
+1|ㄅㄧㄥˋ ㄖㄨˋ ㄍㄠ ㄏㄨㄤ|病入膏肓|病入膏荒,病入高肓,病入高荒
+1|ㄈㄣ ㄓˋ ㄊㄚˋ ㄌㄞˊ|紛至沓來|紛至踏來,紛至塌來,紛至遝來
+1|ㄍㄨˋ ㄅㄨˋ ㄗˋ ㄈㄥ|故步自封|固步自封,顧步自封,固步自風
+1|ㄏㄠˋ ㄍㄠ ㄨ4 ㄩㄢ3|好高騖遠|好高務遠,好高物遠,好高誤遠
+1|ㄢˋ ㄉㄨ4 ㄔㄣ2 ㄘㄤ|暗度陳倉|暗渡陳倉,暗度陳滄,暗渡陳滄
+1|ㄇㄧㄥˊ ㄩ4 ㄙㄠ3 ㄉㄧ4|名譽掃地|明譽掃地,名譽掃第,名譽掃弟
+1|ㄐㄧㄣ ㄅㄧ4 ㄏㄨㄟ ㄏㄨㄤˊ|金碧輝煌|金壁輝煌,金璧輝煌,金畢輝煌
+1|ㄌㄠˇ ㄊㄞ4 ㄌㄨㄥˊ ㄓㄨㄥ|老態龍鍾|老態龍鐘,老太龍鍾,老太龍鐘
+1|ㄧˋ ㄈㄣ4 ㄊㄧㄢˊ ㄧㄥ|義憤填膺|義憤填胸,義憤填纓,義憤填英
+1|ㄌㄧˊ ㄑㄧㄥ|釐清|離清,厘清,理清
+1|ㄊㄧㄥ3 ㄕㄣ ㄦˊ ㄔㄨ|挺身而出|鋌身而出,挺身二出,廷身而出
+1|ㄗˋ ㄘㄢˊ ㄒㄧㄥ2 ㄏㄨㄟ4|自慚形穢|自殘形穢,自慚形悔,自殘形悔
+1|ㄅㄨ4 ㄎㄜ3 ㄙ ㄧ4|不可思議|不可思義,不可思意,不可私議
+1|ㄓㄣˋ ㄌㄨㄥˊ ㄈㄚ ㄎㄨㄟ4|振聾發聵|震聾發聵,振聾發潰,震聾發潰
+1|ㄔㄣˊ ㄑㄧㄤ ㄌㄢ4 ㄉㄧㄠ4|陳腔濫調|陳腔爛調,陳槍濫調,陳腔亂調
+1|ㄅㄧㄢ4 ㄅㄣ3 ㄐㄧㄚ ㄌㄧ4|變本加厲|變本加勵,變本佳厲,變本佳勵
+1|ㄗㄞ4 ㄐㄧㄝ ㄗㄞ4 ㄌㄧ4|再接再厲|再接再勵,在接在厲,在接再勵
+1|ㄒㄩㄣˊ ㄒㄩㄣˊ ㄕㄢ4 ㄧㄡ4|循循善誘|尋尋善誘,詢詢善誘,巡巡善誘
+1|ㄈㄤˊ ㄞ4|妨礙|防礙,妨害,防害
+1|ㄈㄤˊ ㄏㄞ4|妨害|防害,妨礙,防礙
+`;
+    </script>
+
+    <!-- Firebase 初始化 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.db = null; window.auth = null; window.user = null;
+        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'word-hunter-app-id';
+        window.doc = doc; window.setDoc = setDoc; window.getDocs = getDocs; window.getDoc = getDoc; window.collection = collection;
+
+        try {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { projectId: "demo-project" };
+            const app = initializeApp(firebaseConfig);
+            window.auth = getAuth(app); window.db = getFirestore(app);
+            
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(window.auth, __initial_auth_token);
+                else await signInAnonymously(window.auth);
+            };
+            initAuth().catch(e => console.warn("登入失敗:", e));
+            onAuthStateChanged(window.auth, (u) => { if (u) window.user = u; });
+        } catch(e) { console.warn("Firebase 初始化跳過", e); }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
+        :root { --bg-dark: #0f0f10; --panel-bg: rgba(25, 25, 30, 0.98); --primary: #c23616; --accent: #fbc531; --luck: #00d2d3; --enhance: #e056fd; --boss: #e74c3c; --text: #f5f6fa; --font-main: 'Noto Serif TC', serif; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { font-family: var(--font-main); background-color: var(--bg-dark); color: var(--text); margin: 0; padding: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0f0f10; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: opacity 0.5s ease; }
+        @keyframes splashPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        .btn { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight:bold; transition: 0.2s; display: inline-block; text-align: center; text-decoration:none; }
+        .btn:active { transform: scale(0.95); filter: brightness(0.8); }
+        .btn:disabled { background: #555 !important; cursor: not-allowed; opacity: 0.5; border-color: #333 !important; color:#aaa; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: #222; border: 2px solid var(--accent); border-radius: 15px; width: 100%; max-width: 450px; text-align: center; display: flex; flex-direction: column; padding: 0; overflow: hidden; max-height: 90vh;}
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-dark); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .title-text { color: var(--accent); font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 15px var(--primary); text-align: center; line-height: 1.2; }
+        .input-group { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px; background: rgba(0,0,0,0.5); padding: 25px 20px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
+        .avatar-option { width: 100%; aspect-ratio: 1; border-radius: 10px; border: 2px solid #444; background: #1a1a1a; cursor: pointer; transition: all 0.2s ease; object-fit: contain; padding: 5px; image-rendering: pixelated; }
+        .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 15px rgba(251, 197, 49, 0.6); transform: scale(1.1); background: #333; z-index: 2; }
+        .name-input-container { display: flex; width: 100%; gap: 10px; margin-bottom: 25px; }
+        .input-box { flex: 1; padding: 15px; font-size: 1.3rem; background: #222; color: var(--accent); border: 2px solid var(--primary); border-radius: 10px; text-align: center; outline: none; min-width: 0; }
+        .input-box:focus { background: #111; border-color: var(--accent); box-shadow: 0 0 15px rgba(251, 197, 49, 0.4); }
+        .random-btn { background: #333; color: #fff; border: 2px solid #555; border-radius: 10px; padding: 0 15px; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
+        #game-container { display: none; height: 100%; flex-direction: column; }
+        .nav-bar { display: flex; background: #111; padding: env(safe-area-inset-top) 5px 5px 5px; border-bottom: 2px solid #333; gap: 2px; }
+        .nav-btn { flex: 1; text-align: center; padding: 10px 2px; cursor: pointer; color: #888; font-weight: bold; transition: 0.3s; font-size: 0.95rem; white-space: nowrap; }
+        .nav-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+        .tab-page { display: none; flex: 1; padding: 20px; overflow-y: auto; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+        .tab-page.active { display: block; }
+        .stat-card { background: var(--panel-bg); border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 15px; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 10px; border: 2px solid var(--accent); background: #111; object-fit: contain; padding: 5px; image-rendering: pixelated; }
+        .profile-gold { color: #f1c40f !important; font-weight: bold; text-shadow: 0 0 5px rgba(241,196,15,0.5); }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-item { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; text-align: center; }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: var(--luck); }
+        .moves-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .move-slot { background: #2c3e50; border: 1px solid #34495e; padding: 8px; border-radius: 5px; text-align: center; font-size: 0.9rem; font-weight: bold; color: #ecf0f1; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        .move-empty { background: #1a1a1a; color: #555; border-style: dashed; }
+        .inv-item { background: linear-gradient(145deg, #1f2125, #111315); border: 2px solid #e3350d; border-radius: 12px; padding: 12px; margin-bottom: 15px; box-shadow: 4px 4px 10px rgba(0,0,0,0.5); position: relative; overflow: hidden; text-align: left; cursor:pointer;}
+        .inv-item:active { transform:scale(0.98); }
+        .inv-item::before { content: ''; position: absolute; right: -20px; top: -20px; width: 80px; height: 80px; background: radial-gradient(circle, rgba(227, 53, 13, 0.15) 30%, transparent 70%); border-radius: 50%; }
+        .inv-item.locked { filter: grayscale(1); opacity: 0.6; border-color: #555; }
+        .inv-header { border-bottom: 1px dashed #444; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; }
+        .inv-quality-tag { font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; color: #000; margin-left: 8px; vertical-align: middle; }
+        .inv-stats { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.95rem; color: #ccc; margin-bottom: 10px; }
+        .upgrade-btn { background: #f39c12; padding: 8px 15px; font-size: 0.9rem; width: auto; display: flex; align-items: center; gap: 5px; }
+        .shop-tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #111; padding: 5px; border-radius: 10px; }
+        .shop-tab-btn { flex: 1; padding: 10px 5px; font-size: 0.95rem; font-weight: bold; background: #222; color: #888; border: 1px solid #444; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .shop-tab-btn.active { background: var(--primary); color: #fff; border-color: var(--accent); }
+        .shop-section { display: none; }
+        .shop-section.active { display: block; }
+        .shop-timer { font-size: 0.9rem; color: var(--luck); margin-bottom: 10px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 5px;}
+        .lb-item { display: flex; align-items: center; background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid var(--accent); }
+        .lb-item.me { border-left-color: var(--primary); background: #3a1a1a; }
+        .lb-avatar { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #555; margin: 0 10px; object-fit: contain; background: #111; padding: 2px; image-rendering: pixelated; }
+        .map-wrapper { background-color: #8bc34a; background-image: radial-gradient(#7cb342 15%, transparent 16%), radial-gradient(#7cb342 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; padding: 20px; max-height: 65vh; overflow-y: auto; position: relative; border-radius: 0 0 10px 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        .map-timeline { position: relative; padding-left: 35px; margin: 10px 0; }
+        .map-timeline::before { content: ''; position: absolute; left: 16px; top: 0; bottom: 0; width: 6px; background: #333; border-radius: 3px; }
+        .map-node { position: relative; background: #2c3e50; border: 3px solid #555; border-radius: 12px; padding: 15px; margin-bottom: 20px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.4); text-align:left;}
+        .map-node::before { content: ''; position: absolute; left: -28px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 50%; background: #ccc; border: 4px solid #333; z-index: 2; transition: 0.3s; }
+        .map-node.unlocked { border-color: var(--primary); background: #1a252f; }
+        .map-node.unlocked::before { background: var(--primary); border-color: #fff; box-shadow: 0 0 10px var(--primary); }
+        .map-node.locked { opacity: 0.8; filter: grayscale(0.8); cursor:not-allowed;}
+        .map-name { font-size: 1.2rem; color: #fff; font-weight: bold; margin-bottom: 5px; }
+        .map-desc { font-size: 0.9rem; color: #ccc; margin-bottom: 8px; line-height: 1.4; }
+        .map-req { font-size: 0.9rem; color: var(--accent); }
+        .detail-view { display: none; padding: 20px; max-height: 65vh; overflow-y: auto; background: #1f2125; border-radius: 0 0 10px 10px; text-align: left; }
+        .poke-display-item { display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; width: 80px; border: 1px solid #444; cursor: pointer; transition: 0.2s;}
+        .poke-display-item:hover { background: rgba(255,255,255,0.1); border-color: #888; transform: translateY(-2px);}
+        .poke-display-item img { width: 50px; height: 50px; object-fit: contain; image-rendering: pixelated; margin-bottom: 5px; }
+        .poke-display-item span { font-size: 0.8rem; color: #fff; text-align: center; white-space: nowrap; }
+        .boss-display-item { border-color: var(--boss); background: rgba(231, 76, 60, 0.1); }
+        .daily-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .daily-box { background: #222; border: 2px solid #444; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: 0.3s; }
+        .daily-box.active { border-color: var(--luck); background: #1a252f; box-shadow: 0 0 15px rgba(46, 204, 113, 0.6); transform: scale(1.05); z-index: 2; }
+        .daily-box.claimed { border-color: #555; opacity: 0.5; filter: grayscale(0.8); }
+        .daily-day { font-size: 0.85rem; color: #aaa; margin-bottom: 5px; font-weight: bold; background: rgba(0,0,0,0.5); width: 100%; border-radius: 4px; padding: 2px 0; text-align: center; }
+
+        /* 戰鬥畫面 */
+        #battle-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #2c3e50; z-index: 2000; display: none; flex-direction: column; }
+        .battle-scene { 
+            flex: 1; 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5); 
+            border-bottom: 4px solid #111; 
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%); 
+        }
+        .battle-stat-box { position: absolute; background: rgba(255, 255, 255, 0.95); border: 3px solid #333; border-radius: 10px; padding: 1vmin 2vmin; width: 45%; max-width: 280px; color: #000; font-weight: bold; box-shadow: 4px 4px 0 rgba(0,0,0,0.3); z-index: 10; }
+        .stat-name-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: clamp(0.9rem, 2.5vmin, 1.2rem); align-items: baseline;}
+        .boss-tag { background: #e74c3c; color: #fff; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; margin-right: 5px; vertical-align: middle; }
+        .hp-bar-bg { background: #555; height: clamp(6px, 1.5vmin, 12px); border-radius: 5px; width: 100%; border: 2px solid #222; overflow: hidden; position: relative; }
+        .hp-bar-fill { height: 100%; background: #2ecc71; width: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
+        .exp-bar-bg { background: #444; height: clamp(4px, 1vmin, 8px); border-radius: 4px; width: 100%; border: 1px solid #111; overflow: hidden; position: relative; margin-top: 4px; }
+        .exp-bar-fill { height: 100%; background: #3498db; width: 0%; transition: width 0.5s ease-in-out; }
+        .hp-numbers { text-align: right; font-size: clamp(0.8rem, 2vmin, 1rem); margin-top: 4px; color: #333; }
+        .status-tag { display: none; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; margin-right: 5px; vertical-align: middle; color: white; }
+        .status-psn { background: #9b59b6; display: inline-block; }
+        .status-slp { background: #7f8c8d; display: inline-block; }
+        .status-cnf { background: #e67e22; display: inline-block; }
+
+        .enemy-stat-box { top: 5vmin; left: 5vmin; border-bottom-right-radius: 20px; }
+        .player-stat-box { bottom: 5vmin; right: 5vmin; border-top-left-radius: 20px; }
+        
+        .enemy-sprite { position: absolute; top: 10vmin; right: 8vmin; width: 28vmin; height: 28vmin; object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.3)); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
+        .player-sprite { position: absolute; bottom: 5vmin; left: 8vmin; width: 35vmin; height: 35vmin; object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5)); transform: scaleX(-1); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
+        .boss-glow { filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8)) drop-shadow(0 10px 5px rgba(0,0,0,0.3)); animation: boss-breathe 2s infinite alternate; }
+        @keyframes boss-breathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+        #fx-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 8; pointer-events:none; }
+
+        .battle-ui-panel { height: 35vh; min-height: 200px; background: #111; display: flex; flex-direction: column; padding: 10px 15px 15px 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
+        .battle-dialog { background: #fff; color: #000; border: 4px solid #444; border-radius: 10px; padding: clamp(10px, 2vmin, 15px); font-size: clamp(1.1rem, 2.5vmin, 1.3rem); min-height: 80px; margin-bottom: 10px; font-weight: bold; line-height: 1.4; box-shadow: inset 2px 2px 0 #ccc; display: flex; align-items: center; justify-content: center; text-align: center; }
+        
+        .battle-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; margin-bottom: 10px;}
+        .battle-actions-row { display: flex; justify-content: center; gap: 8px; margin-top: auto; }
+        
+        .battle-btn { background: #f1c40f; color: #000; border: 3px solid #d35400; border-radius: 8px; font-size: clamp(1rem, 2.5vmin, 1.3rem); font-weight: bold; cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center; padding: 5px; text-align: center; min-height: 45px; }
+        .battle-btn:active { background: #e67e22; transform: scale(0.95); }
+        
+        .action-btn { background: #2980b9; color: #ecf0f1; border: 2px solid #2471a3; border-radius: 6px; font-size: 0.9rem; padding: 8px 5px; font-weight: bold; cursor: pointer; transition: 0.1s; flex: 1; text-align: center; }
+        .action-btn:active { transform: scale(0.95); filter: brightness(0.8); }
+        .action-btn.report { background: #8e44ad; border-color: #732d91; }
+        .action-btn.flee { background: #7f8c8d; border-color: #616a6b; }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .battle-ui-panel { height: 45vh; min-height: auto; flex-direction: row; gap: 15px; }
+            .battle-dialog { flex: 1; margin-bottom: 0; min-height: 100%; }
+            .battle-options-grid { flex: 1; }
+            .battle-actions-row { position:absolute; bottom: 10px; right: 15px; }
+            .enemy-sprite { width: 35vmin; height: 35vmin; top: 2vmin; right: 15vmin; }
+            .player-sprite { width: 45vmin; height: 45vmin; bottom: 2vmin; left: 15vmin; }
+        }
+
+        /* 動畫特效 (屬性招式) */
+        @keyframes attack-right { 0%, 100% { transform: scaleX(-1) translateX(0); } 20% { transform: scaleX(-1) translateX(30px); } 50% { transform: scaleX(-1) translateX(-60px); } }
+        @keyframes attack-left { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-30px); } 50% { transform: translateX(60px); } }
+        @keyframes dodge-right { 0%, 100% { transform: scaleX(-1) translateX(0); opacity: 1; } 50% { transform: scaleX(-1) translateX(60px); opacity: 0.3; } }
+        @keyframes dodge-left { 0%, 100% { transform: translateX(0); opacity: 1; } 50% { transform: translateX(60px); opacity: 0.3; } }
+        @keyframes take-damage { 0% { filter: brightness(1); } 25% { filter: brightness(0) invert(1); transform: translateX(-10px); } 50% { filter: brightness(1); transform: translateX(10px); } 75% { filter: brightness(0) invert(1); transform: translateX(-10px); } 100% { filter: brightness(1); transform: translateX(0); } }
+        @keyframes level-up-flash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(2) drop-shadow(0 0 10px #f1c40f); } }
+        
+        @keyframes fx-normal { 0%, 100% { background: transparent; } 50% { background: rgba(255,255,255,0.6); } }
+        @keyframes fx-dark { 0%, 100% { background: transparent; } 50% { background: rgba(0,0,0,0.7); } }
+        @keyframes fx-ground { 0%, 100% { transform: translateY(0); } 20%, 60% { transform: translateY(-20px); background: rgba(139,69,19,0.4); } 40%, 80% { transform: translateY(20px); background: rgba(139,69,19,0.4); } }
+        @keyframes fx-ice { 0%, 100% { background: transparent; } 50% { background: rgba(173,216,230,0.7); } }
+        @keyframes fx-fire { 0% { background: rgba(231, 76, 60, 0); } 50% { background: rgba(231, 76, 60, 0.6); } 100% { background: rgba(231, 76, 60, 0); } }
+        @keyframes fx-water { 0% { background: rgba(52, 152, 219, 0); transform:translateY(100%); } 50% { background: rgba(52, 152, 219, 0.6); transform:translateY(0); } 100% { background: rgba(52, 152, 219, 0); transform:translateY(100%); } }
+        @keyframes fx-electric { 0%, 100% { background: rgba(241, 196, 15, 0); } 10%, 30%, 50% { background: rgba(241, 196, 15, 0.7); } 20%, 40% { background: rgba(255, 255, 255, 0.8); } }
+        @keyframes fx-grass { 0%, 100% { background: rgba(46, 204, 113, 0); } 50% { background: rgba(46, 204, 113, 0.5); } }
+        @keyframes fx-flying { 0%, 100% { background: rgba(255, 255, 255, 0); transform: skewX(0); } 50% { background: rgba(200, 200, 200, 0.5); transform: skewX(-30deg); } }
+
+        .anim-atk-player { animation: attack-right 0.4s ease; }
+        .anim-atk-enemy { animation: attack-left 0.4s ease; }
+        .anim-dodge-player { animation: dodge-right 0.5s ease; }
+        .anim-dodge-enemy { animation: dodge-left 0.5s ease; }
+        .anim-dmg { animation: take-damage 0.4s ease; }
+        .anim-lvl-up { animation: level-up-flash 0.8s ease 2; }
+        
+        .fx-normal-run { animation: fx-normal 0.4s ease; }
+        .fx-dark-run { animation: fx-dark 0.4s ease; }
+        .fx-ground-run { animation: fx-ground 0.6s ease; }
+        .fx-ice-run { animation: fx-ice 0.6s ease; }
+        .fx-fire-run { animation: fx-fire 0.6s ease; }
+        .fx-water-run { animation: fx-water 0.6s ease; }
+        .fx-electric-run { animation: fx-electric 0.6s ease; }
+        .fx-grass-run { animation: fx-grass 0.6s ease; }
+        .fx-flying-run { animation: fx-flying 0.4s ease; }
+
+        /* 設定按鈕 */
+        #settings-btn { position: fixed; top: 10px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 5000; transition: 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #settings-btn:hover { background: rgba(0,0,0,0.6); transform: rotate(45deg) scale(1.1); border-color: var(--accent); opacity: 1; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 1.1rem; }
+        .zy-keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 15px; margin-bottom: 15px; }
+        .zy-key { background: #444; color: #fff; padding: 12px 0; text-align: center; border-radius: 5px; cursor: pointer; border: 1px solid #666; font-size: 1.1rem; }
+        .zy-key:active { background: var(--accent); color: #000; }
+    </style>
+</head>
+<body>
+    
+    <!-- 點擊進入畫面 (解決音訊自動播放限制) -->
+    <div id="splash-screen">
+        <h1 style="color: var(--accent); font-size: 4rem; text-shadow: 0 0 20px var(--primary); margin-bottom: 20px; text-align: center; animation: splashPulse 1.5s infinite;">字靈獵人<br>寶可夢傳說</h1>
+        <p style="font-size: 1.5rem; color: #aaa; animation: splashPulse 1.5s infinite alternate-reverse;" id="loading-text">請開啟音量並點擊進入</p>
+    </div>
+
+    <div id="settings-btn" onclick="window.openSettings()">⚙️</div>
+
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box" style="padding: 25px; text-align:left;">
+            <h2 style="color:var(--accent); margin-top:0; text-align:center;">⚙️ 遊戲設定</h2>
+            <div class="setting-row"><label>🎵 音量</label><input type="range" id="bgm-vol" min="0" max="1" step="0.1" value="0.25" onchange="window.AudioEngine.setBgmVolume(this.value)"></div>
+            <div class="setting-row"><label>🔊 音效</label><input type="range" id="sfx-vol" min="0" max="1" step="0.1" value="0.5" onchange="window.AudioEngine.setSfxVolume(this.value)"></div>
+            <button class="btn" style="margin-bottom: 20px; background: #3498db;" onclick="window.requestAppFullscreen()">🔲 切換全螢幕</button>
+            <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
+            <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
+            <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260501 (防呆究極完善版)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理員介面 -->
+    <div id="admin-modal" class="modal-overlay" style="z-index: 8000;">
+        <div class="modal-box" style="padding: 25px; background:#2c3e50; border-color:#e74c3c;">
+            <h2 style="color:var(--boss); margin-top:0;">🛡️ 管理員專區</h2>
+            <p style="font-size:0.8rem; color:#aaa; margin-top:0;">題庫上次更新: <span id="db-last-update">從未</span></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <button class="btn" style="background: #444; font-size:0.9rem;" onclick="window.exportQuizData()">📄 匯出題庫</button>
+                <button class="btn" style="background: #444; font-size:0.9rem;" onclick="document.getElementById('import-file').click()">📂 匯入題庫</button>
+                <input type="file" id="import-file" style="display:none" accept=".txt,.js" onchange="window.importQuizData(event)">
+            </div>
+            <div style="display: flex; flex-direction:column; gap: 10px;">
+                <button class="btn" style="background: #2ecc71;" onclick="window.syncQuizFromFirebase(true)">⬇️ 雲端同步題庫</button>
+                <button class="btn" style="background: #e67e22;" onclick="window.exportReportsFromFirebase()">📥 下載錯誤回報清單</button>
+                <button class="btn" style="background:#555; margin-top: 10px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 物品詳情 -->
+    <div id="item-detail-modal" class="modal-overlay" style="z-index: 7800;">
+        <div class="modal-box" style="padding: 25px;">
+            <h2 id="id-name" style="margin-top:0;">物品名稱</h2>
+            <p id="id-desc" style="color:#ccc; font-size:0.95rem; margin-bottom:15px;"></p>
+            <div id="id-stats" style="margin-bottom:15px; font-size:1.1rem; color:var(--luck); font-weight:bold;"></div>
+            <div style="display:flex; gap:10px;">
+                <button id="id-btn-equip" class="btn" style="background:var(--primary); flex:2;">裝備/使用</button>
+                <button id="id-btn-sell" class="btn" style="background:#e67e22; flex:1;">出售</button>
+            </div>
+            <button class="btn" style="background:#555; margin-top:10px;" onclick="document.getElementById('item-detail-modal').style.display='none'">關閉</button>
+        </div>
+    </div>
+
+    <!-- 每日登入 -->
+    <div id="daily-login-modal" class="modal-overlay" style="z-index: 7500;">
+        <div class="modal-box" style="padding: 25px;">
+            <h2 style="color:var(--accent); margin-top:0; text-shadow: 0 0 10px rgba(251,197,49,0.5);">📅 每日登入獎勵</h2>
+            <div class="daily-grid" id="daily-grid-container"></div>
+            <button id="daily-claim-btn" class="btn" style="background:var(--primary);" onclick="window.claimDailyReward()">🎁 領取今日獎勵</button>
+        </div>
+    </div>
+
+    <!-- 地圖選擇 -->
+    <div id="map-modal" class="modal-overlay" style="z-index: 5500;">
+        <div class="modal-box" style="background: transparent; border: none; max-width: 450px;">
+            <div style="background: var(--primary); padding: 15px; color: #fff; font-weight: bold; font-size: 1.3rem; position: relative; border-radius: 10px 10px 0 0; text-shadow: 1px 1px 2px #000;">
+                🗺️ 寶可夢世界地圖
+                <span style="position:absolute; right:15px; cursor:pointer;" onclick="window.closeMapModal()">❌</span>
+            </div>
+            <div id="map-list-view" class="map-wrapper"><div class="map-timeline" id="map-timeline-container"></div></div>
+            <div id="map-detail-view" class="detail-view">
+                <button class="btn" style="background: #555; padding: 8px 15px; margin-bottom: 15px; font-size: 1rem; width: auto;" onclick="window.backToMapList()">🔙 返回路線圖</button>
+                <h3 id="zd-name" style="color: var(--accent); margin-top: 0; font-size: 1.5rem; border-bottom: 2px solid #555; padding-bottom: 8px;"></h3>
+                <p id="zd-desc" style="color: #ddd; font-size: 1rem; line-height: 1.5; margin-bottom: 15px;"></p>
+                <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                    <div style="flex:1; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; text-align:center;"><div style="font-size: 0.9rem; color: #aaa;">解鎖要求</div><div id="zd-req" style="color: var(--luck); font-weight: bold;"></div></div>
+                    <div style="flex:1; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; text-align:center;"><div style="font-size: 0.9rem; color: #aaa;">出沒等級</div><div id="zd-lvl" style="color: var(--boss); font-weight: bold;"></div></div>
+                </div>
+                <h4 style="color: #fff; margin-bottom: 8px; font-size: 1.1rem;">野生寶可夢 (點擊預覽)</h4>
+                <div id="zd-enemies" style="display: flex; flex-wrap: wrap; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px;"></div>
+                <h4 style="color: #e74c3c; margin-bottom: 8px; font-size: 1.1rem;">區域霸主 (點擊預覽)</h4>
+                <div id="zd-bosses" style="display: flex; flex-wrap: wrap; gap: 10px; background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(231, 76, 60, 0.3);"></div>
+                <button id="zd-start-btn" class="btn" style="background: var(--primary); width: 100%; margin-top: 20px; font-size: 1.3rem; padding: 15px;" onclick="">⚔️ 進入探索</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 寶可夢情報 -->
+    <div id="enemy-info-modal" class="modal-overlay" style="z-index: 6800;">
+        <div class="modal-box" style="padding: 20px; max-width: 350px;">
+            <h2 id="ei-name" style="color:var(--accent); margin-top:0;">寶可夢名稱</h2>
+            <img id="ei-sprite" src="" style="width:100px; height:100px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; background:rgba(0,0,0,0.3); border-radius:50%; border:2px solid #555;">
+            <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left;">
+                <div style="color:var(--luck); margin-bottom:5px; font-weight:bold;">📊 預估能力 (依地圖等級)</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-size:0.9rem; color:#ccc;">
+                    <div>等級: <span id="ei-lvl" style="color:#fff"></span></div><div>生命: <span id="ei-hp" style="color:#2ecc71"></span></div>
+                    <div>攻擊: <span id="ei-atk" style="color:var(--boss)"></span></div><div>閃避率: <span id="ei-dodge" style="color:#9b59b6"></span></div>
+                </div>
+            </div>
+            <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:15px; text-align:left;">
+                <div style="color:var(--accent); margin-bottom:5px; font-weight:bold;">⚔️ 習得招式</div>
+                <div id="ei-moves" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;"></div>
+            </div>
+            <button class="btn" style="background:#555;" onclick="document.getElementById('enemy-info-modal').style.display='none'">關閉情報</button>
+        </div>
+    </div>
+
+    <!-- 學習新招式 -->
+    <div id="learn-move-modal" class="modal-overlay" style="z-index: 7200;">
+        <div class="modal-box" style="padding: 20px; max-width: 400px; background: #2c3e50; border-color: #3498db;">
+            <h2 style="color:#3498db; margin-top:0;">💡 學習新招式！</h2>
+            <p id="learn-move-desc" style="font-size:1.1rem; line-height:1.5; margin-bottom:15px;">想學習「<span id="lm-new-name" style="color:var(--accent); font-weight:bold;"></span>」！<br>但只能記住 4 個招式。要忘記哪個呢？</p>
+            <div id="lm-moves-grid" style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;"></div>
+            <button class="btn" id="lm-cancel-btn" style="background:#555;">放棄學習</button>
+        </div>
+    </div>
+
+    <!-- 上一題回顧與疑義回報 Modal -->
+    <div id="last-quiz-modal" class="modal-overlay" style="z-index: 6200;">
+        <div class="modal-box" style="padding: 20px; max-width: 400px; background: #222; border-radius: 15px;">
+            <h2 style="color:var(--accent); margin-top:0;">🔍 上一題回顧</h2>
+            <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:15px; text-align:center;">
+                <div style="color:#aaa; font-size:0.9rem; margin-bottom:5px;">題目：</div>
+                <div id="last-quiz-question" style="font-size:1.5rem; color:#fff; font-weight:bold; margin-bottom:15px;"></div>
+                <div style="color:#aaa; font-size:0.9rem; margin-bottom:5px;">正確解答：</div>
+                <div id="last-quiz-answer" style="font-size:1.5rem; color:var(--luck); font-weight:bold;"></div>
+            </div>
+            <div id="report-form-area" style="display:none; background:#1a1a1a; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--boss);">
+                <p style="margin-top:0; color:#ccc; font-size:0.9rem;">請輸入正確注音或建議內容：</p>
+                <input type="text" id="report-input" class="input-box" placeholder="使用下方鍵盤輸入" style="width:100%; padding:10px; font-size:1.2rem; margin-bottom:5px;" readonly>
+                <div id="zy-keyboard" class="zy-keyboard"></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" style="background:#555; padding:8px;" onclick="document.getElementById('report-form-area').style.display='none'">取消</button>
+                    <button class="btn" style="background:var(--boss); padding:8px;" onclick="window.submitReport()">送出回報</button>
+                </div>
+            </div>
+            <div id="last-quiz-buttons" style="display:flex; flex-direction:column; gap:10px;">
+                <a id="dict-link" href="#" target="_blank" class="btn" style="background:#3498db; text-decoration:none; display:block;">📖 教育部辭典尋找此字</a>
+                <button class="btn" style="background:var(--boss);" onclick="document.getElementById('report-form-area').style.display='block';">⚠️ 題庫有誤？提出疑義</button>
+                <button class="btn" style="background:#555;" onclick="document.getElementById('last-quiz-modal').style.display='none'">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登入畫面 -->
+    <div id="login-screen">
+        <div class="title-text">字靈獵人<br>寶可夢傳說</div>
+        <div class="input-group">
+            <div style="margin-bottom:10px; font-weight:bold; color:var(--accent);">請選擇您的先鋒寶可夢：</div>
+            <div id="avatar-grid" class="avatar-grid"></div>
+            <p style="margin-top: 10px; color:#ccc;">請輸入訓練家名稱</p>
+            <div class="name-input-container">
+                <input type="text" id="player-name-input" class="input-box" placeholder="點擊輸入" maxlength="10" inputmode="text" autocomplete="off" />
+                <button class="random-btn" onclick="window.generateRandomName()" title="隨機生成名字">🎲</button>
+            </div>
+            <button class="start-btn btn" style="background:linear-gradient(135deg, var(--primary), #e74c3c); padding:15px; font-size:1.4rem; border-radius:30px;" onclick="window.startGame()">開始冒險</button>
+        </div>
+    </div>
+
+    <!-- 主遊戲介面 -->
+    <div id="game-container">
+        <div class="nav-bar">
+            <div class="nav-btn active" onclick="window.switchTab('battle')">⚔️ 戰鬥</div>
+            <div class="nav-btn" onclick="window.switchTab('inventory')">🎒 背包</div>
+            <div class="nav-btn" onclick="window.switchTab('shop')">🏪 商店</div>
+            <div class="nav-btn" onclick="window.switchTab('leaderboard')">🏆 英雄榜</div>
+        </div>
+        <div id="tab-battle" class="tab-page active">
+            <div class="stat-card">
+                <div class="profile-header">
+                    <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar">
+                    <div class="profile-info">
+                        <h3 id="ui-name">無名獵人</h3>
+                        <p>等級 <span id="ui-level" style="color:var(--luck); font-weight:bold;">1</span></p>
+                        <p class="profile-gold">💰 金幣: <span id="ui-gold">0</span></p>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size:0.9rem; color:#aaa; margin-bottom:5px; font-weight:bold;">⚔️ 習得招式 (自動施放)</div>
+                    <div class="moves-grid" id="ui-moves"></div>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-item">經驗 <div class="stat-value" id="ui-exp">0 / 10</div></div>
+                    <div class="stat-item">生命值 <div class="stat-value" id="ui-hp" style="color:#2ecc71">100 / 100</div></div>
+                    <div class="stat-item">攻擊力 <div class="stat-value" id="ui-atk" style="color:var(--boss)">10</div></div>
+                    <div class="stat-item">防禦力 <div class="stat-value" id="ui-def" style="color:#3498db">5</div></div>
+                    <div class="stat-item">爆擊率 <div class="stat-value" id="ui-crit" style="color:#e67e22">0%</div></div>
+                    <div class="stat-item">閃避率 <div class="stat-value" id="ui-dodge" style="color:#9b59b6">0%</div></div>
+                    <div class="stat-item" style="grid-column: span 2;">幸運值 (掉寶率) <div class="stat-value" id="ui-luck" style="color:#f1c40f">0%</div></div>
+                </div>
+            </div>
+            <button id="daily-chest-btn" class="btn" style="background:#f39c12; margin-bottom:10px; display:none;" onclick="window.openDailyLoginModal()">🎁 查看每日獎勵</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#3498db; flex: 1;" onclick="window.openMapModal()">🗺️ 選擇地圖</button>
+                <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#e3350d; flex: 2;" onclick="window.initCombat()">🌲 快速遇敵</button>
+            </div>
+        </div>
+        <div id="tab-inventory" class="tab-page">
+            <h2 style="margin-top:0; color:var(--accent);">🎒 您的背包庫存</h2>
+            <div style="background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">🥤 消耗品 (點擊詳細/出售)</h3>
+                <div id="consumables-list"></div>
+            </div>
+            <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">⚔️ 攜帶裝備 (點擊裝備/出售)</h3>
+            <div id="equipment-slots" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;"></div>
+            <div id="inventory-list">背包空空如也</div>
+        </div>
+        <div id="tab-shop" class="tab-page">
+            <h2 style="margin-top:0; color:var(--accent);">🏪 友好商店</h2>
+            <div class="stat-card" style="margin-bottom: 15px; padding: 10px; text-align: center;"><p class="profile-gold" style="font-size: 1.2rem; margin:0;">您的金幣: 💰<span id="shop-gold-display">0</span></p></div>
+            <p style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">商品會隨著您的等級逐步解鎖！</p>
+            <div class="shop-tabs">
+                <button class="shop-tab-btn active" onclick="window.switchShopTab('consumables')">🥤 消耗品</button>
+                <button class="shop-tab-btn" onclick="window.switchShopTab('chests')">🧰 寶箱</button>
+                <button class="shop-tab-btn" onclick="window.switchShopTab('equipments')">⚔️ 黑市裝備</button>
+            </div>
+            <div id="shop-sec-consumables" class="shop-section active"><div id="shop-items"></div></div>
+            <div id="shop-sec-chests" class="shop-section"><div id="shop-chests-list"></div></div>
+            <div id="shop-sec-equipments" class="shop-section">
+                <div class="shop-timer">下一次進貨時間：<span id="shop-refresh-timer">--:--:--</span></div>
+                <div id="shop-equipments-list"></div>
+            </div>
+        </div>
+        <div id="tab-leaderboard" class="tab-page">
+            <h2 style="margin-top:0; color:var(--accent);">🏆 獵人英雄榜</h2>
+            <button class="btn" onclick="window.loadLeaderboard()" style="margin-bottom:15px; background:#444;">🔄 重新整理</button>
+            <div id="leaderboard-list"><p style="color:#888;">載入中...</p></div>
+        </div>
+    </div>
+
+    <!-- 戰鬥畫面 -->
+    <div id="battle-screen">
+        <div class="battle-scene" id="battle-scene">
+            <div id="fx-layer"></div>
+            <div class="battle-stat-box enemy-stat-box">
+                <div class="stat-name-row">
+                    <div><span id="enemy-boss-tag" class="boss-tag" style="display:none;">霸主</span><span id="enemy-name">野生字靈</span><span id="enemy-status" class="status-tag"></span></div>
+                    <span>Lv.<span id="enemy-lvl">1</span></span>
+                </div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemy-hp-fill"></div></div>
+            </div>
+            <img id="enemy-sprite" class="enemy-sprite" src="">
+
+            <div class="battle-stat-box player-stat-box">
+                <div class="stat-name-row">
+                    <div><span id="battle-player-name">獵人</span><span id="player-status" class="status-tag"></span></div>
+                    <span>Lv.<span id="battle-player-lvl">1</span></span>
+                </div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="player-hp-fill"></div></div>
+                <div class="exp-bar-bg"><div class="exp-bar-fill" id="player-exp-fill"></div></div>
+                <div class="hp-numbers"><span id="player-current-hp">100</span> / <span id="player-max-hp">100</span></div>
+            </div>
+            <img id="player-sprite" class="player-sprite" src="">
+        </div>
+        <div class="battle-ui-panel">
+            <div id="battle-dialog" class="battle-dialog">野生寶可夢出現了！</div>
+            <div id="battle-options" class="battle-options-grid"></div>
+            <div id="battle-actions" class="battle-actions-row"></div>
+        </div>
+    </div>
+
+    <!-- ================== 核心腳本 ================== -->
+    <script>
+        // ======= 通用函數與等待 Promise =======
+        window.wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+        
+        const TONE_MAP = { '1': '', '2': 'ˊ', '3': 'ˇ', '4': 'ˋ', '5': '˙' };
+        // 聰明的聲調轉換：只會轉換「注音符號後面跟著的數字」，絕不會誤改到純數字或一般文字
+        window.formatZhuyin = (str) => { 
+            if (!str) return ''; 
+            return str.replace(/([ㄅ-ㄩ]+)([1-5])/g, (match, base, tone) => base + TONE_MAP[tone]); 
+        };
+
+        window.showToast = (t, c) => { const m = document.createElement('div'); m.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${c};color:#fff;padding:10px 20px;border-radius:5px;z-index:8000;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:opacity 0.3s;pointer-events:none;text-align:center;`; m.innerText = t; document.body.appendChild(m); setTimeout(() => { m.style.opacity = '0'; setTimeout(() => m.remove(), 300); }, 2000); };
+        window.playAnim = (id, cls) => { const e = document.getElementById(id); e.classList.remove(cls); void e.offsetWidth; e.classList.add(cls); };
+        window.updateHpBar = (tgt, cur, max) => { const p = Math.max(0, Math.min(100, (cur / max) * 100)); const f = document.getElementById(`${tgt}-hp-fill`); if(tgt === 'player') { document.getElementById('player-current-hp').innerText = Math.floor(cur); document.getElementById('player-max-hp').innerText = Math.floor(max); } f.style.width = p + '%'; f.style.backgroundColor = p > 50 ? '#2ecc71' : p > 20 ? '#f1c40f' : '#e74c3c'; };
+        window.typeDialog = (text) => new Promise(res => { document.getElementById('battle-dialog').innerHTML = text.replace(/\n/g, '<br>'); setTimeout(res, 800); });
+        window.saveData = () => { localStorage.setItem('wordHunterSave', JSON.stringify(window.player)); if(!window.db||!window.user||!window.player.name)return; try{window.setDoc(window.doc(window.db,'artifacts',window.appId,'public','data','leaderboard',window.user.uid),{name:window.player.name,avatar:window.player.avatar,level:window.player.level,timestamp:Date.now()},{merge:true});}catch(e){} };
+
+        // ======= 本地音樂檔案管理與音效引擎 =======
+        window.AudioEngine = {
+            bgmAudio: null, bgmVolume: 0.25, sfxVolume: 0.5, ctx: null, tracks: {},
+            init: function() { 
+                if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if(this.ctx.state === 'suspended') this.ctx.resume();
+                
+                // 預載本地音效檔
+                this.tracks = {
+                    lobby: new Audio('lobby.mp3'),
+                    battle: new Audio('battle.mp3'),
+                    boss: new Audio('boss.mp3'),
+                    win: new Audio('win.mp3'),
+                    lose: new Audio('lose.mp3'),
+                    levelup: new Audio('levelup.mp3')
+                };
+
+                this.tracks.lobby.loop = true;
+                this.tracks.battle.loop = true;
+                this.tracks.boss.loop = true;
+
+                for (let key in this.tracks) {
+                    this.tracks[key].preload = 'auto';
+                }
+            },
+
+            playBGM: function(type) { 
+                if(this.bgmVolume <= 0) return;
+                
+                // 切換背景音樂時，強制中止所有戰鬥結算的專屬音效
+                ['win', 'lose', 'levelup'].forEach(t => {
+                    if (this.tracks[t] && !this.tracks[t].paused) {
+                        this.tracks[t].pause();
+                        this.tracks[t].currentTime = 0;
+                    }
+                });
+                
+                if(this.bgmAudio && !this.bgmAudio.paused) {
+                    this.bgmAudio.pause();
+                    this.bgmAudio.currentTime = 0;
+                }
+
+                if (this.tracks[type]) {
+                    this.bgmAudio = this.tracks[type];
+                    this.bgmAudio.volume = this.bgmVolume;
+                    this.bgmAudio.currentTime = 0;
+                    this.bgmAudio.play().catch(e => console.warn(e));
+                }
+            },
+
+            playSFXTrack: function(type) {
+                if(this.sfxVolume <= 0) return;
+                if (this.tracks[type]) {
+                    let sfx = this.tracks[type];
+                    sfx.volume = this.sfxVolume;
+                    sfx.currentTime = 0;
+                    sfx.play().catch(e => console.warn(e));
+                }
+            },
+
+            playTone: function(freq, type, duration, vol, slideTo=null) {
+                if(!this.ctx || this.sfxVolume <= 0) return;
+                try {
+                    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                    osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    if(slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, this.ctx.currentTime + duration);
+                    gain.gain.setValueAtTime(vol * this.sfxVolume, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                    osc.connect(gain); gain.connect(this.ctx.destination); 
+                    osc.start(); osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            },
+            sfx: {
+                click: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(600, 'square', 0.1, 0.1); },
+                attack: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(200, 'sawtooth', 0.15, 0.2, 50); },
+                hit: () => { if(window.AudioEngine.ctx) { window.AudioEngine.playTone(150, 'square', 0.1, 0.3, 50); setTimeout(()=>window.AudioEngine.playTone(100, 'sawtooth', 0.15, 0.3, 30), 80); } },
+                superEffective: () => { if(window.AudioEngine.ctx) { window.AudioEngine.playTone(800, 'square', 0.1, 0.3, 1200); setTimeout(()=>window.AudioEngine.playTone(1000, 'square', 0.1, 0.3, 1400), 100); } },
+                dodge: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(400, 'sine', 0.2, 0.3, 800); },
+                status: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(300, 'triangle', 0.3, 0.3, 150); },
+                encounter: () => { if(window.AudioEngine.ctx) { for(let i=0;i<5;i++) setTimeout(()=>window.AudioEngine.playTone(i%2===0?800:1200,'square',0.1,0.2),i*80); } },
+                cry: (id) => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(400+(id%200), 'sawtooth', 0.4, 0.2, 200); }
+            },
+            setBgmVolume: function(v) { this.bgmVolume = parseFloat(v); if(this.bgmAudio) this.bgmAudio.volume = this.bgmVolume; },
+            setSfxVolume: function(v) { this.sfxVolume = parseFloat(v); this.sfx.click(); }
+        };
+
+        // ======= 資料庫 (真實屬性招式) =======
+        const MOVES={
+            m_tackle:{name:"撞擊",type:'damage',power:40,anim:'normal',desc:"用全身撞擊對手。"},m_wingattack:{name:"翅膀攻擊",type:'damage',power:60,anim:'flying',desc:"用寬大的翅膀拍打。"},m_ember:{name:"火花",type:'status',status:'burn',chance:0.3,power:40,anim:'fire',desc:"發射小火焰。"},m_flamethrower:{name:"噴射火焰",type:'damage',power:90,anim:'fire',desc:"噴出烈焰。"},m_watergun:{name:"水槍",type:'damage',power:40,anim:'water',desc:"噴水攻擊。"},m_surf:{name:"衝浪",type:'damage',power:90,anim:'water',desc:"掀起大浪攻擊。"},m_vinewhip:{name:"藤鞭",type:'damage',power:45,anim:'grass',desc:"用藤蔓抽打。"},m_razorleaf:{name:"飛葉快刀",type:'damage',power:55,anim:'grass',critBonus:0.2,desc:"容易擊中要害。"},m_thundershock:{name:"電擊",type:'damage',power:40,anim:'electric',desc:"微弱的電流。"},m_thunderbolt:{name:"十萬伏特",type:'damage',power:90,anim:'electric',desc:"釋放強烈電流。"},m_bite:{name:"咬住",type:'damage',power:60,anim:'dark',desc:"用牙齒咬住。"},m_absorb:{name:"吸取",type:'drain',power:20,anim:'grass',desc:"回復一半傷害HP。"},m_poison:{name:"毒粉",type:'status',status:'poison',chance:0.8,desc:"讓對手中毒。"},m_sleep:{name:"催眠粉",type:'status',status:'sleep',chance:0.6,desc:"讓對手睡著。"},m_confuse:{name:"超音波",type:'status',status:'confusion',chance:0.7,desc:"讓對手混亂。"},m_swordsdance:{name:"劍舞",type:'buff',stat:'atk',amount:20,desc:"大幅提升攻擊。"},m_irondefense:{name:"鐵壁",type:'buff',stat:'def',amount:20,desc:"大幅提升防禦力。"},m_doubleteam:{name:"影子分身",type:'buff',stat:'dodge',amount:0.2,desc:"大幅提升閃避率。"},m_hyperbeam:{name:"破壞光線",type:'damage',power:150,anim:'normal',desc:"毀滅性傷害。"},m_recover:{name:"自我再生",type:'heal',amount:0.5,desc:"回復一半的最大HP。"},m_aurasphere:{name:"波導彈",type:'damage',power:80,anim:'normal',desc:"必定命中。"},m_nightslash:{name:"暗襲要害",type:'damage',power:70,anim:'dark',critBonus:0.2,desc:"容易擊中要害的斬擊。"},m_moonblast:{name:"月亮之力",type:'damage',power:95,anim:'normal',desc:"借用月亮的力量攻擊對手。"},m_blizzard:{name:"暴風雪",type:'damage',power:110,anim:'ice',desc:"猛烈的暴風雪。"},m_highjumpkick:{name:"飛膝踢",type:'damage',power:130,anim:'normal',desc:"威力極大。"},m_earthquake:{name:"地震",type:'damage',power:100,anim:'ground',desc:"引發強烈地震攻擊對手。"},m_aeroblast:{name:"氣旋攻擊",type:'damage',power:100,anim:'flying',critBonus:0.2,desc:"容易擊中要害。"},m_sacredfire:{name:"神聖之火",type:'damage',power:100,anim:'fire',desc:"用神聖的火焰焚燒對手。"}
+        };
+        
+        // 專屬圖鑑招式池 (玩家與敵方共用)
+        window.POKEMON_LEARNSETS = {
+            "10": [{lv:1,m:'m_tackle'},{lv:5,m:'m_poison'}], "16": [{lv:1,m:'m_tackle'},{lv:10,m:'m_wingattack'},{lv:20,m:'m_doubleteam'}], "18": [{lv:1,m:'m_tackle'},{lv:15,m:'m_wingattack'},{lv:30,m:'m_aeroblast'}], "19": [{lv:1,m:'m_tackle'},{lv:10,m:'m_bite'},{lv:20,m:'m_swordsdance'}], "41": [{lv:1,m:'m_bite'},{lv:10,m:'m_confuse'},{lv:20,m:'m_wingattack'},{lv:30,m:'m_poison'}], "43": [{lv:1,m:'m_absorb'},{lv:10,m:'m_poison'},{lv:20,m:'m_razorleaf'},{lv:30,m:'m_sleep'}], "45": [{lv:1,m:'m_absorb'},{lv:15,m:'m_poison'},{lv:30,m:'m_razorleaf'},{lv:40,m:'m_sleep'}], "46": [{lv:1,m:'m_tackle'},{lv:10,m:'m_poison'},{lv:20,m:'m_absorb'}], "52": [{lv:1,m:'m_tackle'},{lv:10,m:'m_bite'},{lv:20,m:'m_nightslash'}], "66": [{lv:1,m:'m_tackle'},{lv:15,m:'m_highjumpkick'},{lv:30,m:'m_swordsdance'}], "68": [{lv:1,m:'m_tackle'},{lv:20,m:'m_highjumpkick'},{lv:35,m:'m_earthquake'}], "74": [{lv:1,m:'m_tackle'},{lv:15,m:'m_irondefense'},{lv:30,m:'m_earthquake'}], "92": [{lv:1,m:'m_confuse'},{lv:15,m:'m_nightslash'},{lv:30,m:'m_sleep'}], "94": [{lv:1,m:'m_confuse'},{lv:20,m:'m_nightslash'},{lv:40,m:'m_sleep'}], "95": [{lv:1,m:'m_tackle'},{lv:20,m:'m_irondefense'},{lv:40,m:'m_earthquake'}], "123": [{lv:1,m:'m_tackle'},{lv:15,m:'m_swordsdance'},{lv:30,m:'m_nightslash'},{lv:40,m:'m_wingattack'}], "124": [{lv:1,m:'m_bite'},{lv:15,m:'m_confuse'},{lv:30,m:'m_blizzard'},{lv:40,m:'m_moonblast'}], "126": [{lv:1,m:'m_ember'},{lv:15,m:'m_flamethrower'},{lv:30,m:'m_confuse'}], "127": [{lv:1,m:'m_tackle'},{lv:15,m:'m_swordsdance'},{lv:30,m:'m_earthquake'}], "130": [{lv:1,m:'m_bite'},{lv:20,m:'m_surf'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_hyperbeam'}], "142": [{lv:1,m:'m_bite'},{lv:20,m:'m_wingattack'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_hyperbeam'}], "143": [{lv:1,m:'m_tackle'},{lv:20,m:'m_recover'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_hyperbeam'}], "144": [{lv:1,m:'m_wingattack'},{lv:20,m:'m_blizzard'},{lv:40,m:'m_doubleteam'},{lv:50,m:'m_hyperbeam'}], "149": [{lv:1,m:'m_wingattack'},{lv:20,m:'m_flamethrower'},{lv:40,m:'m_thunderbolt'},{lv:50,m:'m_hyperbeam'}], "150": [{lv:1,m:'m_confuse'},{lv:20,m:'m_aurasphere'},{lv:40,m:'m_recover'},{lv:50,m:'m_hyperbeam'}], "200": [{lv:1,m:'m_confuse'},{lv:15,m:'m_nightslash'},{lv:30,m:'m_sleep'}], "214": [{lv:1,m:'m_tackle'},{lv:15,m:'m_swordsdance'},{lv:30,m:'m_highjumpkick'}], "215": [{lv:1,m:'m_bite'},{lv:15,m:'m_nightslash'},{lv:30,m:'m_blizzard'}], "218": [{lv:1,m:'m_ember'},{lv:15,m:'m_flamethrower'},{lv:30,m:'m_irondefense'}], "248": [{lv:1,m:'m_bite'},{lv:20,m:'m_earthquake'},{lv:40,m:'m_nightslash'},{lv:50,m:'m_hyperbeam'}], "249": [{lv:1,m:'m_aeroblast'},{lv:20,m:'m_surf'},{lv:40,m:'m_recover'},{lv:50,m:'m_earthquake'}], "250": [{lv:1,m:'m_sacredfire'},{lv:20,m:'m_flamethrower'},{lv:40,m:'m_recover'},{lv:50,m:'m_earthquake'}], "324": [{lv:1,m:'m_ember'},{lv:15,m:'m_flamethrower'},{lv:30,m:'m_irondefense'},{lv:40,m:'m_earthquake'}], "353": [{lv:1,m:'m_confuse'},{lv:15,m:'m_nightslash'}], "361": [{lv:1,m:'m_bite'},{lv:15,m:'m_blizzard'},{lv:30,m:'m_doubleteam'}], "373": [{lv:1,m:'m_bite'},{lv:20,m:'m_flamethrower'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_aeroblast'}], "376": [{lv:1,m:'m_tackle'},{lv:20,m:'m_irondefense'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_hyperbeam'}], "384": [{lv:1,m:'m_aeroblast'},{lv:20,m:'m_earthquake'},{lv:40,m:'m_flamethrower'},{lv:50,m:'m_hyperbeam'}], "445": [{lv:1,m:'m_earthquake'},{lv:20,m:'m_bite'},{lv:40,m:'m_swordsdance'},{lv:50,m:'m_hyperbeam'}], "612": [{lv:1,m:'m_bite'},{lv:20,m:'m_swordsdance'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_nightslash'}], "635": [{lv:1,m:'m_bite'},{lv:20,m:'m_flamethrower'},{lv:40,m:'m_surf'},{lv:50,m:'m_hyperbeam'}], "448": [{lv:1,m:'m_tackle'},{lv:5,m:'m_swordsdance'},{lv:15,m:'m_aurasphere'},{lv:30,m:'m_earthquake'}], "624": [{lv:1,m:'m_tackle'},{lv:5,m:'m_swordsdance'},{lv:15,m:'m_nightslash'},{lv:30,m:'m_irondefense'}], "65":  [{lv:1,m:'m_tackle'},{lv:5,m:'m_recover'},{lv:15,m:'m_aurasphere'},{lv:30,m:'m_hyperbeam'}], "68":  [{lv:1,m:'m_tackle'},{lv:5,m:'m_highjumpkick'},{lv:15,m:'m_earthquake'},{lv:30,m:'m_swordsdance'}], "282": [{lv:1,m:'m_tackle'},{lv:5,m:'m_recover'},{lv:15,m:'m_moonblast'},{lv:30,m:'m_hyperbeam'}], "478": [{lv:1,m:'m_tackle'},{lv:5,m:'m_blizzard'},{lv:15,m:'m_doubleteam'},{lv:30,m:'m_bite'}], "549": [{lv:1,m:'m_tackle'},{lv:5,m:'m_absorb'},{lv:15,m:'m_razorleaf'},{lv:30,m:'m_sleep'}], "620": [{lv:1,m:'m_tackle'},{lv:5,m:'m_swordsdance'},{lv:15,m:'m_highjumpkick'},{lv:30,m:'m_absorb'}], "default": [{lv:1,m:'m_tackle'}] 
+        };
+
+        const consumableItems={hp1:{name:"小傷藥",icon:"💊",desc:"回復50生命",price:50,reqLevel:1,type:'hp',val:50}, atk1:{name:"攻擊劑",icon:"💪",desc:"攻擊+10",price:100,reqLevel:3,type:'atk',val:10}, def1:{name:"防禦劑",icon:"🛡️",desc:"防禦+10",price:100,reqLevel:6,type:'def',val:10},crt1:{name:"銳利之爪",icon:"⚡",desc:"爆擊+15%",price:150,reqLevel:9,type:'crit',val:15},hp2:{name:"傷藥",icon:"🧪",desc:"回復200生命",price:200,reqLevel:12,type:'hp',val:200},lck1:{name:"幸運星",icon:"🍀",desc:"掉寶+15%",price:250,reqLevel:15,type:'luck',val:15},eva1:{name:"光粉",icon:"✨",desc:"閃避+15%",price:300,reqLevel:18,type:'dodge',val:15},hp3:{name:"好傷藥",icon:"💉",desc:"回復500生命",price:450,reqLevel:24,type:'hp',val:500},atk2:{name:"力量強化",icon:"🔥",desc:"攻擊+30",price:500,reqLevel:30,type:'atk',val:30},def2:{name:"鐵壁強化",icon:"🧱",desc:"防禦+30",price:500,reqLevel:36,type:'def',val:30},crt2:{name:"焦點鏡",icon:"🌩️",desc:"爆擊+30%",price:650,reqLevel:45,type:'crit',val:30},eva2:{name:"幻影斗篷",icon:"🌫️",desc:"閃避+30%",price:1000,reqLevel:55,type:'dodge',val:30},hp5:{name:"超級傷藥",icon:"❤️‍🔥",desc:"回復3000生命",price:1500,reqLevel:65,type:'hp',val:3000},atk3:{name:"極限力量",icon:"💥",desc:"攻擊+80",price:2000,reqLevel:75,type:'atk',val:80},all1:{name:"萬能藥劑",icon:"🌟",desc:"全能力爆發",price:3000,reqLevel:85,type:'all',val:50},hp6:{name:"全滿藥",icon:"💖",desc:"回復100%生命",price:5000,reqLevel:90,type:'hp',val:999999}};
+        const dailyRewards=[{day:1,gold:50,item:'hp1',count:1},{day:2,gold:100,item:'atk1',count:1},{day:3,gold:150,item:'hp1',count:3},{day:4,gold:200,item:'def1',count:1},{day:5,gold:300,item:'hp1',count:5},{day:6,gold:400,item:'atk1',count:2},{day:7,gold:500,item:'hp1',count:10,extra:'equip'}];
+        
+        // 強化地圖描述
+        const mapZones=[
+            {name:"1. 新手草原",minLv:1,maxLv:10,enemies:[10,16,19],bosses:[18],desc:"綠草如茵的新手平原，微風輕拂，適合初出茅廬的訓練家踏出冒險的第一步。"},
+            {name:"2. 微風森林",minLv:11,maxLv:20,enemies:[43,46,52],bosses:[45],desc:"陽光難以穿透的茂密森林，充滿了蟲屬性寶可夢，小心從樹上掉下來的驚喜。"},
+            {name:"3. 月見山洞",minLv:21,maxLv:30,enemies:[41,66,74],bosses:[95],desc:"昏暗潮濕的岩石洞穴，據說深處藏著稀有的礦石與強大的岩石屬性寶可夢。"},
+            {name:"4. 紫苑幽塔",minLv:31,maxLv:40,enemies:[92,200,353],bosses:[94],desc:"瀰漫著詭異氣息的古老高塔，幽靈屬性寶可夢常在此徘徊，令人毛骨悚然。"},
+            {name:"5. 常磐密林",minLv:41,maxLv:50,enemies:[123,127,214],bosses:[143],desc:"林木錯綜複雜的神祕叢林，強大的蟲屬性與草屬性寶可夢盤踞於此。"},
+            {name:"6. 紅蓮火山",minLv:51,maxLv:60,enemies:[126,218,324],bosses:[6],desc:"岩漿翻滾、熱氣逼人的活火山，火屬性寶可夢的樂園，極度危險。"},
+            {name:"7. 雙子冰島",minLv:61,maxLv:70,enemies:[124,215,361],bosses:[144],desc:"長年被冰雪覆蓋的極寒雙島，傳說中沉睡著冰屬性的傳說寶可夢。"},
+            {name:"8. 冠軍之路",minLv:71,maxLv:80,enemies:[130,68,142],bosses:[149],desc:"通往寶可夢聯盟的終極試煉之路，只有最強的訓練家才能在此存活。"},
+            {name:"9. 白銀神山",minLv:81,maxLv:90,enemies:[248,376,373],bosses:[249,250],desc:"高聳入雲的神聖雪山，空氣稀薄，是電屬性與傳說飛行寶可夢的棲息地。"},
+            {name:"10. 終焉之洞",minLv:91,maxLv:100,enemies:[445,635,612],bosses:[150,384],desc:"深不見底的終焉深淵，匯聚了世界最強的龍屬性與霸主寶可夢，準備迎戰！"}
+        ];
+        
+        const pokeNames={10:"綠毛蟲",16:"波波",19:"小拉達",18:"大比鳥",43:"走路草",46:"派拉斯",52:"喵喵",45:"霸王花",41:"超音蝠",66:"腕力",74:"小拳石",95:"大岩蛇",92:"鬼斯",200:"夢妖",353:"怨影娃娃",94:"耿鬼",123:"飛天螳螂",127:"大甲",214:"赫拉克羅斯",143:"卡比獸",126:"鴨嘴火獸",218:"熔岩蟲",324:"煤炭龜",6:"噴火龍",124:"迷唇姐",215:"紐拉",361:"雪童子",144:"急凍鳥",130:"暴鯉龍",68:"怪力",142:"化石翼龍",149:"快龍",248:"班基拉斯",376:"巨金怪",373:"暴飛龍",249:"洛奇亞",250:"鳳王",445:"烈咬陸鯊",635:"三首惡龍",612:"雙斧戰龍",150:"超夢",384:"烈空坐"};
+        const chestNames=["破舊木寶箱","堅固鐵寶箱","閃亮銅寶箱","精緻銀寶箱","璀璨金寶箱","稀有白金寶箱","紫水晶寶箱","傳說翡翠寶箱","史詩鑽石寶箱","幻之星龍寶箱"];
+        
+        const avatarDatabase=[
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/448.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/624.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/65.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/68.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/282.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/478.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/549.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/620.gif"
+        ];
+        
+        const nameDataObj={prefixes:["真新鎮","常磐市","尼比市","華藍市","枯葉市","紫苑鎮","紅蓮島"],suffixes:["小智","小茂","訓練家","冠軍","培育家","大師","捕蟲少年"]};
+        window.getSprite = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
+
+        // ======= 玩家狀態 =======
+        window.isAnimating = false; window.selectedAvatarUrl = avatarDatabase[0];
+        window.player = { bag: [], equipment: { weapon: null, armor: null, accessory: null }, name: "無名獵人", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 10, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, shopEquips: [], shopLastRefresh: 0, moves: [] };
+        window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; 
+        window.itemUsedThisTurn = false; window.lastQuiz = null; window.pendingMoveToLearn = null; window.currentEnemy = {}; window.currentQuiz = null; window.currentOptions = []; window.currentCombatZoneLevel = 1; window.currentChestTier = 1; window.inspectingZoneIdx = 0;
+
+        // ======= 題庫解析 =======
+        window.parseQuizData = (rawStr) => {
+            window.quizBank = []; if(!rawStr) return; window.currentRawQuizData = rawStr;
+            rawStr.trim().split('\n').forEach(line => {
+                if(!line || line.startsWith('//')) return; const parts = line.split('|');
+                if(parts.length === 4) {
+                    // 對題目和選項進行聲調轉換
+                    window.quizBank.push({ 
+                        question: window.formatZhuyin(parts[1]), 
+                        answer: window.formatZhuyin(parts[2]), 
+                        wrongs: parts[3].split(',').map(w => window.formatZhuyin(w)) 
+                    });
+                }
+            });
+        };
+
+        // ======= 初始化 =======
+        document.addEventListener('DOMContentLoaded', () => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.addEventListener('click', () => {
+                    splash.style.opacity = '0'; 
+                    setTimeout(() => splash.style.display = 'none', 500);
+                    window.AudioEngine.init(); 
+                    window.AudioEngine.playBGM('lobby');
+                    document.getElementById('login-screen').style.display = 'flex';
+                });
+            }
+            const savedPlayer = localStorage.getItem('wordHunterSave');
+            if (savedPlayer) { try { const parsed = JSON.parse(savedPlayer); document.getElementById('player-name-input').value = parsed.name || ""; if(parsed.avatar) window.selectedAvatarUrl = parsed.avatar; } catch(e) {} }
+            window.initAvatarSelection(); window.initZyKeyboard(); document.getElementById('player-name-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.startGame(); });
+        });
+
+        // ======= UI 與系統控制 =======
+        window.openSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); document.getElementById('settings-modal').style.display = 'flex'; };
+        window.closeSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); document.getElementById('settings-modal').style.display = 'none'; };
+        window.requestAppFullscreen = () => {
+            if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click();
+            try {
+                if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(e => console.warn("Fullscreen prevented", e));
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            } catch(e) {
+                console.warn("Fullscreen API not supported", e);
+            }
+        };
+
+        window.getLocalQuizData = () => { const d = localStorage.getItem('wordHunterQuizData'); return (d && d.trim().length > 20) ? d : window.MOE_DATA_STRING; };
+        window.saveLocalQuizData = (rawStr) => { localStorage.setItem('wordHunterQuizData', rawStr); const d = document.getElementById('db-last-update'); if(d) d.innerText = new Date().toLocaleString(); };
+        window.loadQuizSystem = async () => { window.parseQuizData(window.getLocalQuizData()); window.syncQuizFromFirebase(false); };
+        window.syncQuizFromFirebase = async (isManual=false) => {
+            if (isManual) window.AudioEngine.sfx.click(); if (!window.db || !window.user) return;
+            try {
+                if(isManual) window.showToast("同步雲端題庫中...", "#f1c40f");
+                const docSnap = await window.getDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'quiz_db', 'main'));
+                if (docSnap.exists() && docSnap.data().content.length > 10) { window.saveLocalQuizData(docSnap.data().content); window.parseQuizData(docSnap.data().content); if(isManual) window.showToast("✅ 更新成功", "#2ecc71"); } 
+            } catch (e) {}
+        };
+        window.exportQuizData = () => { window.AudioEngine.sfx.click(); const url = URL.createObjectURL(new Blob([window.currentRawQuizData], { type: 'text/plain;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 匯出成功", "#2ecc71"); };
+        window.importQuizData = (event) => { window.AudioEngine.sfx.click(); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { window.saveLocalQuizData(e.target.result); window.parseQuizData(e.target.result); window.showToast("✅ 匯入成功！", "#2ecc71"); event.target.value = ''; }; reader.readAsText(file); };
+
+        window.adminLogin = async () => {
+            window.AudioEngine.sfx.click(); const pwd = prompt("請輸入管理員密碼：");
+            if (pwd === "Stingary0821") { window.showToast("管理員登入成功", "#2ecc71"); document.getElementById('settings-modal').style.display = 'none'; document.getElementById('admin-modal').style.display = 'flex'; } 
+            else if (pwd !== null) window.showToast("密碼錯誤", "var(--boss)");
+        };
+        window.exportReportsFromFirebase = async () => {
+            if (!window.db) return window.showToast("無網路連線", "var(--boss)"); window.showToast("正在獲取回報資料...", "#f1c40f");
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'reports')); let reportData = "回報時間,題目,原設定答案,玩家建議,回報者ID\n";
+                querySnapshot.forEach(doc => { const d = doc.data(); const dateStr = new Date(d.timestamp).toLocaleString(); reportData += `"${dateStr}","${d.question}","${d.originalAnswer}","${d.userSuggestion}","${d.uid}"\n`; });
+                const blob = new Blob([reportData], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫回報清單.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 回報資料匯出成功", "#2ecc71");
+            } catch (e) { window.showToast("匯出失敗", "var(--boss)"); }
+        };
+
+        window.initAvatarSelection = () => {
+            const grid = document.getElementById('avatar-grid');
+            avatarDatabase.forEach((url, index) => {
+                const img = document.createElement('img'); img.src = url; img.className = 'avatar-option' + (index === 0 ? ' selected' : '');
+                img.onclick = () => { document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected')); img.classList.add('selected'); window.selectedAvatarUrl = url; window.AudioEngine.sfx.click(); }; grid.appendChild(img);
+            });
+        };
+
+        window.initZyKeyboard = () => {
+            const kb = document.getElementById('zy-keyboard'); const input = document.getElementById('report-input'); kb.innerHTML = '';
+            const zhuyinChars = ['ㄅ','ㄆ','ㄇ','ㄈ','ㄉ','ㄊ','ㄋ','ㄌ','ㄍ','ㄎ','ㄏ','ㄐ','ㄑ','ㄒ','ㄓ','ㄔ','ㄕ','ㄖ','ㄗ','ㄘ','ㄙ','ㄧ','ㄨ','ㄩ','ㄚ','ㄛ','ㄜ','ㄝ','ㄞ','ㄟ','ㄠ','ㄡ','ㄢ','ㄣ','ㄤ','ㄥ','ㄦ','ˊ','ˇ','ˋ','˙'];
+            zhuyinChars.forEach(char => { const btn = document.createElement('div'); btn.className = 'zy-key'; btn.innerText = char; btn.onclick = () => { input.value += char; window.AudioEngine.sfx.click(); }; kb.appendChild(btn); });
+            const delBtn = document.createElement('div'); delBtn.className = 'zy-key zy-key-del'; delBtn.innerText = '刪除'; delBtn.onclick = () => { input.value = input.value.slice(0, -1); window.AudioEngine.sfx.click(); }; kb.appendChild(delBtn);
+        };
+
+        window.generateRandomName = () => { window.AudioEngine.sfx.click(); document.getElementById('player-name-input').value = nameDataObj.prefixes[Math.floor(Math.random() * nameDataObj.prefixes.length)] + nameDataObj.suffixes[Math.floor(Math.random() * nameDataObj.suffixes.length)]; document.getElementById('player-name-input').focus(); };
+
+        window.recalcStats = () => {
+            let baseMaxHp = window.player.level * 15 + 85; let baseAtk = window.player.level * 3 + 7; let baseDef = window.player.level * 1 + 4; let baseCrit = 0; let baseDodge = 0; let baseLuck = 0;
+            Object.values(window.player.equipment).forEach(eq => { if(eq) { baseMaxHp += (eq.hp||0); baseAtk += (eq.atk||0); baseDef += (eq.def||0); baseCrit += (eq.crit||0); baseDodge += (eq.dodge||0); baseLuck += (eq.luck||0); } });
+            window.player.stats.maxHp = baseMaxHp; window.player.stats.atk = baseAtk; window.player.stats.def = baseDef; window.player.stats.crit = baseCrit; window.player.stats.dodge = baseDodge; window.player.stats.luck = baseLuck;
+            if(window.player.stats.hp > baseMaxHp) window.player.stats.hp = baseMaxHp;
+        };
+
+        window.checkIntegrity = () => {
+            if (!window.player.bag || !Array.isArray(window.player.bag)) window.player.bag = []; if (!window.player.equipment) window.player.equipment = { weapon: null, armor: null, accessory: null };
+            if (!window.player.consumables) window.player.consumables = {}; Object.keys(consumableItems).forEach(k => { if (typeof window.player.consumables[k] === 'undefined') window.player.consumables[k] = 0; });
+            if (!window.player.shopEquips || !Array.isArray(window.player.shopEquips)) window.player.shopEquips = []; if (!window.player.shopLastRefresh) window.player.shopLastRefresh = 0;
+            if (!window.player.moves || !Array.isArray(window.player.moves)) window.player.moves = [];
+            if (window.player.moves.length === 0) { 
+                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; 
+                window.player.moves.push({ id: pool[0].m, ...MOVES[pool[0].m] }); 
+            }
+            window.recalcStats();
+        };
+
+        window.checkDailyLogin = () => {
+            window.checkIntegrity(); const today = new Date().toISOString().slice(0, 10);
+            if (window.player.lastLoginDate !== today) {
+                const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+                if (window.player.lastLoginDate === yesterday) window.player.loginStreak++; else window.player.loginStreak = 1;
+                window.player.lastLoginDate = today; window.player.dailyChestClaimed = false; window.saveData(); setTimeout(() => window.openDailyLoginModal(), 800);
+            }
+            window.updateDailyChestBtn();
+        };
+        window.updateDailyChestBtn = () => { document.getElementById('daily-chest-btn').style.display = window.player.dailyChestClaimed ? 'none' : 'block'; };
+        
+        window.openDailyLoginModal = () => {
+            window.AudioEngine.sfx.click(); const container = document.getElementById('daily-grid-container'); container.innerHTML = '';
+            let currentDay = ((window.player.loginStreak - 1) % 7) + 1;
+            dailyRewards.forEach((r, idx) => {
+                const isClaimed = idx + 1 < currentDay || (idx + 1 === currentDay && window.player.dailyChestClaimed); const isActive = idx + 1 === currentDay && !window.player.dailyChestClaimed; const itemDef = consumableItems[r.item] || consumableItems['hp1'];
+                let boxClass = 'daily-box'; if(isClaimed) boxClass += ' claimed'; if(isActive) boxClass += ' active';
+                container.innerHTML += `<div class="${boxClass}" style="${idx === 6 ? 'grid-column: span 2;' : ''}"><div class="daily-day">第 ${r.day} 天</div><div class="daily-icon">${itemDef.icon}</div><div class="daily-text">💰${r.gold}<br>${itemDef.name}x${r.count}</div></div>`;
+            });
+            const claimBtn = document.getElementById('daily-claim-btn');
+            if(window.player.dailyChestClaimed) { claimBtn.innerText = '今日已領取'; claimBtn.style.background = '#555'; claimBtn.disabled = true; } else { claimBtn.innerText = '🎁 領取今日獎勵'; claimBtn.style.background = 'var(--primary)'; claimBtn.disabled = false; }
+            document.getElementById('daily-login-modal').style.display = 'flex';
+        };
+        
+        window.claimDailyReward = () => {
+            window.AudioEngine.sfx.click(); if(window.player.dailyChestClaimed) { document.getElementById('daily-login-modal').style.display = 'none'; return; }
+            window.player.dailyChestClaimed = true; let currentDay = ((window.player.loginStreak - 1) % 7) + 1; const reward = dailyRewards[currentDay - 1];
+            window.player.gold += reward.gold; if(consumableItems[reward.item]) window.player.consumables[reward.item] += reward.count;
+            let extraMsg = ''; if(reward.extra === 'equip') { setTimeout(() => window.generateRandomItemFromChest(10), 1000); extraMsg = '\n✨ 額外獲得了史詩裝備！'; }
+            window.showToast(`🎁 領取成功！\n獲得 💰${reward.gold} 與道具！${extraMsg}`, '#f1c40f');
+            window.updateDailyChestBtn(); window.updateUI(); window.saveData(); document.getElementById('daily-login-modal').style.display = 'none';
+        };
+
+        window.startGame = () => {
+            window.AudioEngine.sfx.click();
+            window.requestAppFullscreen(); 
+            const savedPlayer = localStorage.getItem('wordHunterSave'); if (savedPlayer) { try { Object.assign(window.player, JSON.parse(savedPlayer)); } catch(e) {} }
+            const nameInput = document.getElementById('player-name-input').value.trim();
+            if(nameInput) window.player.name = nameInput; else if(window.player.name === "無名獵人") window.player.name = nameDataObj.prefixes[Math.floor(Math.random() * nameDataObj.prefixes.length)] + nameDataObj.suffixes[Math.floor(Math.random() * nameDataObj.suffixes.length)];
+            
+            if (!window.selectedAvatarUrl) window.selectedAvatarUrl = avatarDatabase[0];
+            window.player.avatar = window.selectedAvatarUrl; const match = window.selectedAvatarUrl.match(/\/(\d+)\.gif$/); window.player.avatarId = match ? match[1] : "448";
+            
+            if(!window.quizBank || window.quizBank.length === 0) { window.parseQuizData(window.getLocalQuizData()); }
+            window.checkIntegrity(); window.lastQuiz = null; document.getElementById('login-screen').style.display = 'none'; document.getElementById('game-container').style.display = 'flex'; window.player.stats.hp = window.player.stats.maxHp; 
+            window.checkDailyLogin(); window.updateUI(); window.saveData(); 
+        };
+
+        // ======= UI 介面操作 =======
+        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); };
+        window.switchShopTab = (sec) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.shop-tab-btn').forEach(b => b.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active')); document.getElementById(`shop-sec-${sec}`).classList.add('active'); };
+
+        window.renderConsumables = () => {
+            const list = document.getElementById('consumables-list'); let html = '';
+            Object.keys(window.player.consumables).forEach(id => { if(window.player.consumables[id] > 0 && consumableItems[id]) { const item = consumableItems[id]; html += `<div style="display:inline-block; background:#222; border:1px solid #555; border-radius:8px; padding:5px 10px; margin:5px; font-weight:bold; font-size:0.9rem; cursor:pointer;" onclick="window.openItemDetail('consumable', '${id}')">${item.icon} ${item.name} x${window.player.consumables[id]}</div>`; } });
+            list.innerHTML = html || '<span style="color:#666; font-size:0.9rem;">尚無消耗品</span>';
+        };
+        
+        window.useItemFromBag = (id) => {
+            if(window.player.consumables[id] <= 0) return; window.player.consumables[id]--; const item = consumableItems[id]; window.AudioEngine.playSFXTrack('levelup');
+            if(item.type === 'hp') { const healAmt = item.val; window.player.stats.hp = Math.min(window.player.stats.maxHp, window.player.stats.hp + healAmt); window.showToast(`回復了 ${healAmt > 10000 ? '全部' : healAmt} 點生命值！`, '#2ecc71'); } 
+            else window.showToast(`非戰鬥中無法使用能力強化藥劑！`, 'var(--boss)');
+            window.updateUI(); window.saveData(); document.getElementById('item-detail-modal').style.display='none';
+        };
+
+        window.refreshShopEquipments = () => {
+            const now = Date.now(); const twelveHours = 12 * 60 * 60 * 1000;
+            if (!window.player.shopEquips || !Array.isArray(window.player.shopEquips) || !window.player.shopLastRefresh || now - window.player.shopLastRefresh >= twelveHours) {
+                window.player.shopEquips = []; for(let i=0; i<10; i++) window.player.shopEquips.push(window.generateRandomItemFromChest(0, true));
+                window.player.shopLastRefresh = now; window.saveData();
+            }
+        };
+
+        window.updateShopTimer = () => {
+            const now = Date.now(); const diff = (window.player.shopLastRefresh + 12 * 60 * 60 * 1000) - now;
+            if (diff <= 0) { window.refreshShopEquipments(); window.renderShop(); } else {
+                const h = Math.floor(diff / 3600000).toString().padStart(2, '0'); const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0'); const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                const timerEl = document.getElementById('shop-refresh-timer'); if(timerEl) timerEl.innerText = `${h}:${m}:${s}`;
+            }
+        };
+
+        window.renderShop = () => {
+            document.getElementById('shop-gold-display').innerText = window.player.gold || 0;
+            document.getElementById('shop-items').innerHTML = Object.keys(consumableItems).map(id => {
+                const item = consumableItems[id]; const isLocked = window.player.level < item.reqLevel; const lockStyle = isLocked ? 'opacity:0.5; filter:grayscale(1);' : '';
+                return `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${lockStyle}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">${item.icon} ${item.name} ${isLocked ? `<span style="color:#e74c3c; font-size:0.8rem; margin-left:5px;">(Lv.${item.reqLevel} 解鎖)</span>` : `<span style="font-size:0.8rem;color:#888;">(擁有: ${window.player.consumables[id] || 0})</span>`}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${item.desc}</div></div><div><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyItem('${id}')" ${isLocked ? 'disabled' : ''}>💰${item.price}</button></div></div>`;
+            }).join('');
+
+            let chestHtml = '';
+            for(let i=1; i<=10; i++) {
+                const reqLv = i === 1 ? 1 : (i-1)*10 + 1; const cost = Math.floor(reqLv * 25 + 150); const isLocked = window.player.level < reqLv;
+                chestHtml += `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${isLocked?'opacity:0.5; filter:grayscale(1);':''}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">🧰 ${chestNames[i-1]}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${isLocked ? `<span style="color:#e74c3c;">(Lv.${reqLv} 解鎖)</span>` : '開啟獲得大量金幣或對應等級裝備'}</div></div><div><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopChest(${i}, ${cost})" ${isLocked ? 'disabled' : ''}>💰${cost}</button></div></div>`;
+            }
+            document.getElementById('shop-chests-list').innerHTML = chestHtml;
+
+            window.refreshShopEquipments();
+            const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const qualities = ['破舊的', '普通的', '良好的', '精緻的', '高級的', '皇家的'];
+            document.getElementById('shop-equipments-list').innerHTML = window.player.shopEquips.map((item, idx) => {
+                if(item.sold) return `<div class="inv-item" style="opacity:0.5; text-align:center; padding:20px;">已售出</div>`;
+                const color = qColors[item.qualityIndex];
+                return `<div class="inv-item"><div class="inv-header" style="color:${color}"><span>${item.icon} ${item.name} <span class="inv-quality-tag" style="background:${color}">${qualities[item.qualityIndex]}</span></span><span style="color:#888; font-size:0.9rem;">Lv.${item.level}</span></div><div class="inv-stats">${item.atk ? `<span>🗡️ 攻擊 +${item.atk}</span>` : ''}${item.hp ? `<span>❤️ 生命 +${item.hp}</span>` : ''}${item.def ? `<span>🛡️ 防禦 +${item.def}</span>` : ''}${item.crit ? `<span>⚡ 爆擊 +${item.crit}%</span>` : ''}${item.dodge ? `<span>🌫️ 閃避 +${item.dodge}%</span>` : ''}${item.luck ? `<span>🍀 幸運 +${item.luck}%</span>` : ''}</div><div style="text-align:right; border-top:1px dashed #444; padding-top:8px; margin-top:8px;"><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopEquip(${idx}, ${item.price})">💰${item.price} 購買</button></div></div>`;
+            }).join('');
+
+            if(window.shopTimerInterval) clearInterval(window.shopTimerInterval); window.shopTimerInterval = setInterval(window.updateShopTimer, 1000); window.updateShopTimer();
+        };
+
+        window.buyItem = (id) => {
+            const item = consumableItems[id];
+            if(window.player.gold >= item.price) { window.AudioEngine.playSFXTrack('levelup'); window.player.gold -= item.price; window.player.consumables[id]++; window.showToast(`✅ 購買了 ${item.name}！`, "#2ecc71"); window.updateUI(); window.saveData(); } 
+            else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); }
+        };
+        window.buyShopChest = (tier, cost) => {
+            if(window.player.gold >= cost) {
+                window.AudioEngine.playSFXTrack('levelup'); window.player.gold -= cost; window.currentChestTier = tier;
+                if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.showToast(`✨ 獲得了 💰${extraGold} 金幣！`, "#f1c40f"); } 
+                else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.showToast(`✨ 獲得裝備：${item.icon} ${item.name}！`, "#2ecc71"); }
+                window.updateUI(); window.saveData();
+            } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); }
+        };
+        window.buyShopEquip = (idx, cost) => {
+            if(window.player.gold >= cost) {
+                window.AudioEngine.playSFXTrack('levelup'); window.player.gold -= cost; const item = window.player.shopEquips[idx]; item.sold = true;
+                const newItem = { ...item }; delete newItem.sold; delete newItem.price; window.player.bag.push(newItem); 
+                window.showToast(`✅ 購買了 ${newItem.name}，已放入背包！`, "#2ecc71"); window.updateUI(); window.saveData();
+            } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); }
+        };
+
+        window.updateUI = () => {
+            document.getElementById('ui-name').innerText = window.player.name; document.getElementById('ui-level').innerText = window.player.level; document.getElementById('ui-exp').innerText = `${window.player.exp} / ${window.player.maxExp}`; document.getElementById('ui-atk').innerText = window.player.stats.atk; document.getElementById('ui-def').innerText = window.player.stats.def; document.getElementById('ui-hp').innerText = `${window.player.stats.hp} / ${window.player.stats.maxHp}`; document.getElementById('ui-gold').innerText = window.player.gold || 0; document.getElementById('ui-avatar').src = window.player.avatar; document.getElementById('ui-crit').innerText = `${window.player.stats.crit}%`; document.getElementById('ui-dodge').innerText = `${Math.min(60, window.player.stats.dodge)}%`; document.getElementById('ui-luck').innerText = `${Math.min(60, window.player.stats.luck)}%`;
+            let mHtml = ''; for(let i=0; i<4; i++) { if(window.player.moves[i]) mHtml += `<div class="move-slot" title="${window.player.moves[i].desc}">${window.player.moves[i].name}</div>`; else mHtml += `<div class="move-slot move-empty">-</div>`; } document.getElementById('ui-moves').innerHTML = mHtml;
+            window.renderConsumables(); if(document.getElementById('tab-shop').classList.contains('active')) window.renderShop();
+            
+            const eqSlots = document.getElementById('equipment-slots'); eqSlots.innerHTML = '';
+            const slotNames = { weapon: '武器', armor: '防具', accessory: '飾品' };
+            ['weapon', 'armor', 'accessory'].forEach(key => {
+                const eq = window.player.equipment[key];
+                if(eq) {
+                    const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[eq.qualityIndex] || '#fff';
+                    eqSlots.innerHTML += `<div style="background:#2c3e50; border:1px solid ${color}; border-radius:8px; padding:10px; cursor:pointer; position:relative;" onclick="window.openItemDetail('equip', '${key}')"><div style="font-size:0.8rem;color:#aaa;">${slotNames[key]}</div><div style="font-weight:bold;color:${color}">${eq.icon} ${eq.name}</div></div>`;
+                } else { eqSlots.innerHTML += `<div style="background:#1a1a1a; border:1px dashed #555; border-radius:8px; padding:10px; text-align:center; color:#555;">${slotNames[key]}空缺</div>`; }
+            });
+
+            const invList = document.getElementById('inventory-list');
+            if(window.player.bag.length === 0) { invList.innerHTML = '<p style="color:#666; text-align:center;">背包空空如也</p>'; } 
+            else {
+                invList.innerHTML = window.player.bag.map((item, idx) => ({item, idx})).reverse().map(obj => {
+                    const i = obj.item; const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[i.qualityIndex] || '#fff';
+                    return `<div class="inv-item" onclick="window.openItemDetail('bag', ${obj.idx})"><div class="inv-header" style="color:${color}"><span>${i.icon} ${i.name} <span class="inv-quality-tag" style="background:${color}">${['破舊的','普通的','良好的','精緻的','高級的','皇家的'][i.qualityIndex]}</span></span><span style="color:#888; font-size:0.9rem;">Lv.${i.level}</span></div><div class="inv-stats">${i.atk ? `<span>🗡️ 攻擊 +${i.atk}</span>` : ''}${i.hp ? `<span>❤️ 生命 +${i.hp}</span>` : ''}${i.def ? `<span>🛡️ 防禦 +${i.def}</span>` : ''}${i.crit ? `<span>⚡ 爆擊 +${i.crit}%</span>` : ''}${i.dodge ? `<span>🌫️ 閃避 +${i.dodge}%</span>` : ''}${i.luck ? `<span>🍀 幸運 +${i.luck}%</span>` : ''}</div></div>`;
+                }).join('');
+            }
+        };
+
+        window.openItemDetail = (source, indexOrKey) => {
+            window.AudioEngine.sfx.click(); const modal = document.getElementById('item-detail-modal'); const eqKeys = { 'weapon':['weapon','gloves'], 'armor':['head','body','legs','feet','offhand'], 'accessory':['accessory'] };
+            let item = null; let btnEq = document.getElementById('id-btn-equip'); let btnSell = document.getElementById('id-btn-sell');
+            if(source === 'consumable') {
+                item = consumableItems[indexOrKey]; document.getElementById('id-name').innerText = item.name;
+                document.getElementById('id-desc').innerText = item.desc; document.getElementById('id-stats').innerHTML = `擁有數量: ${window.player.consumables[indexOrKey]}`;
+                btnEq.innerText = "使用"; btnEq.style.display = "block";
+                btnEq.onclick = () => { window.useItemFromBag(indexOrKey); };
+                let sellPrice = Math.floor(item.price * 0.5);
+                btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
+                btnSell.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.gold += sellPrice; window.player.consumables[indexOrKey]--; window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
+            } else if(source === 'bag') {
+                item = window.player.bag[indexOrKey]; document.getElementById('id-name').innerText = item.name;
+                document.getElementById('id-desc').innerText = `品質: ${['破舊','普通','良好','精緻','高級','皇家'][item.qualityIndex]} / 等級: ${item.level}`;
+                let sHtml = ''; if(item.atk) sHtml += `攻擊力 +${item.atk}<br>`; if(item.def) sHtml += `防禦力 +${item.def}<br>`; if(item.hp) sHtml += `最大生命 +${item.hp}<br>`; if(item.crit) sHtml += `爆擊率 +${item.crit}%<br>`; if(item.dodge) sHtml += `閃避率 +${item.dodge}%<br>`; if(item.luck) sHtml += `掉寶率 +${item.luck}%<br>`; document.getElementById('id-stats').innerHTML = sHtml;
+                btnEq.innerText = "裝備"; btnEq.style.display = "block";
+                btnEq.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); let slotType = 'accessory'; if(eqKeys['weapon'].includes(item.slot)) slotType='weapon'; else if(eqKeys['armor'].includes(item.slot)) slotType='armor'; if(window.player.equipment[slotType]) window.player.bag.push(window.player.equipment[slotType]); window.player.equipment[slotType] = item; window.player.bag.splice(indexOrKey, 1); window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`裝備了 ${item.name}!`, "#2ecc71"); };
+                let sellPrice = Math.floor((item.level*15 + item.qualityIndex*80 + 50) / 2);
+                btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
+                btnSell.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.gold += sellPrice; window.player.bag.splice(indexOrKey, 1); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
+            } else if (source === 'equip') {
+                item = window.player.equipment[indexOrKey]; document.getElementById('id-name').innerText = item.name; document.getElementById('id-desc').innerText = `已裝備`;
+                let sHtml = ''; if(item.atk) sHtml += `攻擊力 +${item.atk}<br>`; if(item.def) sHtml += `防禦力 +${item.def}<br>`; if(item.hp) sHtml += `最大生命 +${item.hp}<br>`; if(item.crit) sHtml += `爆擊率 +${item.crit}%<br>`; if(item.dodge) sHtml += `閃避率 +${item.dodge}%<br>`; if(item.luck) sHtml += `掉寶率 +${item.luck}%<br>`; document.getElementById('id-stats').innerHTML = sHtml;
+                btnEq.innerText = "卸下"; btnEq.style.display = "block"; btnSell.style.display = "none";
+                btnEq.onclick = () => { window.AudioEngine.sfx.click(); window.player.bag.push(item); window.player.equipment[indexOrKey] = null; window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; };
+            }
+            modal.style.display = 'flex';
+        };
+
+        window.generateRandomItemFromChest = (tier, isShop=false) => {
+            const parts = ['head','body','legs','feet','gloves','weapon','offhand','accessory']; const part = parts[Math.floor(Math.random()*parts.length)];
+            let bRoll = Math.random()*100; let aTier = isShop?Math.max(1,Math.ceil(window.player.level/10)):tier; let fRoll = bRoll + (aTier*6); let qIdx=0;
+            if(fRoll>140)qIdx=5;else if(fRoll>115)qIdx=4;else if(fRoll>85)qIdx=3;else if(fRoll>55)qIdx=2;else if(fRoll>25)qIdx=1;
+            let iLv = isShop?window.player.level:(tier-1)*10+Math.floor(Math.random()*10)+1; const lMult = 1+(iLv*0.1); const qMult = (qIdx+1)*0.5;
+            const n={head:'氣勢披帶',body:'突擊背心',legs:'輕石',feet:'講究圍巾',gloves:'力量護腕',weapon:'生命寶珠',offhand:'凸凸頭盔',accessory:'吃剩的東西'}; const i={head:'🎗️',body:'🦺',legs:'🪨',feet:'🧣',gloves:'🥊',weapon:'🔮',offhand:'🪖',accessory:'🍎'}; const q=['破舊的','普通的','良好的','精緻的','高級的','皇家的'];
+            const item = {name:`${q[qIdx]} ${n[part]}`, slot:part, qualityIndex:qIdx, icon:i[part], level:iLv, upgradeLevel:0, atk:Math.floor((part==='weapon'?5:1)*lMult*qMult), def:Math.floor((part!=='weapon'&&part!=='accessory'?3:0)*lMult*qMult), hp:Math.floor((part==='body'?20:5)*lMult*qMult), crit:Math.floor((part==='weapon'?3:(part==='gloves'?1:0))*qMult*(iLv>50?2:1)), dodge:Math.floor((part==='feet'?3:(part==='legs'?2:0))*qMult*(iLv>50?2:1)), luck:Math.floor((part==='accessory'?3:(part==='head'?1:0))*qMult*(iLv>50?2:1))};
+            if(isShop) { item.price=Math.floor((iLv*15)+(qIdx*80)+50); item.sold=false; return item; }
+            return item;
+        };
+
+        window.loadLeaderboard = async () => {
+            const div = document.getElementById('leaderboard-list'); if(!window.db || !window.user) return div.innerHTML = '<p style="color:#e74c3c;text-align:center;">無網路連線</p>';
+            div.innerHTML = '<p style="color:#888;text-align:center;">📡 正在同步雲端資料...</p>';
+            try {
+                const snap = await window.getDocs(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'leaderboard'));
+                let ps = []; snap.forEach(d => ps.push({id: d.id, ...d.data()})); ps.sort((a,b) => b.level - a.level);
+                let top = ps.slice(0, 10); if(top.length===0) return div.innerHTML = '<p style="text-align:center;">目前尚無紀錄</p>';
+                div.innerHTML = top.map((p, i) => `<div class="lb-item ${p.id===window.user.uid?'me':''}"><div style="font-weight:bold;color:var(--accent);width:30px;">#${i+1}</div><img src="${p.avatar||avatarDatabase[0]}" class="lb-avatar"><div style="flex:1;text-align:left;padding-left:5px;">${p.name} ${p.id===window.user.uid?'<span style="color:#aaa;font-size:0.8em">(你)</span>':''}</div><div style="color:var(--luck);font-weight:bold;">Lv.${p.level}</div></div>`).join('');
+            } catch(e) { div.innerHTML = '<p style="color:#e74c3c;">資料讀取失敗</p>'; }
+        };
+
+        window.openMapModal = () => {
+            window.AudioEngine.sfx.click(); document.getElementById('map-modal').style.display = 'flex'; document.getElementById('map-list-view').style.display = 'block'; document.getElementById('map-detail-view').style.display = 'none';
+            const container = document.getElementById('map-timeline-container'); container.innerHTML = '';
+            mapZones.forEach((zone, idx) => {
+                const isUnlocked = true; const node = document.createElement('div'); node.className = `map-node ${window.player.level >= zone.minLv ? 'unlocked' : 'locked'}`; node.innerHTML = `<div class="map-name">${zone.name}</div><div class="map-req">要求等級: Lv.${zone.minLv}</div>`;
+                node.onclick = () => { window.AudioEngine.sfx.click(); window.showZoneDetail(idx); }; container.appendChild(node);
+            });
+        };
+
+        window.closeMapModal = () => { window.AudioEngine.sfx.click(); document.getElementById('map-modal').style.display = 'none'; };
+        window.backToMapList = () => { window.AudioEngine.sfx.click(); document.getElementById('map-detail-view').style.display = 'none'; document.getElementById('map-list-view').style.display = 'block'; };
+
+        window.showZoneDetail = (idx) => {
+            window.inspectingZoneIdx = idx; const zone = mapZones[idx]; const isUnlocked = window.player.level >= zone.minLv;
+            document.getElementById('map-list-view').style.display = 'none'; document.getElementById('map-detail-view').style.display = 'block';
+            document.getElementById('zd-name').innerText = zone.name; document.getElementById('zd-desc').innerText = zone.desc; document.getElementById('zd-req').innerText = `Lv. ${zone.minLv}`; document.getElementById('zd-lvl').innerText = `Lv. ${zone.minLv} ~ ${zone.maxLv}`;
+            const renderPoke = (idArray, containerId, isBoss) => { document.getElementById(containerId).innerHTML = idArray.map(id => `<div class="poke-display-item ${isBoss ? 'boss-display-item' : ''}" onclick="window.showEnemyInfo('${id}', ${zone.minLv}, ${isBoss})"><img src="${window.getSprite(id)}"><span>${pokeNames[id] || '???'}</span></div>`).join(''); };
+            renderPoke(zone.enemies, 'zd-enemies', false); renderPoke(zone.bosses, 'zd-bosses', true);
+            const startBtn = document.getElementById('zd-start-btn');
+            if (isUnlocked) { startBtn.style.background = 'var(--primary)'; startBtn.innerText = '⚔️ 進入探索'; startBtn.disabled = false; startBtn.onclick = () => { window.closeMapModal(); window.initCombat(idx); }; } 
+            else { startBtn.style.background = '#555'; startBtn.innerText = `🔒 等級不足 (需Lv.${zone.minLv})`; startBtn.disabled = true; startBtn.onclick = null; }
+        };
+
+        window.getEnemyMoves = (pId, eLv, isBoss, zoneIdx) => {
+            let pool = window.POKEMON_LEARNSETS[pId] || window.POKEMON_LEARNSETS['default'];
+            let available = pool.filter(m => m.lv <= eLv).map(m => m.m);
+            if(available.length === 0) available = [pool[0].m];
+            
+            let maxMoves = 1;
+            if (isBoss) {
+                if (zoneIdx <= 3) { maxMoves = 2; }
+                else if (zoneIdx <= 6) { maxMoves = 2; }
+                else { maxMoves = 4; }
+            } else {
+                maxMoves = Math.min(3, Math.max(1, Math.floor(eLv/15) + 1));
+            }
+            let shuffled = [...available].sort(() => 0.5 - Math.random());
+            let selectedIds = shuffled.slice(0, maxMoves);
+            return selectedIds.map(id => ({ id: id, ...MOVES[id] }));
+        };
+
+        window.showEnemyInfo = (id, minLv, isBoss) => {
+            window.AudioEngine.sfx.click(); document.getElementById('ei-name').innerText = pokeNames[id] || '???'; document.getElementById('ei-sprite').src = window.getSprite(id);
+            let eLv = minLv + 5; document.getElementById('ei-lvl').innerText = `~${eLv}`; 
+            document.getElementById('ei-hp').innerText = Math.floor(eLv * (isBoss ? 35 : 10) + (isBoss ? 180 : 30)); 
+            document.getElementById('ei-atk').innerText = Math.floor((eLv * 2 + 5) * (isBoss ? 1.2 : 1)); 
+            document.getElementById('ei-dodge').innerText = isBoss ? "30%" : "0%";
+            let eMoves = window.getEnemyMoves(id.toString(), eLv, isBoss, window.inspectingZoneIdx);
+            document.getElementById('ei-moves').innerHTML = eMoves.map(m => `<div style="background:#222; border:1px solid #444; padding:5px; border-radius:4px; text-align:center; font-size:0.9rem; color:#fff;" title="${m.desc}">${m.name}</div>`).join('');
+            document.getElementById('enemy-info-modal').style.display = 'flex';
+        };
+
+        window.initCombat = (zoneIdx) => {
+            window.AudioEngine.sfx.click(); 
+            if(!window.quizBank || window.quizBank.length === 0) { window.parseQuizData(window.MOE_DATA_STRING); }
+            window.player.stats.hp = window.player.stats.maxHp; window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; window.lastQuiz = null; 
+            if(zoneIdx === undefined) { zoneIdx = mapZones.length - 1; while(zoneIdx > 0 && window.player.level < mapZones[zoneIdx].minLv) zoneIdx--; }
+            const zone = mapZones[zoneIdx]; let baseLv = zone.minLv + Math.floor(Math.random() * 10); let isBossEncounter = Math.random() < 0.15 || baseLv % 10 === 0; let eLv = baseLv + (isBossEncounter ? 2 : 0);
+            let spriteId = isBossEncounter ? zone.bosses[Math.floor(Math.random() * zone.bosses.length)] : zone.enemies[Math.floor(Math.random() * zone.enemies.length)]; window.currentCombatZoneLevel = eLv; 
+            
+            let eMaxHp = Math.floor(eLv * (isBossEncounter ? 35 : 10) + (isBossEncounter ? 180 : 30));
+            let eAtk = Math.floor((eLv * 2 + 5) * (isBossEncounter ? 1.2 : 1));
+
+            window.currentEnemy = { name: pokeNames[spriteId] || "野生寶可夢", level: eLv, maxHp: eMaxHp, hp: eMaxHp, atk: eAtk, def: Math.floor(eLv * 1.5), sprite: window.getSprite(spriteId), isBoss: isBossEncounter, dodgeRate: isBossEncounter ? 0.3 : 0, moves: window.getEnemyMoves(spriteId.toString(), eLv, isBossEncounter, zoneIdx) };
+            
+            // 播放對應戰鬥音樂
+            window.AudioEngine.playBGM(isBossEncounter ? 'boss' : 'battle');
+
+            // 日夜場景切換
+            const currentHour = new Date().getHours();
+            const isDaytime = currentHour >= 6 && currentHour < 18;
+            const battleScene = document.getElementById('battle-scene');
+            if (isDaytime) {
+                // 白天: 藍天綠地
+                battleScene.style.background = 'linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%)';
+            } else {
+                // 黑夜: 夜間藍天暗綠地
+                battleScene.style.background = 'linear-gradient(to bottom, #191970 0%, #191970 50%, #1a330a 50%, #0d1a05 100%)';
+            }
+
+            document.getElementById('enemy-sprite').src = window.currentEnemy.sprite; document.getElementById('player-sprite').src = window.player.avatar; document.getElementById('battle-player-name').innerText = window.player.name; document.getElementById('battle-player-lvl').innerText = window.player.level; document.getElementById('enemy-name').innerText = window.currentEnemy.name; document.getElementById('enemy-lvl').innerText = window.currentEnemy.level;
+            document.getElementById('player-status').style.display = 'none'; document.getElementById('enemy-status').style.display = 'none';
+            const bossTag = document.getElementById('enemy-boss-tag'); const enemySprite = document.getElementById('enemy-sprite');
+            if(window.currentEnemy.isBoss) { bossTag.style.display = 'inline-block'; enemySprite.classList.add('boss-glow'); } else { bossTag.style.display = 'none'; enemySprite.classList.remove('boss-glow'); }
+            window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); window.updateHpBar('enemy', window.currentEnemy.hp, window.currentEnemy.maxHp);
+            const expPct = Math.max(0, Math.min(100, (window.player.exp / window.player.maxExp) * 100)); document.getElementById('player-exp-fill').style.transition = 'none'; document.getElementById('player-exp-fill').style.width = expPct + '%';
+            document.getElementById('battle-screen').style.display = 'flex'; document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
+            
+            const encounterMsg = window.currentEnemy.isBoss ? `⚠️ 警告！遭遇了霸主 ${window.currentEnemy.name}！` : `野生的 ${window.currentEnemy.name} 跳出來了！`;
+            window.AudioEngine.sfx.encounter(); setTimeout(() => window.AudioEngine.sfx.cry(spriteId), 1500);
+            window.typeDialog(encounterMsg).then(() => window.nextQuestion());
+        };
+
+        window.nextQuestion = () => {
+            window.itemUsedThisTurn = false; 
+            if(!window.quizBank || window.quizBank.length === 0) {
+                window.parseQuizData(window.MOE_DATA_STRING);
+                if(!window.quizBank || window.quizBank.length === 0) {
+                    window.quizBank = [{ question: "系統異常測試", answer: "測試", wrongs: ["測", "試", "系統"] }];
+                }
+            }
+            window.currentQuiz = window.quizBank[Math.floor(Math.random() * window.quizBank.length)]; 
+            window.currentOptions = [window.currentQuiz.answer, ...window.currentQuiz.wrongs].sort(() => Math.random() - 0.5);
+            window.typeDialog(`請選擇正確讀音或國字：\n【 ${window.currentQuiz.question} 】`).then(() => window.renderBattleOptions());
+        };
+
+        window.renderBattleOptions = () => {
+            const optionsDiv = document.getElementById('battle-options'); optionsDiv.innerHTML = '';
+            window.currentOptions.forEach(opt => { const btn = document.createElement('div'); btn.className = 'battle-btn'; btn.innerText = opt; btn.onclick = () => window.handleAnswerSelection(opt); optionsDiv.appendChild(btn); });
+            
+            const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
+            const bagBtn = document.createElement('div'); bagBtn.className = 'action-btn'; bagBtn.innerText = '🎒 道具'; bagBtn.onclick = () => window.openBattleBag(); actionsRow.appendChild(bagBtn);
+            const reviewBtn = document.createElement('div'); reviewBtn.className = 'action-btn report'; reviewBtn.innerText = '🔍 上一題'; reviewBtn.onclick = () => window.openLastQuizModal(); if(!window.lastQuiz) { reviewBtn.style.opacity = '0.5'; reviewBtn.onclick = null; } actionsRow.appendChild(reviewBtn);
+            const fleeBtn = document.createElement('div'); fleeBtn.className = 'action-btn flee'; fleeBtn.innerText = '🏃‍♂️ 逃跑'; fleeBtn.onclick = () => window.fleeCombat(false); actionsRow.appendChild(fleeBtn);
+        };
+
+        window.handleAnswerSelection = async (opt) => {
+            window.AudioEngine.sfx.click(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
+            let isCorrect = (opt === window.currentQuiz.answer); let msg = `你選擇了「${opt}」\n`; msg += isCorrect ? `✅ 答對了！` : `❌ 答錯了！正確是：${window.currentQuiz.answer}`;
+            window.lastQuiz = window.currentQuiz; await window.typeDialog(msg);
+            await window.wait(400); 
+            window.executeCombatTurn(isCorrect);
+        };
+
+        window.executeCombatTurn = async (isCorrect) => {
+            if (window.isAnimating) return; window.isAnimating = true; document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
+            let playerCanAct = true;
+            if (window.battleState.player.status === 'sleep') {
+                window.battleState.player.statusTimer--;
+                if (window.battleState.player.statusTimer <= 0) { window.battleState.player.status = null; document.getElementById('player-status').style.display = 'none'; await window.typeDialog(`${window.player.name} 醒過來了！`); await window.wait(600); } 
+                else { await window.typeDialog(`${window.player.name} 正在呼呼大睡...`); await window.wait(600); playerCanAct = false; }
+            } else if (window.battleState.player.status === 'confusion') {
+                window.battleState.player.statusTimer--;
+                if (window.battleState.player.statusTimer <= 0) { window.battleState.player.status = null; document.getElementById('player-status').style.display = 'none'; await window.typeDialog(`${window.player.name} 混亂解除了！`); await window.wait(600); } 
+                else {
+                    await window.typeDialog(`${window.player.name} 混亂了！`); await window.wait(600);
+                    if (Math.random() < 0.5) {
+                        window.AudioEngine.sfx.hit(); window.playAnim('player-sprite', 'anim-dmg'); let dmg = Math.floor(window.player.stats.atk / 2); window.player.stats.hp = Math.max(0, window.player.stats.hp - dmg); window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); await window.typeDialog(`${window.player.name} 攻擊了自己！`); await window.wait(600); playerCanAct = false;
+                        if(window.player.stats.hp <= 0) return window.loseCombat();
+                    }
+                }
+            }
+
+            if (isCorrect && playerCanAct) {
+                const move = window.player.moves[Math.floor(Math.random() * window.player.moves.length)]; await window.typeDialog(`${window.player.name} 使用了\n【${move.name}】！`); await window.wait(600);
+                if (window.currentEnemy.isBoss && Math.random() < window.currentEnemy.dodgeRate) { window.AudioEngine.sfx.dodge(); window.playAnim('enemy-sprite', 'anim-dodge-enemy'); await window.wait(500); await window.typeDialog(`但是 ${window.currentEnemy.name} 閃避了！`); await window.wait(600); } 
+                else { await window.applyMoveEffect(move, window.player.stats, window.battleBuffs, window.currentEnemy, {atk:0, def:0}, 'player', 'enemy'); if(window.currentEnemy.hp <= 0) return window.winCombat(); }
+            } else if (!isCorrect || !playerCanAct) {
+                let enemyCanAct = true;
+                if (window.battleState.enemy.status === 'sleep') {
+                    window.battleState.enemy.statusTimer--;
+                    if (window.battleState.enemy.statusTimer <= 0) { window.battleState.enemy.status = null; document.getElementById('enemy-status').style.display = 'none'; await window.typeDialog(`${window.currentEnemy.name} 醒過來了！`); await window.wait(600); } 
+                    else { await window.typeDialog(`${window.currentEnemy.name} 正在呼呼大睡...`); await window.wait(600); enemyCanAct = false; }
+                } else if (window.battleState.enemy.status === 'confusion') {
+                    window.battleState.enemy.statusTimer--;
+                    if (window.battleState.enemy.statusTimer <= 0) { window.battleState.enemy.status = null; document.getElementById('enemy-status').style.display = 'none'; await window.typeDialog(`${window.currentEnemy.name} 混亂解除了！`); await window.wait(600); } 
+                    else {
+                        await window.typeDialog(`${window.currentEnemy.name} 混亂了！`); await window.wait(600);
+                        if (Math.random() < 0.5) {
+                            window.AudioEngine.sfx.hit(); window.playAnim('enemy-sprite', 'anim-dmg'); let dmg = Math.floor(window.currentEnemy.atk / 2); window.currentEnemy.hp = Math.max(0, window.currentEnemy.hp - dmg); window.updateHpBar('enemy', window.currentEnemy.hp, window.currentEnemy.maxHp); await window.typeDialog(`${window.currentEnemy.name} 攻擊了自己！`); await window.wait(600); enemyCanAct = false;
+                            if(window.currentEnemy.hp <= 0) return window.winCombat();
+                        }
+                    }
+                }
+                if(enemyCanAct) {
+                    const eMove = window.currentEnemy.moves[Math.floor(Math.random() * window.currentEnemy.moves.length)]; await window.typeDialog(`${window.currentEnemy.name} 使用了\n【${eMove.name}】！`); await window.wait(600);
+                    let totalDodge = Math.min(60, window.player.stats.dodge + window.battleBuffs.dodge);
+                    if (totalDodge > 0 && Math.random() * 100 < totalDodge) { window.AudioEngine.sfx.dodge(); window.playAnim('player-sprite', 'anim-dodge-player'); await window.wait(500); await window.typeDialog(`💨 ${window.player.name} 敏捷地閃避了！`); await window.wait(600); } 
+                    else { await window.applyMoveEffect(eMove, window.currentEnemy, {atk:0, def:0}, window.player.stats, window.battleBuffs, 'enemy', 'player'); if(window.player.stats.hp <= 0) return window.loseCombat(); }
+                }
+            }
+
+            if (window.battleState.player.status === 'poison') { window.AudioEngine.sfx.status(); window.playAnim('player-sprite', 'anim-dmg'); let dmg = Math.max(1, Math.floor(window.player.stats.maxHp * 0.1)); window.player.stats.hp = Math.max(0, window.player.stats.hp - dmg); window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); await window.typeDialog(`${window.player.name} 受到了毒的傷害！`); await window.wait(600); if(window.player.stats.hp <= 0) return window.loseCombat(); }
+            if (window.battleState.enemy.status === 'poison') { window.AudioEngine.sfx.status(); window.playAnim('enemy-sprite', 'anim-dmg'); let dmg = Math.max(1, Math.floor(window.currentEnemy.maxHp * 0.1)); window.currentEnemy.hp = Math.max(0, window.currentEnemy.hp - dmg); window.updateHpBar('enemy', window.currentEnemy.hp, window.currentEnemy.maxHp); await window.typeDialog(`${window.currentEnemy.name} 受到了毒的傷害！`); await window.wait(600); if(window.currentEnemy.hp <= 0) return window.winCombat(); }
+            window.isAnimating = false; window.nextQuestion();
+        };
+
+        window.applyMoveEffect = async (move, attacker, aBuffs, defender, dBuffs, aId, dId) => {
+            if (move.type === 'damage' || move.type === 'drain') {
+                window.AudioEngine.sfx.attack(); window.playAnim(`${aId}-sprite`, `anim-atk-${aId}`); await window.wait(200); 
+                
+                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600); }
+
+                window.AudioEngine.sfx.hit(); window.playAnim(`${dId}-sprite`, 'anim-dmg');
+                let atkStat = (attacker.atk || 10) + (aBuffs.atk || 0); let defStat = (defender.def || 5) + (dBuffs.def || 0); let critChance = (attacker.crit || 0) + (aBuffs.crit || 0) + (move.critBonus ? move.critBonus * 100 : 0); let isCrit = Math.random() * 100 < critChance;
+                
+                let baseDmg = Math.max(1, Math.floor((atkStat * move.power / 30) - (defStat / 2))) + Math.floor(Math.random() * 5); let dmg = isCrit ? baseDmg * 2 : baseDmg;
+                defender.hp = Math.max(0, defender.hp - dmg); window.updateHpBar(dId, defender.hp, defender.maxHp || defender.hp);
+                
+                if(isCrit) { window.AudioEngine.sfx.superEffective(); await window.typeDialog(`💥 擊中要害！\n造成了 ${dmg} 點巨大傷害！`); } else await window.typeDialog(`造成了 ${dmg} 點傷害！`); await window.wait(600);
+                if (move.type === 'drain' && defender.hp >= 0) { let heal = Math.max(1, Math.floor(dmg / 2)); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`吸收了 ${heal} 點 HP！`); await window.wait(600); }
+            } else if (move.type === 'status') {
+                if (Math.random() < move.chance) {
+                    window.AudioEngine.sfx.status(); let targetState = dId === 'player' ? window.battleState.player : window.battleState.enemy; let tag = document.getElementById(`${dId}-status`);
+                    if(!targetState.status) {
+                        targetState.status = move.status;
+                        if(move.status === 'sleep') { targetState.statusTimer = 2 + Math.floor(Math.random()*2); tag.innerText="睡"; tag.className="status-tag status-slp"; }
+                        if(move.status === 'confusion') { targetState.statusTimer = 2 + Math.floor(Math.random()*3); tag.innerText="混"; tag.className="status-tag status-cnf"; }
+                        if(move.status === 'poison') { tag.innerText="毒"; tag.className="status-tag status-psn"; }
+                        tag.style.display = 'inline-block'; await window.typeDialog(`對手陷入了異常狀態！`); await window.wait(600);
+                    } else { await window.typeDialog(`但是沒有產生效果！`); await window.wait(600); }
+                } else { await window.typeDialog(`但是沒有命中！`); await window.wait(600); }
+            } else if (move.type === 'buff') {
+                window.AudioEngine.playSFXTrack('levelup');
+                if(aId === 'player') { if(move.stat === 'atk') window.battleBuffs.atk += move.amount; if(move.stat === 'def') window.battleBuffs.def += move.amount; if(move.stat === 'dodge') window.battleBuffs.dodge += move.amount * 100; } 
+                else { if(move.stat === 'atk') window.currentEnemy.atk += move.amount; if(move.stat === 'def') window.currentEnemy.def += move.amount; if(move.stat === 'dodge') window.currentEnemy.dodgeRate += move.amount; }
+                await window.typeDialog(`能力提升了！`); await window.wait(600);
+            } else if (move.type === 'heal') {
+                window.AudioEngine.playSFXTrack('levelup'); let heal = Math.floor(attacker.maxHp * move.amount); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`回復了 ${heal} 點 HP！`); await window.wait(600);
+            }
+        };
+
+        window.openBattleBag = () => {
+            window.AudioEngine.sfx.click(); const optionsDiv = document.getElementById('battle-options'); optionsDiv.innerHTML = ''; let hasItems = false;
+            Object.keys(window.player.consumables).forEach(id => {
+                if(window.player.consumables[id] > 0 && consumableItems[id]) {
+                    hasItems = true; const item = consumableItems[id]; const btn = document.createElement('div'); btn.className = 'battle-btn'; btn.innerHTML = `${item.icon} ${item.name} (x${window.player.consumables[id]})`; btn.onclick = () => window.useItemInBattle(id); optionsDiv.appendChild(btn);
+                }
+            });
+            if(!hasItems) { const emptyMsg = document.createElement('div'); emptyMsg.style.cssText = "color:#aaa; display:flex; align-items:center; justify-content:center; grid-column: span 2;"; emptyMsg.innerText = "道具包空空如也..."; optionsDiv.appendChild(emptyMsg); }
+            
+            const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
+            const backBtn = document.createElement('div'); backBtn.className = 'action-btn'; backBtn.innerText = '🔙 返回'; backBtn.onclick = () => { window.AudioEngine.sfx.click(); window.renderBattleOptions(); }; actionsRow.appendChild(backBtn);
+        };
+
+        window.useItemInBattle = async (id) => {
+            if(window.itemUsedThisTurn) return window.showToast("這回合已經使用過道具了！", "var(--boss)");
+            if(window.player.consumables[id] <= 0) return; window.player.consumables[id]--; window.itemUsedThisTurn = true; const item = consumableItems[id]; let msg = `${window.player.name} 使用了 ${item.name}！\n`;
+            window.AudioEngine.playSFXTrack('levelup');
+            if(item.type === 'hp') { const healAmt = item.val; window.player.stats.hp = Math.min(window.player.stats.maxHp, window.player.stats.hp + healAmt); window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); msg += `回復了 ${healAmt > 10000 ? '全部' : healAmt} 點生命值！`; } 
+            else if(item.type === 'atk') { window.battleBuffs.atk += item.val; msg += `攻擊力提升了！`; } else if(item.type === 'def') { window.battleBuffs.def += item.val; msg += `防禦力提升了！`; } else if(item.type === 'dodge') { window.battleBuffs.dodge += item.val; msg += `閃避率提升了！`; } else if(item.type === 'crit') { window.battleBuffs.crit += item.val; msg += `爆擊率提升了！`; } else if(item.type === 'luck') { window.battleBuffs.luck += item.val; msg += `掉寶率提升了！`; } else if(item.type === 'all') { window.battleBuffs.atk += item.val; window.battleBuffs.def += item.val; window.battleBuffs.dodge += Math.floor(item.val/2); window.battleBuffs.crit += Math.floor(item.val/2); msg += `所有能力極限爆發！`; }
+            window.updateUI(); window.saveData(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(600); window.typeDialog(`請選擇正確讀音或國字：\n【 ${window.currentQuiz.question} 】`).then(() => window.renderBattleOptions());
+        };
+
+        window.winCombat = async () => {
+            if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause();
+            window.AudioEngine.playSFXTrack('win');
+
+            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
+            await window.typeDialog(`${window.currentEnemy.name} 倒下了！\n戰鬥勝利！`); await window.wait(500);
+            const expGain = Math.floor(Math.random() * 5) + window.currentEnemy.level * 2; const goldGain = Math.floor(Math.random() * 15) + window.currentEnemy.level * 5; 
+            window.player.gold += goldGain; await window.typeDialog(`獲得了 ${expGain} 點經驗值\n獲得了 💰${goldGain} 金幣！`); await window.wait(600);
+            
+            let expBar = document.getElementById('player-exp-fill'); window.player.exp += expGain;
+            
+            while (window.player.exp >= window.player.maxExp) {
+                expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = '100%'; await window.wait(600);
+                window.player.level++; window.player.exp -= window.player.maxExp; window.player.maxExp = Math.floor(window.player.maxExp * 1.5);
+                window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
+                
+                window.AudioEngine.playSFXTrack('levelup'); 
+                document.getElementById('battle-scene').classList.add('anim-lvl-up'); setTimeout(() => document.getElementById('battle-scene').classList.remove('anim-lvl-up'), 1600);
+                
+                expBar.style.transition = 'none'; expBar.style.width = '0%'; window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); document.getElementById('battle-player-lvl').innerText = window.player.level;
+                await window.typeDialog(`🎉 升級了！\n${window.player.name} 達到了 Lv.${window.player.level}！`); await window.wait(600);
+                
+                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; let newMoveData = pool.find(m => m.lv === window.player.level);
+                if(newMoveData) {
+                    let mDef = MOVES[newMoveData.m]; window.AudioEngine.sfx.encounter();
+                    await window.typeDialog(`${window.player.name} 想要學習新招式\n【${mDef.name}】！`); await window.wait(800);
+                    if(window.player.moves.length < 4) { window.player.moves.push({ id: newMoveData.m, ...mDef }); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`學會了【${mDef.name}】！`); await window.wait(600); } 
+                    else { window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; await window.promptLearnMove(newMoveData); }
+                }
+            }
+            expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = Math.max(0, Math.min(100, (window.player.exp / window.player.maxExp) * 100)) + '%'; await window.wait(600);
+
+            let totalLuck = Math.min(60, window.player.stats.luck + window.battleBuffs.luck); let consumableChance = 0.4 + (totalLuck / 100) * 0.5; 
+            if (Math.random() < consumableChance) {
+                const availableDrops = Object.keys(consumableItems).filter(k => consumableItems[k].reqLevel <= window.player.level);
+                if (availableDrops.length > 0) { const droppedId = availableDrops[Math.floor(Math.random() * availableDrops.length)]; window.player.consumables[droppedId]++; window.AudioEngine.sfx.encounter(); await window.typeDialog(`從野生寶可夢身上\n撿到了 ${consumableItems[droppedId].icon}${consumableItems[droppedId].name}！`); await window.wait(600); }
+            }
+
+            let baseChestChance = window.currentEnemy.isBoss ? 1.0 : 0.35;
+            if (Math.random() < (window.currentEnemy.isBoss ? 1.0 : baseChestChance + (totalLuck / 100))) {
+                window.currentChestTier = Math.min(10, Math.ceil(window.currentCombatZoneLevel / 10)); const namedChest = chestNames[window.currentChestTier - 1] || "神秘寶箱";
+                window.AudioEngine.sfx.encounter(); await window.typeDialog(`發現了一個 ${namedChest}！\n(已自動開啟)`); await window.wait(600);
+                if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得了 💰${extraGold} 大量金幣！`); await window.wait(600); } 
+                else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得裝備：${item.icon} ${item.name}！`); await window.wait(600); }
+            }
+            
+            window.saveData(); window.updateUI(); document.getElementById('battle-options').innerHTML = '';
+            const leaveBtn = document.createElement('div'); leaveBtn.className = 'action-btn'; leaveBtn.style.padding = "10px 20px"; leaveBtn.style.fontSize = "1.2rem"; leaveBtn.innerText = '🔙 返回大地圖'; 
+            leaveBtn.onclick = () => { 
+                window.AudioEngine.playBGM('lobby'); 
+                window.AudioEngine.sfx.click(); 
+                document.getElementById('battle-screen').style.display = 'none'; 
+                window.player.stats.hp = window.player.stats.maxHp; 
+                window.updateUI(); 
+            }; 
+            document.getElementById('battle-actions').appendChild(leaveBtn);
+            window.isAnimating = false;
+        };
+
+        window.promptLearnMove = (newMoveData) => {
+            return new Promise(resolve => {
+                const modal = document.getElementById('learn-move-modal'); document.getElementById('lm-new-name').innerText = MOVES[newMoveData.m].name; const grid = document.getElementById('lm-moves-grid'); grid.innerHTML = '';
+                window.player.moves.forEach((m, idx) => {
+                    const btn = document.createElement('button'); btn.className = 'btn'; btn.style.background = '#34495e'; btn.innerText = `忘記 【${m.name}】`;
+                    btn.onclick = async () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; let oldName = window.player.moves[idx].name; window.player.moves[idx] = { id: newMoveData.m, ...MOVES[newMoveData.m] }; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`忘記了【${oldName}】...\n並且學會了【${MOVES[newMoveData.m].name}】！`); await window.wait(800); window.pendingMoveToLearn = null; resolve(); }; grid.appendChild(btn);
+                });
+                document.getElementById('lm-cancel-btn').onclick = async () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; await window.typeDialog(`放棄學習【${MOVES[newMoveData.m].name}】了。`); await window.wait(600); window.pendingMoveToLearn = null; resolve(); };
+                modal.style.display = 'flex';
+            });
+        };
+
+        window.loseCombat = async () => {
+            if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause();
+            window.AudioEngine.playSFXTrack('lose');
+
+            let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
+            let msg = `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}`;
+            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(1500);
+            
+            window.AudioEngine.playBGM('lobby');
+            document.getElementById('battle-screen').style.display='none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.saveData();
+            window.isAnimating = false;
+        };
+
+        window.fleeCombat = async (isDefeat=false) => {
+            if(isDefeat) {
+                if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause();
+                window.AudioEngine.playSFXTrack('lose');
+            }
+            let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
+            let msg = isDefeat ? `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}` : `成功逃跑了！${p>0?`\n損失了 ${p} 點經驗...`:''}`;
+            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(1000);
+            
+            window.AudioEngine.playBGM('lobby'); 
+            window.AudioEngine.sfx.click(); 
+            document.getElementById('battle-screen').style.display='none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.saveData();
+            window.isAnimating = false;
+        };
+
+        window.openLastQuizModal = () => {
+            window.AudioEngine.sfx.click(); if (!window.lastQuiz) return window.showToast("沒有上一題的紀錄", "var(--boss)");
+            document.getElementById('last-quiz-question').innerText = `【 ${window.lastQuiz.question} 】`; document.getElementById('last-quiz-answer').innerText = window.lastQuiz.answer; 
+            document.getElementById('report-form-area').style.display = 'none'; document.getElementById('last-quiz-buttons').style.display = 'flex'; document.getElementById('last-quiz-modal').style.display = 'flex'; 
+        };
+        window.closeLastQuizModal = () => { window.AudioEngine.sfx.click(); document.getElementById('last-quiz-modal').style.display = 'none'; };
+        
+        window.submitReport = async () => {
+            window.AudioEngine.sfx.click(); const suggestion = document.getElementById('report-input').value.trim();
+            if(!suggestion) return window.showToast('請輸入建議修正內容！', 'var(--boss)');
+            if (window.db && window.user) { try { await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'reports', "rep_" + Date.now().toString()), { question: window.lastQuiz.question, originalAnswer: window.lastQuiz.answer, userSuggestion: suggestion, reportedBy: window.player.name, uid: window.user.uid, timestamp: Date.now() }); window.showToast('感謝回報！資料已上傳。', '#2ecc71'); } catch(e) { window.showToast('上傳失敗', 'var(--boss)'); } } else { window.showToast('無網路連線', '#f1c40f'); }
+            window.closeLastQuizModal();
+        };
+    </script>
+</body>
+</html>
