@@ -259,6 +259,7 @@ window.MOE_DATA_STRING = `
             <h2 style="color:var(--accent); margin-top:0; text-align:center;">⚙️ 遊戲設定</h2>
             <div class="setting-row"><label>🎵 音量</label><input type="range" id="bgm-vol" min="0" max="1" step="0.1" value="0.25" onchange="window.AudioEngine.setBgmVolume(this.value)"></div>
             <div class="setting-row"><label>🔊 音效</label><input type="range" id="sfx-vol" min="0" max="1" step="0.1" value="0.5" onchange="window.AudioEngine.setSfxVolume(this.value)"></div>
+            <div class="setting-row"><label>🧰 戰鬥後自動開寶箱</label><input type="checkbox" id="auto-open-chest-toggle" style="width: 20px; height: 20px;" onchange="window.toggleAutoOpenChest(this.checked)"></div>
             <button class="btn" style="margin-bottom: 20px; background: #3498db;" onclick="window.requestAppFullscreen()">🔲 切換全螢幕</button>
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
@@ -446,6 +447,10 @@ window.MOE_DATA_STRING = `
         </div>
         <div id="tab-inventory" class="tab-page">
             <h2 style="margin-top:0; color:var(--accent);">🎒 您的背包庫存</h2>
+            <div style="background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+                <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">🧰 寶箱 (點擊開啟)</h3>
+                <div id="chests-list"></div>
+            </div>
             <div style="background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
                 <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">🥤 消耗品 (點擊詳細/出售)</h3>
                 <div id="consumables-list"></div>
@@ -658,7 +663,7 @@ window.MOE_DATA_STRING = `
 
         // ======= 玩家狀態 =======
         window.isAnimating = false; window.selectedAvatarUrl = avatarDatabase[0];
-        window.player = { bag: [], equipment: { weapon: null, armor: null, accessory: null }, name: "無名獵人", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 10, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, shopEquips: [], shopLastRefresh: 0, moves: [] };
+        window.player = { bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null, slot5: null }, name: "無名獵人", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 10, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true } };
         window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; 
         window.itemUsedThisTurn = false; window.lastQuiz = null; window.pendingMoveToLearn = null; window.currentEnemy = {}; window.currentQuiz = null; window.currentOptions = []; window.currentCombatZoneLevel = 1; window.currentChestTier = 1; window.inspectingZoneIdx = 0;
 
@@ -696,8 +701,22 @@ window.MOE_DATA_STRING = `
         });
 
         // ======= UI 與系統控制 =======
-        window.openSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); document.getElementById('settings-modal').style.display = 'flex'; };
+        window.openSettings = () => { 
+            if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); 
+            if(window.player && window.player.settings) {
+                document.getElementById('auto-open-chest-toggle').checked = window.player.settings.autoOpenChest;
+            }
+            document.getElementById('settings-modal').style.display = 'flex'; 
+        };
         window.closeSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); document.getElementById('settings-modal').style.display = 'none'; };
+        
+        window.toggleAutoOpenChest = (val) => {
+            if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click();
+            if(!window.player.settings) window.player.settings = {};
+            window.player.settings.autoOpenChest = val;
+            window.saveData();
+        };
+
         window.requestAppFullscreen = () => {
             if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click();
             try {
@@ -726,9 +745,8 @@ window.MOE_DATA_STRING = `
         window.importQuizData = (event) => { window.AudioEngine.sfx.click(); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { window.saveLocalQuizData(e.target.result); window.parseQuizData(e.target.result); window.showToast("✅ 匯入成功！", "#2ecc71"); event.target.value = ''; }; reader.readAsText(file); };
 
         window.adminLogin = async () => {
-            window.AudioEngine.sfx.click(); const pwd = prompt("請輸入管理員密碼：");
-            if (pwd === "Stingary0821") { window.showToast("管理員登入成功", "#2ecc71"); document.getElementById('settings-modal').style.display = 'none'; document.getElementById('admin-modal').style.display = 'flex'; } 
-            else if (pwd !== null) window.showToast("密碼錯誤", "var(--boss)");
+            window.AudioEngine.sfx.click(); const pwd = prompt("");
+            if (pwd === "07210609") { window.showToast("管理員登入成功", "#2ecc71"); document.getElementById('settings-modal').style.display = 'none'; document.getElementById('admin-modal').style.display = 'flex'; } 
         };
         window.exportReportsFromFirebase = async () => {
             if (!window.db) return window.showToast("無網路連線", "var(--boss)"); window.showToast("正在獲取回報資料...", "#f1c40f");
@@ -764,8 +782,24 @@ window.MOE_DATA_STRING = `
         };
 
         window.checkIntegrity = () => {
-            if (!window.player.bag || !Array.isArray(window.player.bag)) window.player.bag = []; if (!window.player.equipment) window.player.equipment = { weapon: null, armor: null, accessory: null };
+            if (!window.player.bag || !Array.isArray(window.player.bag)) window.player.bag = []; 
+            
+            // 遷移舊的裝備系統到新的 5 格系統
+            if (!window.player.equipment || typeof window.player.equipment.slot1 === 'undefined') {
+                const oldEq = window.player.equipment || {};
+                window.player.equipment = { 
+                    slot1: oldEq.weapon || null, 
+                    slot2: oldEq.armor || null, 
+                    slot3: oldEq.accessory || null, 
+                    slot4: null, 
+                    slot5: null 
+                };
+            }
+
             if (!window.player.consumables) window.player.consumables = {}; Object.keys(consumableItems).forEach(k => { if (typeof window.player.consumables[k] === 'undefined') window.player.consumables[k] = 0; });
+            if (!window.player.chests) window.player.chests = {};
+            if (!window.player.settings) window.player.settings = { autoOpenChest: true };
+            if (typeof window.player.settings.autoOpenChest === 'undefined') window.player.settings.autoOpenChest = true;
             if (!window.player.shopEquips || !Array.isArray(window.player.shopEquips)) window.player.shopEquips = []; if (!window.player.shopLastRefresh) window.player.shopLastRefresh = 0;
             if (!window.player.moves || !Array.isArray(window.player.moves)) window.player.moves = [];
             if (window.player.moves.length === 0) { 
@@ -831,6 +865,36 @@ window.MOE_DATA_STRING = `
             const list = document.getElementById('consumables-list'); let html = '';
             Object.keys(window.player.consumables).forEach(id => { if(window.player.consumables[id] > 0 && consumableItems[id]) { const item = consumableItems[id]; html += `<div style="display:inline-block; background:#222; border:1px solid #555; border-radius:8px; padding:5px 10px; margin:5px; font-weight:bold; font-size:0.9rem; cursor:pointer;" onclick="window.openItemDetail('consumable', '${id}')">${item.icon} ${item.name} x${window.player.consumables[id]}</div>`; } });
             list.innerHTML = html || '<span style="color:#666; font-size:0.9rem;">尚無消耗品</span>';
+            
+            const chestList = document.getElementById('chests-list'); let chestHtml = '';
+            Object.keys(window.player.chests || {}).forEach(tierStr => {
+                const tier = parseInt(tierStr);
+                if (window.player.chests[tier] > 0) {
+                    const chestName = chestNames[tier - 1] || "神秘寶箱";
+                    chestHtml += `<div style="display:inline-block; background:#222; border:1px solid #f39c12; border-radius:8px; padding:5px 10px; margin:5px; font-weight:bold; font-size:0.9rem; cursor:pointer;" onclick="window.openChestFromBag(${tier})">🧰 ${chestName} x${window.player.chests[tier]}</div>`;
+                }
+            });
+            chestList.innerHTML = chestHtml || '<span style="color:#666; font-size:0.9rem;">尚無寶箱</span>';
+        };
+
+        window.openChestFromBag = (tier) => {
+            if(!window.player.chests || !window.player.chests[tier] || window.player.chests[tier] <= 0) return;
+            window.player.chests[tier]--;
+            
+            if (Math.random() < 0.2) {
+                const extraGold = Math.floor(Math.random() * 100 + 50) * tier;
+                window.player.gold += extraGold;
+                window.AudioEngine.playSFXTrack('levelup');
+                window.showToast(`✨ 寶箱開啟！獲得了 💰${extraGold} 金幣！`, "#f1c40f");
+            } else {
+                const item = window.generateRandomItemFromChest(tier);
+                window.player.bag.push(item);
+                window.AudioEngine.playSFXTrack('levelup');
+                window.showToast(`✨ 寶箱開啟！獲得裝備：${item.icon} ${item.name}！`, "#2ecc71");
+            }
+            
+            window.updateUI();
+            window.saveData();
         };
         
         window.useItemFromBag = (id) => {
@@ -908,8 +972,8 @@ window.MOE_DATA_STRING = `
             window.renderConsumables(); if(document.getElementById('tab-shop').classList.contains('active')) window.renderShop();
             
             const eqSlots = document.getElementById('equipment-slots'); eqSlots.innerHTML = '';
-            const slotNames = { weapon: '武器', armor: '防具', accessory: '飾品' };
-            ['weapon', 'armor', 'accessory'].forEach(key => {
+            const slotNames = { slot1: '裝備位置1', slot2: '裝備位置2', slot3: '裝備位置3', slot4: '裝備位置4', slot5: '裝備位置5' };
+            ['slot1', 'slot2', 'slot3', 'slot4', 'slot5'].forEach(key => {
                 const eq = window.player.equipment[key];
                 if(eq) {
                     const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[eq.qualityIndex] || '#fff';
@@ -920,37 +984,73 @@ window.MOE_DATA_STRING = `
             const invList = document.getElementById('inventory-list');
             if(window.player.bag.length === 0) { invList.innerHTML = '<p style="color:#666; text-align:center;">背包空空如也</p>'; } 
             else {
+                // 找出目前所有已經裝備的「種類」
+                const equippedTypes = Object.values(window.player.equipment).filter(e => e !== null).map(e => e.slot);
+                
                 invList.innerHTML = window.player.bag.map((item, idx) => ({item, idx})).reverse().map(obj => {
                     const i = obj.item; const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[i.qualityIndex] || '#fff';
-                    return `<div class="inv-item" onclick="window.openItemDetail('bag', ${obj.idx})"><div class="inv-header" style="color:${color}"><span>${i.icon} ${i.name} <span class="inv-quality-tag" style="background:${color}">${['破舊的','普通的','良好的','精緻的','高級的','皇家的'][i.qualityIndex]}</span></span><span style="color:#888; font-size:0.9rem;">Lv.${i.level}</span></div><div class="inv-stats">${i.atk ? `<span>🗡️ 攻擊 +${i.atk}</span>` : ''}${i.hp ? `<span>❤️ 生命 +${i.hp}</span>` : ''}${i.def ? `<span>🛡️ 防禦 +${i.def}</span>` : ''}${i.crit ? `<span>⚡ 爆擊 +${i.crit}%</span>` : ''}${i.dodge ? `<span>🌫️ 閃避 +${i.dodge}%</span>` : ''}${i.luck ? `<span>🍀 幸運 +${i.luck}%</span>` : ''}</div></div>`;
+                    
+                    const isEquippedType = equippedTypes.includes(i.slot);
+                    const grayStyle = isEquippedType ? 'filter: grayscale(1); opacity: 0.5;' : '';
+                    const equippedTag = isEquippedType ? '<span style="color:#e74c3c; font-size:0.8rem; margin-left:5px;">(已裝備同類型)</span>' : '';
+                    
+                    return `<div class="inv-item" style="${grayStyle}" onclick="window.openItemDetail('bag', ${obj.idx})"><div class="inv-header" style="color:${color}"><span>${i.icon} ${i.name} <span class="inv-quality-tag" style="background:${color}">${['破舊的','普通的','良好的','精緻的','高級的','皇家的'][i.qualityIndex]}</span>${equippedTag}</span><span style="color:#888; font-size:0.9rem;">Lv.${i.level}</span></div><div class="inv-stats">${i.atk ? `<span>🗡️ 攻擊 +${i.atk}</span>` : ''}${i.hp ? `<span>❤️ 生命 +${i.hp}</span>` : ''}${i.def ? `<span>🛡️ 防禦 +${i.def}</span>` : ''}${i.crit ? `<span>⚡ 爆擊 +${i.crit}%</span>` : ''}${i.dodge ? `<span>🌫️ 閃避 +${i.dodge}%</span>` : ''}${i.luck ? `<span>🍀 幸運 +${i.luck}%</span>` : ''}</div></div>`;
                 }).join('');
             }
         };
 
         window.openItemDetail = (source, indexOrKey) => {
-            window.AudioEngine.sfx.click(); const modal = document.getElementById('item-detail-modal'); const eqKeys = { 'weapon':['weapon','gloves'], 'armor':['head','body','legs','feet','offhand'], 'accessory':['accessory'] };
+            window.AudioEngine.sfx.click(); const modal = document.getElementById('item-detail-modal');
             let item = null; let btnEq = document.getElementById('id-btn-equip'); let btnSell = document.getElementById('id-btn-sell');
             if(source === 'consumable') {
                 item = consumableItems[indexOrKey]; document.getElementById('id-name').innerText = item.name;
                 document.getElementById('id-desc').innerText = item.desc; document.getElementById('id-stats').innerHTML = `擁有數量: ${window.player.consumables[indexOrKey]}`;
-                btnEq.innerText = "使用"; btnEq.style.display = "block";
+                btnEq.innerText = "使用"; btnEq.style.background = "var(--primary)"; btnEq.disabled = false; btnEq.style.display = "block";
                 btnEq.onclick = () => { window.useItemFromBag(indexOrKey); };
                 let sellPrice = Math.floor(item.price * 0.5);
                 btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
                 btnSell.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.gold += sellPrice; window.player.consumables[indexOrKey]--; window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
             } else if(source === 'bag') {
                 item = window.player.bag[indexOrKey]; document.getElementById('id-name').innerText = item.name;
-                document.getElementById('id-desc').innerText = `品質: ${['破舊','普通','良好','精緻','高級','皇家'][item.qualityIndex]} / 等級: ${item.level}`;
+                
+                const partNames = {head:'披帶', body:'衣服', legs:'腰帶', feet:'圍巾', gloves:'護腕', weapon:'武器', offhand:'防具', accessory:'飾品'};
+                document.getElementById('id-desc').innerText = `種類: ${partNames[item.slot] || '通用'} | 品質: ${['破舊','普通','良好','精緻','高級','皇家'][item.qualityIndex]} | 等級: ${item.level}`;
                 let sHtml = ''; if(item.atk) sHtml += `攻擊力 +${item.atk}<br>`; if(item.def) sHtml += `防禦力 +${item.def}<br>`; if(item.hp) sHtml += `最大生命 +${item.hp}<br>`; if(item.crit) sHtml += `爆擊率 +${item.crit}%<br>`; if(item.dodge) sHtml += `閃避率 +${item.dodge}%<br>`; if(item.luck) sHtml += `掉寶率 +${item.luck}%<br>`; document.getElementById('id-stats').innerHTML = sHtml;
-                btnEq.innerText = "裝備"; btnEq.style.display = "block";
-                btnEq.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); let slotType = 'accessory'; if(eqKeys['weapon'].includes(item.slot)) slotType='weapon'; else if(eqKeys['armor'].includes(item.slot)) slotType='armor'; if(window.player.equipment[slotType]) window.player.bag.push(window.player.equipment[slotType]); window.player.equipment[slotType] = item; window.player.bag.splice(indexOrKey, 1); window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`裝備了 ${item.name}!`, "#2ecc71"); };
+                
+                const isTypeEquipped = Object.values(window.player.equipment).some(e => e && e.slot === item.slot);
+                const emptySlot = Object.keys(window.player.equipment).find(k => !window.player.equipment[k]);
+
+                if (isTypeEquipped) {
+                    btnEq.innerText = "已裝備同類型";
+                    btnEq.style.background = "#555";
+                    btnEq.disabled = true;
+                    btnEq.onclick = null;
+                } else if (!emptySlot) {
+                    btnEq.innerText = "裝備欄已滿";
+                    btnEq.style.background = "#555";
+                    btnEq.disabled = true;
+                    btnEq.onclick = null;
+                } else {
+                    btnEq.innerText = "裝備"; 
+                    btnEq.style.background = "var(--primary)";
+                    btnEq.disabled = false;
+                    btnEq.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.equipment[emptySlot] = item; window.player.bag.splice(indexOrKey, 1); window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`裝備了 ${item.name}!`, "#2ecc71"); };
+                }
+                
+                btnEq.style.display = "block";
+                
                 let sellPrice = Math.floor((item.level*15 + item.qualityIndex*80 + 50) / 2);
                 btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
                 btnSell.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.gold += sellPrice; window.player.bag.splice(indexOrKey, 1); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
             } else if (source === 'equip') {
                 item = window.player.equipment[indexOrKey]; document.getElementById('id-name').innerText = item.name; document.getElementById('id-desc').innerText = `已裝備`;
                 let sHtml = ''; if(item.atk) sHtml += `攻擊力 +${item.atk}<br>`; if(item.def) sHtml += `防禦力 +${item.def}<br>`; if(item.hp) sHtml += `最大生命 +${item.hp}<br>`; if(item.crit) sHtml += `爆擊率 +${item.crit}%<br>`; if(item.dodge) sHtml += `閃避率 +${item.dodge}%<br>`; if(item.luck) sHtml += `掉寶率 +${item.luck}%<br>`; document.getElementById('id-stats').innerHTML = sHtml;
-                btnEq.innerText = "卸下"; btnEq.style.display = "block"; btnSell.style.display = "none";
+                
+                btnEq.innerText = "卸下"; 
+                btnEq.style.background = "var(--primary)";
+                btnEq.disabled = false;
+                btnEq.style.display = "block"; 
+                btnSell.style.display = "none";
                 btnEq.onclick = () => { window.AudioEngine.sfx.click(); window.player.bag.push(item); window.player.equipment[indexOrKey] = null; window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; };
             }
             modal.style.display = 'flex';
@@ -1253,9 +1353,18 @@ window.MOE_DATA_STRING = `
             let baseChestChance = window.currentEnemy.isBoss ? 1.0 : 0.35;
             if (Math.random() < (window.currentEnemy.isBoss ? 1.0 : baseChestChance + (totalLuck / 100))) {
                 window.currentChestTier = Math.min(10, Math.ceil(window.currentCombatZoneLevel / 10)); const namedChest = chestNames[window.currentChestTier - 1] || "神秘寶箱";
-                window.AudioEngine.sfx.encounter(); await window.typeDialog(`發現了一個 ${namedChest}！\n(已自動開啟)`); await window.wait(600);
-                if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得了 💰${extraGold} 大量金幣！`); await window.wait(600); } 
-                else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得裝備：${item.icon} ${item.name}！`); await window.wait(600); }
+                window.AudioEngine.sfx.encounter(); 
+                
+                if (window.player.settings && window.player.settings.autoOpenChest === false) {
+                    if (!window.player.chests) window.player.chests = {};
+                    if (!window.player.chests[window.currentChestTier]) window.player.chests[window.currentChestTier] = 0;
+                    window.player.chests[window.currentChestTier]++;
+                    await window.typeDialog(`發現了一個 ${namedChest}！\n已放入背包。`); await window.wait(600);
+                } else {
+                    await window.typeDialog(`發現了一個 ${namedChest}！\n(已自動開啟)`); await window.wait(600);
+                    if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得了 💰${extraGold} 大量金幣！`); await window.wait(600); } 
+                    else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得裝備：${item.icon} ${item.name}！`); await window.wait(600); }
+                }
             }
             
             window.saveData(); window.updateUI(); document.getElementById('battle-options').innerHTML = '';
@@ -1289,10 +1398,25 @@ window.MOE_DATA_STRING = `
 
             let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
             let msg = `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}`;
-            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(1500);
+            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; 
+            await window.typeDialog(msg);
             
-            window.AudioEngine.playBGM('lobby');
-            document.getElementById('battle-screen').style.display='none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.saveData();
+            const leaveBtn = document.createElement('div'); 
+            leaveBtn.className = 'action-btn'; 
+            leaveBtn.style.padding = "10px 20px"; 
+            leaveBtn.style.fontSize = "1.2rem"; 
+            leaveBtn.style.background = "#7f8c8d"; 
+            leaveBtn.style.borderColor = "#616a6b"; 
+            leaveBtn.innerText = '🔙 拖著疲憊的身軀返回'; 
+            leaveBtn.onclick = () => { 
+                window.AudioEngine.playBGM('lobby');
+                window.AudioEngine.sfx.click(); 
+                document.getElementById('battle-screen').style.display='none'; 
+                window.player.stats.hp = window.player.stats.maxHp; 
+                window.updateUI(); 
+                window.saveData();
+            }; 
+            document.getElementById('battle-actions').appendChild(leaveBtn);
             window.isAnimating = false;
         };
 
@@ -1303,17 +1427,34 @@ window.MOE_DATA_STRING = `
             }
             let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
             let msg = isDefeat ? `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}` : `成功逃跑了！${p>0?`\n損失了 ${p} 點經驗...`:''}`;
-            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(1000);
+            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; 
+            await window.typeDialog(msg);
             
-            window.AudioEngine.playBGM('lobby'); 
-            window.AudioEngine.sfx.click(); 
-            document.getElementById('battle-screen').style.display='none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.saveData();
+            const leaveBtn = document.createElement('div'); 
+            leaveBtn.className = 'action-btn'; 
+            leaveBtn.style.padding = "10px 20px"; 
+            leaveBtn.style.fontSize = "1.2rem"; 
+            leaveBtn.innerText = '🔙 返回大地圖'; 
+            leaveBtn.onclick = () => { 
+                window.AudioEngine.playBGM('lobby'); 
+                window.AudioEngine.sfx.click(); 
+                document.getElementById('battle-screen').style.display='none'; 
+                window.player.stats.hp = window.player.stats.maxHp; 
+                window.updateUI(); 
+                window.saveData();
+            }; 
+            document.getElementById('battle-actions').appendChild(leaveBtn);
             window.isAnimating = false;
         };
 
         window.openLastQuizModal = () => {
             window.AudioEngine.sfx.click(); if (!window.lastQuiz) return window.showToast("沒有上一題的紀錄", "var(--boss)");
             document.getElementById('last-quiz-question').innerText = `【 ${window.lastQuiz.question} 】`; document.getElementById('last-quiz-answer').innerText = window.lastQuiz.answer; 
+            
+            // 清除題目中的引號，並動態設定教育部字典的搜尋連結
+            const searchWord = window.lastQuiz.question.replace(/[「」【】]/g, '');
+            document.getElementById('dict-link').href = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+
             document.getElementById('report-form-area').style.display = 'none'; document.getElementById('last-quiz-buttons').style.display = 'flex'; document.getElementById('last-quiz-modal').style.display = 'flex'; 
         };
         window.closeLastQuizModal = () => { window.AudioEngine.sfx.click(); document.getElementById('last-quiz-modal').style.display = 'none'; };
