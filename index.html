@@ -7,7 +7,6 @@
     
     <!-- 內建題庫資料 -->
     <script>
-// 👇 請將您 moe_data.js 裡面的【所有題目內容】完整複製，並貼到下方兩個反引號 `` 之間替換 👇
 window.MOE_DATA_STRING = `
 2|「骰」子|ㄊㄡˊ|ㄕㄞˇ,ㄍㄨˇ,ㄉㄡ
 2|「蛤」蜊|ㄍㄜˊ|ㄍㄜˇ,ㄏㄚ,ㄌㄧˋ
@@ -28,9 +27,17 @@ window.MOE_DATA_STRING = `
 1|ㄏㄠˋ ㄍㄠ ㄨ4 ㄩㄢ3|好高騖遠|好高務遠,好高物遠,好高誤遠
 1|ㄢˋ ㄉㄨ4 ㄔㄣ2 ㄘㄤ|暗度陳倉|暗渡陳倉,暗度陳滄,暗渡陳滄
 1|ㄇㄧㄥˊ ㄩ4 ㄙㄠ3 ㄉㄧ4|名譽掃地|明譽掃地,名譽掃第,名譽掃弟
-
-( ...由於系統文字長度限制，這裡省略了中間的題目，請您務必將 moe_data.js 完整內容貼上覆蓋此區... )
-
+2|絢「麗」|ㄌㄧ4|ㄋㄧ4,ㄌㄧ2,ㄌㄧ3
+2|粗「獷」|ㄍㄨㄤ3|ㄎㄨㄤ4,ㄍㄨㄤ4,ㄎㄨㄤ3
+2|空「曠」|ㄎㄨㄤ4|ㄍㄨㄤ3,ㄎㄨㄤ3,ㄍㄨㄤ4
+2|礦「坑」|ㄎㄥ|ㄎㄥ1,ㄎㄤ,ㄍㄥ
+2|蛤「蟆」|ㄇㄚ2|ㄇㄚ,ㄇㄛ2,ㄇㄚ3
+2|「蛤」蟆|ㄏㄚ2|ㄍㄜ2,ㄏㄚ,ㄍㄜ
+2|關「卡」|ㄑㄧㄚ3|ㄎㄚ3,ㄎㄚ,ㄑㄧㄚ
+2|髮「夾」|ㄐㄧㄚ2|ㄐㄧㄚ,ㄐㄧㄚ3,ㄐㄧㄚ4
+2|夾「子」|ㄗ˙|ㄗ3,ㄗ,ㄗˇ
+2|脊「椎」|ㄓㄨㄟ|ㄗㄨㄟ,ㄔㄨㄟ,ㄓㄨㄟ2
+2|「脊」髓|ㄐㄧ3|ㄐㄧ2,ㄐㄧ,ㄐㄧ4
 2|洗「濯」|ㄓㄨㄛ2|ㄓㄨㄛ,ㄉㄧˊ,ㄓㄨㄛ4
 2|擢「髮」難數|ㄈㄚ3|ㄈㄚ3,ㄈㄚ4,ㄈㄚ
 2|「擢」髮難數|ㄓㄨㄛ2|ㄓㄨㄛ,ㄉㄧˊ,ㄓㄨㄛ4
@@ -38,7 +45,6 @@ window.MOE_DATA_STRING = `
 1|ㄈㄤˊ ㄞ4|妨礙|防礙,妨害,防害
 1|ㄈㄤˊ ㄏㄞ4|妨害|防害,妨礙,防礙
 `;
-// 👆 貼上範圍到此為止 👆
     </script>
 
     <!-- Firebase 初始化 -->
@@ -212,6 +218,12 @@ window.MOE_DATA_STRING = `
         .anim-dodge-player { animation: flashy-dodge-right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .anim-dodge-enemy { animation: flashy-dodge-left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
+        /* 下沉消失 (戰敗/勝利動畫) */
+        @keyframes sink-down-enemy { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(200px); opacity: 0; } }
+        @keyframes sink-down-player { 0% { transform: scaleX(-1) translateY(0); opacity: 1; } 100% { transform: scaleX(-1) translateY(200px); opacity: 0; } }
+        .anim-sink-enemy { animation: sink-down-enemy 0.6s ease-in forwards !important; }
+        .anim-sink-player { animation: sink-down-player 0.6s ease-in forwards !important; }
+
         /* 受擊與華麗暴擊 */
         @keyframes take-damage { 0% { filter: brightness(1); } 25% { filter: brightness(0) invert(1); transform: translateX(-10px); } 50% { filter: brightness(1); transform: translateX(10px); } 75% { filter: brightness(0) invert(1); transform: translateX(-10px); } 100% { filter: brightness(1); transform: translateX(0); } }
         .anim-dmg { animation: take-damage 0.4s ease; }
@@ -271,7 +283,7 @@ window.MOE_DATA_STRING = `
 </head>
 <body>
     
-    <!-- 點擊進入畫面 -->
+    <!-- 點擊進入畫面 (解決音訊自動播放限制) -->
     <div id="splash-screen">
         <h1 style="color: var(--accent); font-size: 4rem; text-shadow: 0 0 20px var(--primary); margin-bottom: 20px; text-align: center; animation: splashPulse 1.5s infinite;">字靈獵人<br>寶可夢傳說</h1>
         <p style="font-size: 1.5rem; color: #aaa; animation: splashPulse 1.5s infinite alternate-reverse;" id="loading-text">請開啟音量並點擊進入</p>
@@ -662,7 +674,9 @@ window.MOE_DATA_STRING = `
                 dodge: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(400, 'sine', 0.2, 0.3, 800); },
                 status: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(300, 'triangle', 0.3, 0.3, 150); },
                 encounter: () => { if(window.AudioEngine.ctx) { for(let i=0;i<5;i++) setTimeout(()=>window.AudioEngine.playTone(i%2===0?800:1200,'square',0.1,0.2),i*80); } },
-                cry: (id) => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(400+(id%200), 'sawtooth', 0.4, 0.2, 200); }
+                cry: (id) => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(400+(id%200), 'sawtooth', 0.4, 0.2, 200); },
+                item: () => { if(window.AudioEngine.ctx) { const n=[600, 800, 1000]; n.forEach((f,i)=>setTimeout(()=>window.AudioEngine.playTone(f,'sine',0.1,0.2),i*100)); } },
+                equip: () => { if(window.AudioEngine.ctx) window.AudioEngine.playTone(800, 'square', 0.1, 0.2, 400); }
             },
             setBgmVolume: function(v) { this.bgmVolume = parseFloat(v); if(this.bgmAudio) this.bgmAudio.volume = this.bgmVolume; },
             setSfxVolume: function(v) { this.sfxVolume = parseFloat(v); this.sfx.click(); }
@@ -967,12 +981,12 @@ window.MOE_DATA_STRING = `
             if (Math.random() < 0.2) {
                 const extraGold = Math.floor(Math.random() * 100 + 50) * tier;
                 window.player.gold += extraGold;
-                window.AudioEngine.playSFXTrack('levelup');
+                window.AudioEngine.sfx.item();
                 window.showToast(`✨ 寶箱開啟！獲得了 💰${extraGold} 金幣！`, "#f1c40f");
             } else {
                 const item = window.generateRandomItemFromChest(tier);
                 window.player.bag.push(item);
-                window.AudioEngine.playSFXTrack('levelup');
+                window.AudioEngine.sfx.item();
                 window.showToast(`✨ 寶箱開啟！獲得裝備：${item.icon} ${item.name}！`, "#2ecc71");
             }
             
@@ -981,7 +995,7 @@ window.MOE_DATA_STRING = `
         };
         
         window.useItemFromBag = (id) => {
-            if(window.player.consumables[id] <= 0) return; window.player.consumables[id]--; const item = consumableItems[id]; window.AudioEngine.playSFXTrack('levelup');
+            if(window.player.consumables[id] <= 0) return; window.player.consumables[id]--; const item = consumableItems[id]; window.AudioEngine.sfx.item();
             if(item.type === 'hp') { const healAmt = item.val; window.player.stats.hp = Math.min(window.player.stats.maxHp, window.player.stats.hp + healAmt); window.showToast(`回復了 ${healAmt > 10000 ? '全部' : healAmt} 點生命值！`, '#2ecc71'); } 
             else window.showToast(`非戰鬥中無法使用能力強化藥劑！`, 'var(--boss)');
             window.updateUI(); window.saveData(); document.getElementById('item-detail-modal').style.display='none';
@@ -1030,12 +1044,12 @@ window.MOE_DATA_STRING = `
 
         window.buyItem = (id) => {
             const item = consumableItems[id];
-            if(window.player.gold >= item.price) { window.AudioEngine.playSFXTrack('levelup'); window.player.gold -= item.price; window.player.consumables[id]++; window.showToast(`✅ 購買了 ${item.name}！`, "#2ecc71"); window.updateUI(); window.saveData(); } 
+            if(window.player.gold >= item.price) { window.AudioEngine.sfx.equip(); window.player.gold -= item.price; window.player.consumables[id]++; window.showToast(`✅ 購買了 ${item.name}！`, "#2ecc71"); window.updateUI(); window.saveData(); } 
             else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); }
         };
         window.buyShopChest = (tier, cost) => {
             if(window.player.gold >= cost) {
-                window.AudioEngine.playSFXTrack('levelup'); window.player.gold -= cost; window.currentChestTier = tier;
+                window.AudioEngine.sfx.item(); window.player.gold -= cost; window.currentChestTier = tier;
                 if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.showToast(`✨ 獲得了 💰${extraGold} 金幣！`, "#f1c40f"); } 
                 else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.showToast(`✨ 獲得裝備：${item.icon} ${item.name}！`, "#2ecc71"); }
                 window.updateUI(); window.saveData();
@@ -1043,7 +1057,7 @@ window.MOE_DATA_STRING = `
         };
         window.buyShopEquip = (idx, cost) => {
             if(window.player.gold >= cost) {
-                window.AudioEngine.playSFXTrack('levelup'); window.player.gold -= cost; const item = window.player.shopEquips[idx]; item.sold = true;
+                window.AudioEngine.sfx.equip(); window.player.gold -= cost; const item = window.player.shopEquips[idx]; item.sold = true;
                 const newItem = { ...item }; delete newItem.sold; delete newItem.price; window.player.bag.push(newItem); 
                 window.showToast(`✅ 購買了 ${newItem.name}，已放入背包！`, "#2ecc71"); window.updateUI(); window.saveData();
             } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); }
@@ -1092,7 +1106,7 @@ window.MOE_DATA_STRING = `
                 btnEq.onclick = () => { window.useItemFromBag(indexOrKey); };
                 let sellPrice = Math.floor(item.price * 0.5);
                 btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
-                btnSell.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.gold += sellPrice; window.player.consumables[indexOrKey]--; window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
+                btnSell.onclick = () => { window.AudioEngine.sfx.equip(); window.player.gold += sellPrice; window.player.consumables[indexOrKey]--; window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
             } else if(source === 'bag') {
                 item = window.player.bag[indexOrKey]; document.getElementById('id-name').innerText = item.name;
                 
@@ -1117,14 +1131,14 @@ window.MOE_DATA_STRING = `
                     btnEq.innerText = "裝備"; 
                     btnEq.style.background = "var(--primary)";
                     btnEq.disabled = false;
-                    btnEq.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.equipment[emptySlot] = item; window.player.bag.splice(indexOrKey, 1); window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`裝備了 ${item.name}!`, "#2ecc71"); };
+                    btnEq.onclick = () => { window.AudioEngine.sfx.equip(); window.player.equipment[emptySlot] = item; window.player.bag.splice(indexOrKey, 1); window.recalcStats(); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`裝備了 ${item.name}!`, "#2ecc71"); };
                 }
                 
                 btnEq.style.display = "block";
                 
                 let sellPrice = Math.floor((item.level*15 + item.qualityIndex*80 + 50) / 2);
                 btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
-                btnSell.onclick = () => { window.AudioEngine.playSFXTrack('levelup'); window.player.gold += sellPrice; window.player.bag.splice(indexOrKey, 1); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
+                btnSell.onclick = () => { window.AudioEngine.sfx.equip(); window.player.gold += sellPrice; window.player.bag.splice(indexOrKey, 1); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
             } else if (source === 'equip') {
                 item = window.player.equipment[indexOrKey]; document.getElementById('id-name').innerText = item.name; document.getElementById('id-desc').innerText = `已裝備`;
                 let sHtml = ''; if(item.atk) sHtml += `攻擊力 +${item.atk}<br>`; if(item.def) sHtml += `防禦力 +${item.def}<br>`; if(item.hp) sHtml += `最大生命 +${item.hp}<br>`; if(item.crit) sHtml += `爆擊率 +${item.crit}%<br>`; if(item.dodge) sHtml += `閃避率 +${item.dodge}%<br>`; if(item.luck) sHtml += `掉寶率 +${item.luck}%<br>`; document.getElementById('id-stats').innerHTML = sHtml;
@@ -1218,7 +1232,20 @@ window.MOE_DATA_STRING = `
             if(!window.quizBank || window.quizBank.length === 0) { window.parseQuizData(window.MOE_DATA_STRING); }
             window.player.stats.hp = window.player.stats.maxHp; window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; window.lastQuiz = null; 
             if(zoneIdx === undefined) { zoneIdx = mapZones.length - 1; while(zoneIdx > 0 && window.player.level < mapZones[zoneIdx].minLv) zoneIdx--; }
-            const zone = mapZones[zoneIdx]; let baseLv = zone.minLv + Math.floor(Math.random() * 10); let isBossEncounter = Math.random() < 0.15 || baseLv % 10 === 0; let eLv = baseLv + (isBossEncounter ? 2 : 0);
+            
+            // 重置下沉消失動畫
+            const enemySprite = document.getElementById('enemy-sprite');
+            const playerSprite = document.getElementById('player-sprite');
+            enemySprite.classList.remove('anim-sink-enemy');
+            playerSprite.classList.remove('anim-sink-player');
+            
+            const zone = mapZones[zoneIdx]; 
+            let baseLv = zone.minLv + Math.floor(Math.random() * 10); 
+            // 限制敵方等差不超過 5 等
+            baseLv = Math.max(Math.max(1, window.player.level - 5), Math.min(window.player.level + 5, baseLv));
+            let isBossEncounter = Math.random() < 0.15 || baseLv % 10 === 0; 
+            let eLv = baseLv + (isBossEncounter ? 2 : 0);
+            
             let spriteId = isBossEncounter ? zone.bosses[Math.floor(Math.random() * zone.bosses.length)] : zone.enemies[Math.floor(Math.random() * zone.enemies.length)]; window.currentCombatZoneLevel = eLv; 
             
             let eMaxHp = Math.floor(eLv * (isBossEncounter ? 35 : 10) + (isBossEncounter ? 180 : 30));
@@ -1241,9 +1268,9 @@ window.MOE_DATA_STRING = `
                 battleScene.style.background = 'linear-gradient(to bottom, #191970 0%, #191970 50%, #1a330a 50%, #0d1a05 100%)';
             }
 
-            document.getElementById('enemy-sprite').src = window.currentEnemy.sprite; document.getElementById('player-sprite').src = window.player.avatar; document.getElementById('battle-player-name').innerText = window.player.name; document.getElementById('battle-player-lvl').innerText = window.player.level; document.getElementById('enemy-name').innerText = window.currentEnemy.name; document.getElementById('enemy-lvl').innerText = window.currentEnemy.level;
+            enemySprite.src = window.currentEnemy.sprite; playerSprite.src = window.player.avatar; document.getElementById('battle-player-name').innerText = window.player.name; document.getElementById('battle-player-lvl').innerText = window.player.level; document.getElementById('enemy-name').innerText = window.currentEnemy.name; document.getElementById('enemy-lvl').innerText = window.currentEnemy.level;
             document.getElementById('player-status').style.display = 'none'; document.getElementById('enemy-status').style.display = 'none';
-            const bossTag = document.getElementById('enemy-boss-tag'); const enemySprite = document.getElementById('enemy-sprite');
+            const bossTag = document.getElementById('enemy-boss-tag'); 
             if(window.currentEnemy.isBoss) { bossTag.style.display = 'inline-block'; enemySprite.classList.add('boss-glow'); } else { bossTag.style.display = 'none'; enemySprite.classList.remove('boss-glow'); }
             window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); window.updateHpBar('enemy', window.currentEnemy.hp, window.currentEnemy.maxHp);
             const expPct = Math.max(0, Math.min(100, (window.player.exp / window.player.maxExp) * 100)); document.getElementById('player-exp-fill').style.transition = 'none'; document.getElementById('player-exp-fill').style.width = expPct + '%';
@@ -1388,12 +1415,12 @@ window.MOE_DATA_STRING = `
                     } else { await window.typeDialog(`但是沒有產生效果！`); await window.wait(600); }
                 } else { await window.typeDialog(`但是沒有命中！`); await window.wait(600); }
             } else if (move.type === 'buff') {
-                window.AudioEngine.playSFXTrack('levelup');
+                window.AudioEngine.sfx.item();
                 if(aId === 'player') { if(move.stat === 'atk') window.battleBuffs.atk += move.amount; if(move.stat === 'def') window.battleBuffs.def += move.amount; if(move.stat === 'dodge') window.battleBuffs.dodge += move.amount * 100; } 
                 else { if(move.stat === 'atk') window.currentEnemy.atk += move.amount; if(move.stat === 'def') window.currentEnemy.def += move.amount; if(move.stat === 'dodge') window.currentEnemy.dodgeRate += move.amount; }
                 await window.typeDialog(`能力提升了！`); await window.wait(600);
             } else if (move.type === 'heal') {
-                window.AudioEngine.playSFXTrack('levelup'); let heal = Math.floor(attacker.maxHp * move.amount); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`回復了 ${heal} 點 HP！`); await window.wait(600);
+                window.AudioEngine.sfx.item(); let heal = Math.floor(attacker.maxHp * move.amount); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`回復了 ${heal} 點 HP！`); await window.wait(600);
             }
         };
 
@@ -1413,7 +1440,7 @@ window.MOE_DATA_STRING = `
         window.useItemInBattle = async (id) => {
             if(window.itemUsedThisTurn) return window.showToast("這回合已經使用過道具了！", "var(--boss)");
             if(window.player.consumables[id] <= 0) return; window.player.consumables[id]--; window.itemUsedThisTurn = true; const item = consumableItems[id]; let msg = `${window.player.name} 使用了 ${item.name}！\n`;
-            window.AudioEngine.playSFXTrack('levelup');
+            window.AudioEngine.sfx.item();
             if(item.type === 'hp') { const healAmt = item.val; window.player.stats.hp = Math.min(window.player.stats.maxHp, window.player.stats.hp + healAmt); window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); msg += `回復了 ${healAmt > 10000 ? '全部' : healAmt} 點生命值！`; } 
             else if(item.type === 'atk') { window.battleBuffs.atk += item.val; msg += `攻擊力提升了！`; } else if(item.type === 'def') { window.battleBuffs.def += item.val; msg += `防禦力提升了！`; } else if(item.type === 'dodge') { window.battleBuffs.dodge += item.val; msg += `閃避率提升了！`; } else if(item.type === 'crit') { window.battleBuffs.crit += item.val; msg += `爆擊率提升了！`; } else if(item.type === 'luck') { window.battleBuffs.luck += item.val; msg += `掉寶率提升了！`; } else if(item.type === 'all') { window.battleBuffs.atk += item.val; window.battleBuffs.def += item.val; window.battleBuffs.dodge += Math.floor(item.val/2); window.battleBuffs.crit += Math.floor(item.val/2); msg += `所有能力極限爆發！`; }
             window.updateUI(); window.saveData(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(600); window.typeDialog(`請選擇正確讀音或國字：\n【 ${window.currentQuiz.question} 】`).then(() => window.renderBattleOptions());
@@ -1422,6 +1449,9 @@ window.MOE_DATA_STRING = `
         window.winCombat = async () => {
             if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause();
             window.AudioEngine.playSFXTrack('win');
+
+            window.playAnim('enemy-sprite', 'anim-sink-enemy');
+            await window.wait(600);
 
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
             await window.typeDialog(`${window.currentEnemy.name} 倒下了！\n戰鬥勝利！`); await window.wait(500);
@@ -1469,8 +1499,8 @@ window.MOE_DATA_STRING = `
                     await window.typeDialog(`發現了一個 ${namedChest}！\n已放入背包。`); await window.wait(600);
                 } else {
                     await window.typeDialog(`發現了一個 ${namedChest}！\n(已自動開啟)`); await window.wait(600);
-                    if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得了 💰${extraGold} 大量金幣！`); await window.wait(600); } 
-                    else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得裝備：${item.icon} ${item.name}！`); await window.wait(600); }
+                    if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.AudioEngine.sfx.item(); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得了 💰${extraGold} 大量金幣！`); await window.wait(600); } 
+                    else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.AudioEngine.sfx.item(); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得裝備：${item.icon} ${item.name}！`); await window.wait(600); }
                 }
             }
             
@@ -1502,6 +1532,9 @@ window.MOE_DATA_STRING = `
         window.loseCombat = async () => {
             if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause();
             window.AudioEngine.playSFXTrack('lose');
+
+            window.playAnim('player-sprite', 'anim-sink-player');
+            await window.wait(600);
 
             let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
             let msg = `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}`;
