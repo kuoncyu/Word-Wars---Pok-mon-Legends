@@ -1136,7 +1136,12 @@ window.MOE_DATA_STRING = `
                 if (snap.empty) { listDiv.innerHTML = "目前沒有任何錯誤回報。"; return; }
                 let html = '';
                 snap.forEach(d => {
-                    const data = d.data(); const reportId = d.id; const searchWord = data.question.replace(/[「」【】]/g, ''); const link = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+                   const data = d.data();
+const reportId = d.id;
+// 1. 保留原本過濾括號的邏輯
+const searchWord = data.question.replace(/[「」【】]/g, '');
+// 2. 將網址從 revised 改為 concised
+const link = `https://dict.concised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
                     let rawLine = ''; if(window.currentRawQuizData) { const lines = window.currentRawQuizData.split('\n'); for(let l of lines) { const p = l.split('|'); if(p.length === 4 && window.formatZhuyin(p[1]) === data.question) { rawLine = l; break; } } }
                     html += `<div style="border:1px solid #e74c3c; padding:10px; margin-bottom:10px; border-radius:5px; background:#1a1a1a;"><div style="margin-bottom:5px;"><strong style="color:var(--accent);">題目:</strong> ${data.question}</div><div style="margin-bottom:5px;"><strong style="color:#aaa;">原答案:</strong> ${data.originalAnswer}</div><div style="margin-bottom:5px;"><strong style="color:#2ecc71;">玩家建議:</strong> ${data.userSuggestion}</div><div style="margin-bottom:5px;"><a href="${link}" target="_blank" style="color:#3498db; text-decoration:underline;">📖 查閱教育部字典</a></div><div style="margin-bottom:5px; color:#aaa; font-size:0.8rem;">修改為 (格式: 題型|題目|答案|錯項)：</div><input type="text" id="report-edit-${reportId}" value="${rawLine}" style="width:100%; background:#000; color:#fff; padding:8px; border:1px solid #555; border-radius:4px; margin-bottom:5px;"><div style="display:flex; gap:10px;"><button onclick="window.approveReport('${reportId}', '${data.question}')" style="flex:1; background:#2ecc71; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">✅ 確認並覆蓋</button><button onclick="window.deleteReport('${reportId}')" style="background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">🗑️ 忽略刪除</button></div></div>`;
                 });
@@ -1179,7 +1184,7 @@ window.MOE_DATA_STRING = `
             document.getElementById('last-quiz-question').innerText = window.lastQuiz.question;
             document.getElementById('last-quiz-answer').innerText = window.lastQuiz.answer;
             const searchWord = window.lastQuiz.question.replace(/[「」【】]/g, '');
-            document.getElementById('dict-link').href = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+            document.getElementById('dict-link').href = `https://dict.concised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
             document.getElementById('report-form-area').style.display = 'none';
             document.getElementById('report-input').value = '';
             document.getElementById('last-quiz-modal').style.display = 'flex';
