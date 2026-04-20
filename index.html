@@ -124,7 +124,8 @@ window.MOE_DATA_STRING = `
         .shop-section { display: none; }
         .shop-section.active { display: block; }
         .shop-timer { font-size: 0.9rem; color: var(--luck); margin-bottom: 10px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 5px;}
-        .lb-item { display: flex; align-items: center; background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid var(--accent); }
+        .lb-item { display: flex; align-items: center; background: #222; padding: 10px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid var(--accent); cursor: pointer; transition: background 0.2s;}
+        .lb-item:active { background: #333; }
         .lb-item.me { border-left-color: var(--primary); background: #3a1a1a; }
         .lb-avatar { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #555; margin: 0 10px; object-fit: contain; background: #111; padding: 2px; image-rendering: pixelated; }
         .map-wrapper { background-color: #8bc34a; background-image: radial-gradient(#7cb342 15%, transparent 16%), radial-gradient(#7cb342 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; padding: 20px; max-height: 65vh; overflow-y: auto; position: relative; border-radius: 0 0 10px 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
@@ -194,11 +195,11 @@ window.MOE_DATA_STRING = `
         .action-btn.flee { background: #7f8c8d; border-color: #616a6b; }
 
         @media (orientation: landscape) and (max-height: 600px) {
-            .battle-ui-panel { height: 45vh; min-height: auto; flex-direction: row; gap: 15px; position: relative; }
-            .battle-dialog { flex: 1; margin-bottom: 0; min-height: 100%; font-size: 1.1rem; }
-            .battle-options-grid { flex: 1; grid-template-columns: 1fr 1fr; width: 60%; }
-            .battle-actions-row { position:absolute; bottom: 5px; right: 5px; flex-direction: row; flex-wrap: wrap; width: 40%; justify-content: flex-end; }
-            .action-btn { font-size: 0.85rem; padding: 6px; flex: unset; width: 45%; margin: 2px;}
+            .battle-ui-panel { height: 45vh; min-height: auto; flex-direction: row; align-items: stretch; gap: 10px; position: relative; padding: 10px;}
+            .battle-dialog { width: 35%; margin-bottom: 0; min-height: 100%; font-size: 1rem; flex: none;}
+            .battle-options-grid { width: 45%; flex: none; grid-template-columns: 1fr 1fr; margin-bottom: 0; align-content: center; gap: 5px; }
+            .battle-actions-row { position: static; flex-direction: column; width: 20%; justify-content: center; gap: 5px; flex: none; margin-top: 0;}
+            .action-btn { font-size: 0.85rem; padding: 6px; flex: 1; width: 100%; margin: 0; min-height: 35px;}
             .enemy-sprite { height: clamp(80px, 25vmin, 150px); bottom: 35%; right: 10vmin; top: auto; }
             .player-sprite { height: clamp(100px, 30vmin, 180px); bottom: 5vmin; left: 10vmin; }
             .battle-stat-box { transform: scale(0.8); transform-origin: top center; }
@@ -271,11 +272,11 @@ window.MOE_DATA_STRING = `
         .player-sprite { position: absolute; bottom: 5vmin; left: 8vmin; max-width: 45vmin; height: clamp(120px, 30vmin, 250px); object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5)); transform: scaleX(-1); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
 
         /* 設定與聊天按鈕 */
-        #settings-btn { position: fixed; top: 10px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
-        #settings-btn:hover { background: rgba(0,0,0,0.6); transform: rotate(45deg) scale(1.1); border-color: var(--accent); opacity: 1; }
+        #settings-btn { position: fixed; top: 10px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #settings-btn:hover { background: rgba(0,0,0,0.6); border-color: var(--accent); opacity: 1; }
         
-        #chat-btn { position: fixed; top: 65px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
-        #chat-btn:hover { background: rgba(0,0,0,0.6); transform: scale(1.1); border-color: var(--luck); opacity: 1; }
+        #chat-btn { position: fixed; top: 65px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #chat-btn:hover { background: rgba(0,0,0,0.6); border-color: var(--luck); opacity: 1; }
 
         /* 聊天室面板 */
         #chat-panel { display: none; position: fixed; top: 120px; right: 10px; width: 320px; height: 450px; max-width: 90vw; max-height: 60vh; background: rgba(20, 20, 25, 0.95); border: 2px solid var(--luck); border-radius: 10px; z-index: 8600; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
@@ -303,8 +304,8 @@ window.MOE_DATA_STRING = `
         <p style="font-size: 1.5rem; color: #aaa; animation: splashPulse 1.5s infinite alternate-reverse;" id="loading-text">請開啟音量並點擊進入</p>
     </div>
 
-    <div id="settings-btn" onclick="window.openSettings()">⚙️</div>
-    <div id="chat-btn" onclick="window.toggleChat()">💬<span id="chat-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:0.7rem; font-weight:bold; border:1px solid #fff;">0</span></div>
+    <div id="settings-btn">⚙️</div>
+    <div id="chat-btn">💬<span id="chat-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:0.7rem; font-weight:bold; border:1px solid #fff;">0</span></div>
 
     <div id="chat-panel">
         <div style="background:var(--luck); color:#000; padding:10px; font-weight:bold; text-align:center; display:flex; justify-content:space-between; align-items:center;">
@@ -332,7 +333,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260416 (PvP連線對戰版)</div><div>題庫版本：20260418 (PvP連線對戰版)</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260501 (PvP連線對戰版)</div>
             </div>
         </div>
     </div>
@@ -487,7 +488,8 @@ window.MOE_DATA_STRING = `
             </div>
             <div id="report-form-area" style="display:none; background:#1a1a1a; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--boss);">
                 <p style="margin-top:0; color:#ccc; font-size:0.9rem;">請輸入正確注音或建議內容：</p>
-                <input type="text" id="report-input" class="input-box" placeholder="使用下方鍵盤輸入" style="width:100%; padding:10px; font-size:1.2rem; margin-bottom:5px;" readonly>
+                <!-- 移除了唯讀限制，讓玩家也可以用自帶鍵盤 -->
+                <input type="text" id="report-input" class="input-box" placeholder="使用下方鍵盤或系統鍵盤輸入" style="width:100%; padding:10px; font-size:1.2rem; margin-bottom:5px;">
                 <div id="zy-keyboard" class="zy-keyboard"></div>
                 <div style="display:flex; gap:10px;">
                     <button class="btn" style="background:#555; padding:8px;" onclick="document.getElementById('report-form-area').style.display='none'">取消</button>
@@ -499,6 +501,23 @@ window.MOE_DATA_STRING = `
                 <button class="btn" style="background:var(--boss);" onclick="document.getElementById('report-form-area').style.display='block'; document.getElementById('last-quiz-modal').scrollTop = document.getElementById('last-quiz-modal').scrollHeight;">⚠️ 題庫有誤？提出疑義</button>
                 <button class="btn" style="background:#555;" onclick="document.getElementById('last-quiz-modal').style.display='none'">返回</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 玩家戰績情報彈窗 -->
+    <div id="player-info-modal" class="modal-overlay" style="z-index: 7000;">
+        <div class="modal-box" style="padding: 20px; max-width: 300px;">
+            <h2 style="color:var(--accent); margin-top:0;">玩家情報</h2>
+            <img id="pi-avatar" src="" style="width:80px; height:80px; object-fit:contain; margin-bottom:10px; image-rendering:pixelated; background:rgba(0,0,0,0.3); border-radius:50%; border:2px solid #555;">
+            <h3 id="pi-name" style="color:#fff; margin:5px 0;"></h3>
+            <div style="color:var(--luck); font-weight:bold; margin-bottom:15px;">Lv. <span id="pi-level"></span></div>
+            <div style="background:#111; padding:10px; border-radius:8px; text-align:left; color:#ccc;">
+                <div>⚔️ PvP 勝場: <span id="pi-wins" style="color:#2ecc71; font-weight:bold;"></span></div>
+                <div>💀 PvP 敗場: <span id="pi-losses" style="color:#e74c3c; font-weight:bold;"></span></div>
+                <div style="margin-top:10px;">📜 最近 5 場戰績:</div>
+                <div id="pi-history" style="font-size:1.2rem; margin-top:5px;"></div>
+            </div>
+            <button class="btn" style="background:#555; margin-top:15px;" onclick="document.getElementById('player-info-modal').style.display='none'">關閉</button>
         </div>
     </div>
 
@@ -853,7 +872,11 @@ window.MOE_DATA_STRING = `
             m_wrap: {name:"纏繞", type:'damage', power:15, anim:'normal', desc:"用長長的身體纏繞。"},
             m_airslash: {name:"空氣斬", type:'damage', power:75, anim:'flying', desc:"用連天空也能劈開的空氣攻擊。"},
             m_aquaring: {name:"水流環", type:'heal', amount:0.2, desc:"用水之幕覆蓋身體回復HP。"},
-            m_hurricane: {name:"暴風", type:'damage', power:110, anim:'flying', desc:"用強烈的風暴攻擊。"}
+            m_hurricane: {name:"暴風", type:'damage', power:110, anim:'flying', desc:"用強烈的風暴攻擊。"},
+            m_sacredfire: {name:"神聖之火", type:'damage', power:100, anim:'fire', desc:"神秘燃燒的火焰，可能會造成灼傷。"},
+            m_sacredfire2: {name:"聖之火焰", type:'damage', power:120, anim:'fire', desc:"淨化一切邪惡的聖火，威力巨大。"},
+            m_extremespeed: {name:"神速", type:'damage', power:80, anim:'normal', desc:"以迅雷不及掩耳之勢突擊對手。"},
+            m_surf: {name:"衝浪", type:'damage', power:90, anim:'water', desc:"利用大浪攻擊對手。"}
         };
         
         window.POKEMON_LEARNSETS = {
@@ -877,7 +900,12 @@ window.MOE_DATA_STRING = `
             "130": [{lv:1,m:'m_bite'},{lv:1,m:'m_watergun'},{lv:1,m:'m_hyperbeam'}], "142": [{lv:1,m:'m_wingattack'},{lv:1,m:'m_rockslide'},{lv:1,m:'m_agility'}], "149": [{lv:1,m:'m_hyperbeam'},{lv:1,m:'m_outrage'},{lv:1,m:'m_roost'},{lv:1,m:'m_agility'}],
             "248": [{lv:1,m:'m_crunch'},{lv:1,m:'m_rockslide'},{lv:1,m:'m_earthquake'},{lv:1,m:'m_icefang_fear'}], "376": [{lv:1,m:'m_meteormash'},{lv:1,m:'m_metalclaw'},{lv:1,m:'m_psychic'},{lv:1,m:'m_flashcannon'}], "373": [{lv:1,m:'m_firefang'},{lv:1,m:'m_dragondance'},{lv:1,m:'m_outrage'},{lv:1,m:'m_hyperbeam'}], "249": [{lv:1,m:'m_aeroblast'},{lv:1,m:'m_psychic'},{lv:1,m:'m_recover'},{lv:1,m:'m_hyperbeam'}],
             "445": [{lv:1,m:'m_swordsdance'},{lv:1,m:'m_earthquake'},{lv:1,m:'m_outrage'},{lv:1,m:'m_dragonrage'}], "635": [{lv:1,m:'m_crunch'},{lv:1,m:'m_dragonpulse'},{lv:1,m:'m_darkpulse'},{lv:1,m:'m_outrage'}], "612": [{lv:1,m:'m_dragonclaw'},{lv:1,m:'m_swordsdance'},{lv:1,m:'m_outrage'},{lv:1,m:'m_dragonrage'}], "150": [{lv:1,m:'m_psychic'},{lv:1,m:'m_psystrike'},{lv:1,m:'m_hyperbeam'},{lv:1,m:'m_recover'}],
-            // Weekend Maps
+            
+            // 修正：鳳王與烈空坐專屬招式
+            "250": [{lv:1,m:'m_sacredfire'},{lv:1,m:'m_sacredfire2'},{lv:1,m:'m_roost'},{lv:1,m:'m_reflect'}],
+            "384": [{lv:1,m:'m_outrage'},{lv:1,m:'m_hyperbeam'},{lv:1,m:'m_extremespeed'},{lv:1,m:'m_agility'}],
+
+            // Weekend Maps (修正巨翅飛魚的衝浪)
             "183": [{lv:1,m:'m_watergun'},{lv:1,m:'m_bubble'},{lv:1,m:'m_rollout'},{lv:1,m:'m_tackle'}],
             "222": [{lv:1,m:'m_bubblebeam'},{lv:1,m:'m_rocktomb'},{lv:1,m:'m_recover'},{lv:1,m:'m_spikes'}],
             "72": [{lv:1,m:'m_poisonsting'},{lv:1,m:'m_acid'},{lv:1,m:'m_supersonic'},{lv:1,m:'m_wrap'}],
@@ -914,7 +942,45 @@ window.MOE_DATA_STRING = `
         
         window.isPvP = false; window.pvpState = { role: null, roomId: null, unsub: null, turnProcessed: 0 }; window.currentPvPData = null; window.inPvPBattle = false;
 
-        // ======= 初始化 =======
+        // ======= 初始化與拖曳工具 =======
+        window.makeDraggableAndClickable = (id, clickFn) => {
+            const el = document.getElementById(id);
+            if(!el) return;
+            let isDragging = false, startX, startY, initialX, initialY;
+            const dragStart = (e) => {
+                if(e.type === 'touchstart') { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }
+                else { startX = e.clientX; startY = e.clientY; }
+                const rect = el.getBoundingClientRect();
+                initialX = rect.left; initialY = rect.top;
+                isDragging = false; 
+            };
+            const dragMove = (e) => {
+                if(startX == null || startY == null) return;
+                let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                let dx = clientX - startX; let dy = clientY - startY;
+                if(Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                    isDragging = true;
+                    e.preventDefault();
+                    el.style.left = `${initialX + dx}px`;
+                    el.style.top = `${initialY + dy}px`;
+                    el.style.right = 'auto';
+                    el.style.bottom = 'auto';
+                }
+            };
+            const dragEnd = (e) => { startX = null; startY = null; };
+            el.addEventListener('mousedown', dragStart);
+            el.addEventListener('touchstart', dragStart, {passive: false});
+            document.addEventListener('mousemove', dragMove, {passive: false});
+            document.addEventListener('touchmove', dragMove, {passive: false});
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchend', dragEnd);
+            el.addEventListener('click', (e) => {
+                if(isDragging) { e.preventDefault(); e.stopPropagation(); isDragging = false; return; }
+                if(clickFn) clickFn();
+            });
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -960,6 +1026,8 @@ window.MOE_DATA_STRING = `
             }
             
             window.initAvatarSelection(); window.initZyKeyboard(); 
+            window.makeDraggableAndClickable('settings-btn', window.openSettings);
+            window.makeDraggableAndClickable('chat-btn', window.toggleChat);
         });
 
         // 登入/註冊畫面切換
@@ -1135,13 +1203,6 @@ window.MOE_DATA_STRING = `
             } catch(e) { window.showToast("回報失敗", "var(--boss)"); }
         };
 
-        window.toggleChat = () => {
-            window.AudioEngine.sfx.click();
-            const panel = document.getElementById('chat-panel');
-            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
-            if(panel.style.display === 'flex' && !window.chatInitialized) window.initChat();
-        };
-
         window.initChat = () => {
             if(!window.db) return;
             window.chatInitialized = true;
@@ -1261,14 +1322,29 @@ window.MOE_DATA_STRING = `
         window.renderShop = () => {
             document.getElementById('shop-gold-display').innerText = window.player.gold || 0;
             document.getElementById('shop-items').innerHTML = Object.keys(consumableItems).map(id => { const item = consumableItems[id]; const isLocked = window.player.level < item.reqLevel; const lockStyle = isLocked ? 'opacity:0.5; filter:grayscale(1);' : ''; return `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${lockStyle}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">${item.icon} ${item.name} ${isLocked ? `<span style="color:#e74c3c; font-size:0.8rem; margin-left:5px;">(Lv.${item.reqLevel} 解鎖)</span>` : `<span style="font-size:0.8rem;color:#888;">(擁有: ${window.player.consumables[id] || 0})</span>`}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${item.desc}</div></div><div><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyItem('${id}')" ${isLocked ? 'disabled' : ''}>💰${item.price}</button></div></div>`; }).join('');
-            let chestHtml = ''; for(let i=1; i<=10; i++) { const reqLv = i === 1 ? 1 : (i-1)*10 + 1; const cost = Math.floor(reqLv * 25 + 150); const isLocked = window.player.level < reqLv; chestHtml += `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${isLocked?'opacity:0.5; filter:grayscale(1);':''}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">🧰 ${chestNames[i-1]}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${isLocked ? `<span style="color:#e74c3c;">(Lv.${reqLv} 解鎖)</span>` : '開啟獲得大量金幣或對應等級裝備'}</div></div><div><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopChest(${i}, ${cost})" ${isLocked ? 'disabled' : ''}>💰${cost}</button></div></div>`; } document.getElementById('shop-chests-list').innerHTML = chestHtml;
+            let chestHtml = ''; for(let i=1; i<=10; i++) { const reqLv = i === 1 ? 1 : (i-1)*10 + 1; const cost = Math.floor(reqLv * 25 + 150); const isLocked = window.player.level < reqLv; chestHtml += `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${isLocked?'opacity:0.5; filter:grayscale(1);':''}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">🧰 ${chestNames[i-1]}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${isLocked ? `<span style="color:#e74c3c;">(Lv.${reqLv} 解鎖)</span>` : '購買後會立刻存入背包庫存中'}</div></div><div><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopChest(${i}, ${cost})" ${isLocked ? 'disabled' : ''}>💰${cost}</button></div></div>`; } document.getElementById('shop-chests-list').innerHTML = chestHtml;
             window.refreshShopEquipments(); const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const qualities = ['破舊的', '普通的', '良好的', '精緻的', '高級的', '皇家的'];
             document.getElementById('shop-equipments-list').innerHTML = window.player.shopEquips.map((item, idx) => { if(item.sold) return `<div class="inv-item" style="opacity:0.5; text-align:center; padding:20px;">已售出</div>`; const color = qColors[item.qualityIndex]; return `<div class="inv-item"><div class="inv-header" style="color:${color}"><span>${item.icon} ${item.name} <span class="inv-quality-tag" style="background:${color}">${qualities[item.qualityIndex]}</span></span><span style="color:#888; font-size:0.9rem;">Lv.${item.level}</span></div><div class="inv-stats">${item.atk ? `<span>🗡️ 攻擊 +${item.atk}</span>` : ''}${item.hp ? `<span>❤️ 生命 +${item.hp}</span>` : ''}${item.def ? `<span>🛡️ 防禦 +${item.def}</span>` : ''}${item.crit ? `<span>⚡ 爆擊 +${item.crit}%</span>` : ''}${item.dodge ? `<span>🌫️ 閃避 +${item.dodge}%</span>` : ''}${item.luck ? `<span>🍀 幸運 +${item.luck}%</span>` : ''}</div><div style="text-align:right; border-top:1px dashed #444; padding-top:8px; margin-top:8px;"><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopEquip(${idx}, ${item.price})">💰${item.price} 購買</button></div></div>`; }).join('');
             if(window.shopTimerInterval) clearInterval(window.shopTimerInterval); window.shopTimerInterval = setInterval(window.updateShopTimer, 1000); window.updateShopTimer();
         };
 
         window.buyItem = (id) => { const item = consumableItems[id]; if(window.player.gold >= item.price) { window.AudioEngine.sfx.equip(); window.player.gold -= item.price; window.player.consumables[id]++; window.showToast(`✅ 購買了 ${item.name}！`, "#2ecc71"); window.updateUI(); window.saveData(); } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); } };
-        window.buyShopChest = (tier, cost) => { if(window.player.gold >= cost) { window.AudioEngine.sfx.item(); window.player.gold -= cost; window.currentChestTier = tier; if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.showToast(`✨ 獲得了 💰${extraGold} 金幣！`, "#f1c40f"); } else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.showToast(`✨ 獲得裝備：${item.icon} ${item.name}！`, "#2ecc71"); } window.updateUI(); window.saveData(); } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); } };
+        // 修正寶箱購買，現會直接放到背包
+        window.buyShopChest = (tier, cost) => { 
+            if(window.player.gold >= cost) { 
+                window.AudioEngine.sfx.item(); 
+                window.player.gold -= cost; 
+                if(!window.player.chests) window.player.chests = {};
+                if(!window.player.chests[tier]) window.player.chests[tier] = 0;
+                window.player.chests[tier]++;
+                window.showToast(`✅ 購買了 ${chestNames[tier-1]}，已放入背包！`, "#2ecc71"); 
+                window.updateUI(); 
+                window.saveData(); 
+            } else { 
+                window.AudioEngine.sfx.hit(); 
+                window.showToast(`金幣不足！`, "var(--boss)"); 
+            } 
+        };
         window.buyShopEquip = (idx, cost) => { if(window.player.gold >= cost) { window.AudioEngine.sfx.equip(); window.player.gold -= cost; const item = window.player.shopEquips[idx]; item.sold = true; const newItem = { ...item }; delete newItem.sold; delete newItem.price; window.player.bag.push(newItem); window.showToast(`✅ 購買了 ${newItem.name}，已放入背包！`, "#2ecc71"); window.updateUI(); window.saveData(); } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); } };
 
         window.updateUI = () => {
@@ -1325,15 +1401,41 @@ window.MOE_DATA_STRING = `
             modal.style.display = 'flex';
         };
 
+        // 修正：商店商品等級與當前玩家相符
         window.generateRandomItemFromChest = (tier, isShop=false) => {
             const parts = ['head','body','legs','feet','gloves','weapon','offhand','accessory']; const part = parts[Math.floor(Math.random()*parts.length)];
             let bRoll = Math.random()*100; let aTier = isShop?Math.max(1,Math.ceil(window.player.level/10)):tier; let fRoll = bRoll + (aTier*6); let qIdx=0;
             if(fRoll>140)qIdx=5;else if(fRoll>115)qIdx=4;else if(fRoll>85)qIdx=3;else if(fRoll>55)qIdx=2;else if(fRoll>25)qIdx=1;
-            let iLv = isShop?window.player.level:(tier-1)*10+Math.floor(Math.random()*10)+1; const lMult = 1+(iLv*0.1); const qMult = (qIdx+1)*0.5;
+            
+            let iLv;
+            if (isShop) {
+                let bracketMin = Math.floor(Math.max(0, window.player.level - 1) / 10) * 10 + 1;
+                let bracketMax = bracketMin + 9;
+                iLv = bracketMin + Math.floor(Math.random() * (bracketMax - bracketMin + 1));
+            } else {
+                iLv = (tier-1)*10+Math.floor(Math.random()*10)+1; 
+            }
+            
+            const lMult = 1+(iLv*0.1); const qMult = (qIdx+1)*0.5;
             const n={head:'氣勢披帶',body:'突擊背心',legs:'輕石',feet:'講究圍巾',gloves:'力量護腕',weapon:'生命寶珠',offhand:'凸凸頭盔',accessory:'吃剩的東西'}; const i={head:'🎗️',body:'🦺',legs:'🪨',feet:'🧣',gloves:'🥊',weapon:'🔮',offhand:'🪖',accessory:'🍎'}; const q=['破舊的','普通的','良好的','精緻的','高級的','皇家的'];
             const item = {name:`${q[qIdx]} ${n[part]}`, slot:part, qualityIndex:qIdx, icon:i[part], level:iLv, upgradeLevel:0, atk:Math.floor((part==='weapon'?5:1)*lMult*qMult), def:Math.floor((part!=='weapon'&&part!=='accessory'?3:0)*lMult*qMult), hp:Math.floor((part==='body'?20:5)*lMult*qMult), crit:Math.floor((part==='weapon'?3:(part==='gloves'?1:0))*qMult*(iLv>50?2:1)), dodge:Math.floor((part==='feet'?3:(part==='legs'?2:0))*qMult*(iLv>50?2:1)), luck:Math.floor((part==='accessory'?3:(part==='head'?1:0))*qMult*(iLv>50?2:1))};
             if(isShop) { item.price=Math.floor((iLv*15)+(qIdx*80)+50); item.sold=false; return item; }
             return item;
+        };
+
+        window.showPlayerInfo = (id, name, avatar, level, wins, losses, historyStr) => {
+            window.AudioEngine.sfx.click();
+            document.getElementById('pi-avatar').src = avatar;
+            document.getElementById('pi-name').innerText = name;
+            document.getElementById('pi-level').innerText = level;
+            document.getElementById('pi-wins').innerText = wins;
+            document.getElementById('pi-losses').innerText = losses;
+            
+            const historyList = historyStr ? historyStr.split(',') : [];
+            let hHtml = historyList.map(h => `<span style="color:${h==='勝'?'#2ecc71':'#e74c3c'}; border:1px solid ${h==='勝'?'#2ecc71':'#e74c3c'}; padding:2px 5px; border-radius:4px; margin-right:5px; background:rgba(0,0,0,0.4);">${h}</span>`).join('');
+            document.getElementById('pi-history').innerHTML = hHtml || '<span style="color:#666; font-size:0.9rem;">尚無對戰紀錄</span>';
+            
+            document.getElementById('player-info-modal').style.display = 'flex';
         };
 
         window.loadLeaderboard = async () => {
@@ -1343,7 +1445,7 @@ window.MOE_DATA_STRING = `
                 const snap = await window.getDocs(window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'leaderboard'));
                 let ps = []; snap.forEach(d => ps.push({id: d.id, ...d.data()})); ps.sort((a,b) => b.level - a.level);
                 let top = ps.slice(0, 10); if(top.length===0) return div.innerHTML = '<p style="text-align:center;">目前尚無紀錄</p>';
-                div.innerHTML = top.map((p, i) => `<div class="lb-item ${p.id===window.player.account?'me':''}"><div style="font-weight:bold;color:var(--accent);width:30px;">#${i+1}</div><img src="${p.avatar||avatarDatabase[0]}" class="lb-avatar"><div style="flex:1;text-align:left;padding-left:5px;">${p.name} ${p.id===window.player.account?'<span style="color:#aaa;font-size:0.8em">(你)</span>':''}</div><div style="color:var(--luck);font-weight:bold;">Lv.${p.level}</div></div>`).join('');
+                div.innerHTML = top.map((p, i) => `<div class="lb-item ${p.id===window.player.account?'me':''}" onclick="window.showPlayerInfo('${p.id}', '${p.name}', '${p.avatar||avatarDatabase[0]}', ${p.level}, ${p.wins||0}, ${p.losses||0}, '${(p.pvpHistory||[]).join(',')}')"><div style="font-weight:bold;color:var(--accent);width:30px;">#${i+1}</div><img src="${p.avatar||avatarDatabase[0]}" class="lb-avatar"><div style="flex:1;text-align:left;padding-left:5px;">${p.name} ${p.id===window.player.account?'<span style="color:#aaa;font-size:0.8em">(你)</span>':''}</div><div style="color:var(--luck);font-weight:bold;">Lv.${p.level}</div></div>`).join('');
             } catch(e) { div.innerHTML = '<p style="color:#e74c3c;">資料讀取失敗</p>'; }
         };
 
@@ -1419,7 +1521,15 @@ window.MOE_DATA_STRING = `
             
             window.AudioEngine.playBGM(isBossEncounter ? 'boss' : 'battle');
             const isDaytime = new Date().getHours() >= 6 && new Date().getHours() < 18; const battleScene = document.getElementById('battle-scene');
-            if (isDaytime) { battleScene.style.background = 'linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%)'; } else { battleScene.style.background = 'linear-gradient(to bottom, #191970 0%, #191970 50%, #1a330a 50%, #0d1a05 100%)'; }
+            
+            // 週末深海風格背景修正
+            if (zone.isWeekendRaid) { 
+                battleScene.style.background = 'linear-gradient(to bottom, #87CEFA 0%, #87CEFA 40%, #00008B 40%, #000080 100%)'; 
+            } else if (isDaytime) { 
+                battleScene.style.background = 'linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%)'; 
+            } else { 
+                battleScene.style.background = 'linear-gradient(to bottom, #191970 0%, #191970 50%, #1a330a 50%, #0d1a05 100%)'; 
+            }
 
             enemySprite.src = window.currentEnemy.sprite; playerSprite.src = window.player.avatar; document.getElementById('battle-player-name').innerText = window.player.name; document.getElementById('battle-player-lvl').innerText = window.player.level; document.getElementById('enemy-name').innerText = window.currentEnemy.name; document.getElementById('enemy-lvl').innerText = window.currentEnemy.level;
             
@@ -1523,473 +1633,4 @@ window.MOE_DATA_STRING = `
             window.isAnimating = false; window.nextQuestion();
         };
 
-        window.applyMoveEffect = async (move, attacker, aBuffs, defender, dBuffs, aId, dId) => {
-            if (move.type === 'damage' || move.type === 'drain') {
-                window.AudioEngine.sfx.attack(); window.playAnim(`${aId}-sprite`, `anim-atk-${aId}`); await window.wait(200); 
-                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600); }
-
-                let atkStat = (attacker.atk || 10) + (aBuffs.atk || 0); let defStat = (defender.def || 5) + (dBuffs.def || 0); let critChance = (attacker.crit || 0) + (aBuffs.crit || 0) + (move.critBonus ? move.critBonus * 100 : 0); 
-                let isCrit = Math.random() * 100 < critChance;
-                
-                if (isCrit) { window.AudioEngine.sfx.superEffective(); window.playAnim(`${dId}-sprite`, 'anim-crit-dmg'); window.playAnim('battle-scene', 'anim-screen-shake'); window.showFloatingText('💥 暴擊！', `${dId}-sprite`, '#e74c3c'); } 
-                else { window.AudioEngine.sfx.hit(); window.playAnim(`${dId}-sprite`, 'anim-dmg'); }
-                
-                let baseDmg = Math.max(1, Math.floor((atkStat * move.power / 30) - (defStat / 2))) + Math.floor(Math.random() * 5); let dmg = isCrit ? baseDmg * 2 : baseDmg;
-                defender.hp = Math.max(0, defender.hp - dmg); window.updateHpBar(dId, defender.hp, defender.maxHp || defender.hp);
-                
-                if(isCrit) { await window.typeDialog(`💥 擊中要害！\n造成了 ${dmg} 點巨大傷害！`); } else await window.typeDialog(`造成了 ${dmg} 點傷害！`); await window.wait(600);
-                if (move.type === 'drain' && defender.hp >= 0) { let heal = Math.max(1, Math.floor(dmg / 2)); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`吸收了 ${heal} 點 HP！`); await window.wait(600); }
-            } else if (move.type === 'status') {
-                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 1500); }
-                if (Math.random() < move.chance) {
-                    window.AudioEngine.sfx.status(); let targetState = dId === 'player' ? window.battleState.player : window.battleState.enemy; let tag = document.getElementById(`${dId}-status`);
-                    if(!targetState.status) {
-                        targetState.status = move.status;
-                        if(move.status === 'sleep') { targetState.statusTimer = 2 + Math.floor(Math.random()*2); tag.innerText="睡"; tag.className="status-tag status-slp"; }
-                        if(move.status === 'confusion') { targetState.statusTimer = 2 + Math.floor(Math.random()*3); tag.innerText="混"; tag.className="status-tag status-cnf"; }
-                        if(move.status === 'poison') { tag.innerText="毒"; tag.className="status-tag status-psn"; }
-                        tag.style.display = 'inline-block'; await window.typeDialog(`對手陷入了異常狀態！`); await window.wait(600);
-                    } else { await window.typeDialog(`但是沒有產生效果！`); await window.wait(600); }
-                } else { await window.typeDialog(`但是沒有命中！`); await window.wait(600); }
-            } else if (move.type === 'debuff') {
-                window.AudioEngine.sfx.item();
-                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600); }
-                if(dId === 'enemy') { window.currentEnemy.def = Math.max(1, window.currentEnemy.def - move.amount); } else { window.battleBuffs.def = Math.max(-20, window.battleBuffs.def - move.amount); }
-                await window.typeDialog(`對手的防禦力下降了！`); await window.wait(600);
-            } else if (move.type === 'buff') {
-                window.AudioEngine.sfx.item(); let statNameDict = { atk: '攻擊力', def: '防禦力', dodge: '閃避率', crit: '爆擊率', luck: '掉寶率' }; let statN = statNameDict[move.stat] || '能力';
-                if(aId === 'player') { if(move.stat === 'atk') window.battleBuffs.atk += move.amount; if(move.stat === 'def') window.battleBuffs.def += move.amount; if(move.stat === 'dodge') window.battleBuffs.dodge += move.amount * 100; if(move.stat === 'crit') window.battleBuffs.crit += move.amount * 100; } 
-                else { if(move.stat === 'atk') window.currentEnemy.atk += move.amount; if(move.stat === 'def') window.currentEnemy.def += move.amount; if(move.stat === 'dodge') window.currentEnemy.dodgeRate += move.amount; }
-                await window.typeDialog(`${statN}大幅提升了！`); await window.wait(600);
-            } else if (move.type === 'heal') {
-                window.AudioEngine.sfx.item(); let heal = Math.floor(attacker.maxHp * move.amount); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`回復了 ${heal} 點 HP！`); await window.wait(600);
-            } else if (move.type === 'heal_sleep') {
-                window.AudioEngine.sfx.item(); attacker.hp = attacker.maxHp; window.updateHpBar(aId, attacker.hp, attacker.maxHp);
-                let targetState = aId === 'player' ? window.battleState.player : window.battleState.enemy; let tag = document.getElementById(`${aId}-status`);
-                targetState.status = 'sleep'; targetState.statusTimer = 3; tag.innerText="睡"; tag.className="status-tag status-slp"; tag.style.display = 'inline-block';
-                await window.typeDialog(`回復了所有 HP！\n但也睡著了！`); await window.wait(600);
-            }
-        };
-
-        window.openBattleBag = () => {
-            window.AudioEngine.sfx.click(); const optionsDiv = document.getElementById('battle-options'); optionsDiv.innerHTML = ''; let hasItems = false;
-            Object.keys(window.player.consumables).forEach(id => { if(window.player.consumables[id] > 0 && consumableItems[id]) { hasItems = true; const item = consumableItems[id]; const btn = document.createElement('div'); btn.className = 'battle-btn'; btn.innerHTML = `${item.icon} ${item.name} (x${window.player.consumables[id]})`; btn.onclick = () => window.useItemInBattle(id); optionsDiv.appendChild(btn); } });
-            if(!hasItems) { const emptyMsg = document.createElement('div'); emptyMsg.style.cssText = "color:#aaa; display:flex; align-items:center; justify-content:center; grid-column: span 2;"; emptyMsg.innerText = "道具包空空如也..."; optionsDiv.appendChild(emptyMsg); }
-            const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = ''; const backBtn = document.createElement('div'); backBtn.className = 'action-btn'; backBtn.innerText = '🔙 返回'; backBtn.onclick = () => { window.AudioEngine.sfx.click(); window.renderBattleOptions(); }; actionsRow.appendChild(backBtn);
-        };
-
-        window.useItemInBattle = async (id) => {
-            if(window.itemUsedThisTurn) return window.showToast("這回合已經使用過道具了！", "var(--boss)");
-            if(window.player.consumables[id] <= 0) return; window.player.consumables[id]--; window.itemUsedThisTurn = true; const item = consumableItems[id]; let msg = `${window.player.name} 使用了 ${item.name}！\n`; window.AudioEngine.sfx.item();
-            if(item.type === 'hp') { const healAmt = item.val; window.player.stats.hp = Math.min(window.player.stats.maxHp, window.player.stats.hp + healAmt); window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); msg += `回復了 ${healAmt > 10000 ? '全部' : healAmt} 點生命值！`; } 
-            else if(item.type === 'atk') { window.battleBuffs.atk += item.val; msg += `攻擊力提升了！`; } else if(item.type === 'def') { window.battleBuffs.def += item.val; msg += `防禦力提升了！`; } else if(item.type === 'dodge') { window.battleBuffs.dodge += item.val; msg += `閃避率提升了！`; } else if(item.type === 'crit') { window.battleBuffs.crit += item.val; msg += `爆擊率提升了！`; } else if(item.type === 'luck') { window.battleBuffs.luck += item.val; msg += `掉寶率提升了！`; } else if(item.type === 'all') { window.battleBuffs.atk += item.val; window.battleBuffs.def += item.val; window.battleBuffs.dodge += Math.floor(item.val/2); window.battleBuffs.crit += Math.floor(item.val/2); msg += `所有能力極限爆發！`; }
-            window.updateUI(); window.saveData(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(600); window.typeDialog(`請選擇正確讀音或國字：\n【 ${window.currentQuiz.question} 】`).then(() => window.renderBattleOptions());
-        };
-
-        window.winCombat = async () => {
-            if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('win');
-            window.playAnim('enemy-sprite', 'anim-sink-enemy'); await window.wait(600);
-            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
-            await window.typeDialog(`${window.currentEnemy.name} 倒下了！\n戰鬥勝利！`); await window.wait(500);
-            
-            let expGain = Math.floor(Math.random() * 5) + window.currentEnemy.level * 2; let goldGain = Math.floor(Math.random() * 15) + window.currentEnemy.level * 5; 
-            if(mapZones[window.inspectingZoneIdx] && mapZones[window.inspectingZoneIdx].isWeekendRaid) { expGain *= 2; goldGain *= 2; }
-            
-            window.player.gold += goldGain; await window.typeDialog(`獲得了 ${expGain} 點經驗值\n獲得了 💰${goldGain} 金幣！`); await window.wait(600);
-            
-            let expBar = document.getElementById('player-exp-fill'); window.player.exp += expGain;
-            while (window.player.exp >= window.player.maxExp) {
-                expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = '100%'; await window.wait(600);
-                window.player.level++; window.player.exp -= window.player.maxExp; window.player.maxExp = Math.floor(window.player.maxExp * 1.5); window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
-                window.AudioEngine.playSFXTrack('levelup'); document.getElementById('battle-scene').classList.add('anim-lvl-up'); setTimeout(() => document.getElementById('battle-scene').classList.remove('anim-lvl-up'), 1600);
-                expBar.style.transition = 'none'; expBar.style.width = '0%'; window.updateHpBar('player', window.player.stats.hp, window.player.stats.maxHp); document.getElementById('battle-player-lvl').innerText = window.player.level;
-                await window.typeDialog(`🎉 升級了！\n${window.player.name} 達到了 Lv.${window.player.level}！`); await window.wait(600);
-                
-                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; let newMoveData = pool.find(m => m.lv === window.player.level);
-                if(newMoveData) {
-                    let mDef = MOVES[newMoveData.m]; window.AudioEngine.sfx.encounter();
-                    await window.typeDialog(`${window.player.name} 想要學習新招式\n【${mDef.name}】！`); await window.wait(800);
-                    if(window.player.moves.length < 4) { window.player.moves.push({ id: newMoveData.m, ...mDef }); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`學會了【${mDef.name}】！`); await window.wait(600); } 
-                    else { window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; await window.promptLearnMove(newMoveData); }
-                }
-            }
-            expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = Math.max(0, Math.min(100, (window.player.exp / window.player.maxExp) * 100)) + '%'; await window.wait(600);
-
-            let totalLuck = Math.min(60, window.player.stats.luck + window.battleBuffs.luck); let consumableChance = 0.4 + (totalLuck / 100) * 0.5; 
-            if (mapZones[window.inspectingZoneIdx] && mapZones[window.inspectingZoneIdx].isWeekendRaid) consumableChance += 0.3;
-            if (Math.random() < consumableChance) { const availableDrops = Object.keys(consumableItems).filter(k => consumableItems[k].reqLevel <= window.player.level); if (availableDrops.length > 0) { const droppedId = availableDrops[Math.floor(Math.random() * availableDrops.length)]; window.player.consumables[droppedId]++; window.AudioEngine.sfx.item(); await window.typeDialog(`從野生寶可夢身上\n撿到了 ${consumableItems[droppedId].icon}${consumableItems[droppedId].name}！`); await window.wait(600); } }
-
-            let baseChestChance = window.currentEnemy.isBoss ? 1.0 : 0.35;
-            if (mapZones[window.inspectingZoneIdx] && mapZones[window.inspectingZoneIdx].isWeekendRaid) baseChestChance = 1.0;
-            if (Math.random() < (window.currentEnemy.isBoss ? 1.0 : baseChestChance + (totalLuck / 100))) {
-                window.currentChestTier = Math.min(10, Math.ceil(window.currentCombatZoneLevel / 10)); 
-                if (mapZones[window.inspectingZoneIdx] && mapZones[window.inspectingZoneIdx].isWeekendRaid) window.currentChestTier = Math.min(10, window.currentChestTier + 2);
-                const namedChest = chestNames[window.currentChestTier - 1] || "神秘寶箱"; window.AudioEngine.sfx.item(); 
-                if (window.player.settings && window.player.settings.autoOpenChest === false) {
-                    if (!window.player.chests) window.player.chests = {}; if (!window.player.chests[window.currentChestTier]) window.player.chests[window.currentChestTier] = 0; window.player.chests[window.currentChestTier]++;
-                    await window.typeDialog(`發現了一個 ${namedChest}！\n已放入背包。`); await window.wait(600);
-                } else {
-                    await window.typeDialog(`發現了一個 ${namedChest}！\n(已自動開啟)`); await window.wait(600);
-                    if (Math.random() < 0.2) { const extraGold = Math.floor(Math.random() * 100 + 50) * window.currentChestTier; window.player.gold += extraGold; window.AudioEngine.sfx.item(); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得了 💰${extraGold} 大量金幣！`); await window.wait(600); } 
-                    else { const item = window.generateRandomItemFromChest(window.currentChestTier); window.player.bag.push(item); window.AudioEngine.sfx.equip(); await window.typeDialog(`✨ 寶箱閃閃發光...\n獲得裝備：${item.icon} ${item.name}！`); await window.wait(600); }
-                }
-            }
-            
-            window.saveData(); window.updateUI(); document.getElementById('battle-options').innerHTML = '';
-            
-            const actionsRow = document.getElementById('battle-actions');
-            const contBtn = document.createElement('div'); contBtn.className = 'action-btn'; contBtn.style.padding = "10px"; contBtn.style.fontSize = "1.1rem"; contBtn.style.background = "#2ecc71"; contBtn.style.borderColor = "#27ae60"; contBtn.innerText = '⚔️ 繼續挑戰'; contBtn.onclick = () => { window.AudioEngine.sfx.click(); document.getElementById('battle-screen').style.display = 'none'; window.initCombat(window.inspectingZoneIdx); }; actionsRow.appendChild(contBtn);
-            const leaveBtn = document.createElement('div'); leaveBtn.className = 'action-btn'; leaveBtn.style.padding = "10px"; leaveBtn.style.fontSize = "1.1rem"; leaveBtn.innerText = '🔙 返回大廳'; leaveBtn.onclick = () => { window.AudioEngine.playBGM('lobby'); window.AudioEngine.sfx.click(); document.getElementById('battle-screen').style.display = 'none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); }; actionsRow.appendChild(leaveBtn);
-            window.isAnimating = false;
-        };
-
-        window.promptLearnMove = (newMoveData) => {
-            return new Promise(resolve => {
-                const modal = document.getElementById('learn-move-modal'); document.getElementById('lm-new-name').innerText = MOVES[newMoveData.m].name; const grid = document.getElementById('lm-moves-grid'); grid.innerHTML = '';
-                window.player.moves.forEach((m, idx) => {
-                    const btn = document.createElement('button'); btn.className = 'btn'; btn.style.background = '#34495e'; btn.innerText = `忘記 【${m.name}】`;
-                    btn.onclick = async () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; let oldName = window.player.moves[idx].name; window.player.moves[idx] = { id: newMoveData.m, ...MOVES[newMoveData.m] }; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`忘記了【${oldName}】...\n並且學會了【${MOVES[newMoveData.m].name}】！`); await window.wait(800); window.pendingMoveToLearn = null; resolve(); }; grid.appendChild(btn);
-                });
-                document.getElementById('lm-cancel-btn').onclick = async () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; await window.typeDialog(`放棄學習【${MOVES[newMoveData.m].name}】了。`); await window.wait(600); window.pendingMoveToLearn = null; resolve(); };
-                modal.style.display = 'flex';
-            });
-        };
-
-        window.loseCombat = async () => {
-            if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('lose');
-            window.playAnim('player-sprite', 'anim-sink-player'); await window.wait(600);
-            let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
-            let msg = `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}`;
-            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg);
-            const leaveBtn = document.createElement('div'); leaveBtn.className = 'action-btn'; leaveBtn.style.padding = "10px 20px"; leaveBtn.style.fontSize = "1.2rem"; leaveBtn.style.background = "#7f8c8d"; leaveBtn.style.borderColor = "#616a6b"; leaveBtn.innerText = '🔙 拖著疲憊的身軀返回'; 
-            leaveBtn.onclick = () => { window.AudioEngine.playBGM('lobby'); window.AudioEngine.sfx.click(); document.getElementById('battle-screen').style.display='none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.saveData(); }; 
-            document.getElementById('battle-actions').appendChild(leaveBtn); window.isAnimating = false;
-        };
-
-        window.fleeCombat = async (isDefeat=false) => {
-            if(isDefeat) { if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('lose'); }
-            let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
-            let msg = isDefeat ? `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}` : `成功逃跑了！${p>0?`\n損失了 ${p} 點經驗...`:''}`;
-            document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg);
-            const leaveBtn = document.createElement('div'); leaveBtn.className = 'action-btn'; leaveBtn.style.padding = "10px 20px"; leaveBtn.style.fontSize = "1.2rem"; leaveBtn.innerText = '🔙 返回大地圖'; 
-            leaveBtn.onclick = () => { window.AudioEngine.playBGM('lobby'); window.AudioEngine.sfx.click(); document.getElementById('battle-screen').style.display='none'; window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.saveData(); }; 
-            document.getElementById('battle-actions').appendChild(leaveBtn); window.isAnimating = false;
-        };
-
-        // ================= PVP SYSTEM =================
-        window.openPvPMenu = () => {
-            if (!window.user) return window.showToast("必須連線才能對戰", "var(--boss)");
-            window.AudioEngine.sfx.click(); document.getElementById('pvp-modal').style.display = 'flex'; document.getElementById('pvp-menu-box').style.display = 'block'; document.getElementById('pvp-lobby-box').style.display = 'none';
-        };
-
-        window.createPvPRoom = async () => {
-            window.AudioEngine.sfx.click(); window.showToast("建立房間中...", "#f1c40f");
-            const roomId = Math.floor(1000 + Math.random() * 9000).toString();
-            window.pvpState = { role: 'host', roomId: roomId, unsub: null, turnProcessed: 0 };
-            const pData = { uid: window.user.uid, name: window.player.name, avatar: window.player.avatar, avatarId: window.player.avatarId, hp: window.player.stats.hp, maxHp: window.player.stats.maxHp, atk: window.player.stats.atk, ready: false, rematch: false, moves: window.player.moves };
-            try {
-                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', roomId), { host: pData, guest: null, state: 'lobby', turn: 0, action: null, quiz: null });
-                window.enterPvPLobby(roomId);
-            } catch(e) { window.showToast("建立失敗", "var(--boss)"); }
-        };
-
-        window.joinPvPRoom = async () => {
-            window.AudioEngine.sfx.click(); const roomId = document.getElementById('pvp-join-code').value.trim();
-            if(roomId.length !== 4) return window.showToast("請輸入4碼房號", "var(--boss)"); window.showToast("加入房間中...", "#f1c40f");
-            try {
-                const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', roomId); const snap = await window.getDoc(docRef);
-                if(snap.exists()) {
-                    const data = snap.data();
-                    if(data.guest) return window.showToast("房間已滿", "var(--boss)");
-                    window.pvpState = { role: 'guest', roomId: roomId, unsub: null, turnProcessed: 0 };
-                    const pData = { uid: window.user.uid, name: window.player.name, avatar: window.player.avatar, avatarId: window.player.avatarId, hp: window.player.stats.hp, maxHp: window.player.stats.maxHp, atk: window.player.stats.atk, ready: false, rematch: false, moves: window.player.moves };
-                    await window.updateDoc(docRef, { guest: pData });
-                    window.enterPvPLobby(roomId);
-                } else { window.showToast("房間不存在", "var(--boss)"); }
-            } catch(e) { window.showToast("加入失敗", "var(--boss)"); }
-        };
-
-        window.enterPvPLobby = (roomId) => {
-            document.getElementById('pvp-menu-box').style.display = 'none'; document.getElementById('pvp-lobby-box').style.display = 'block'; document.getElementById('pvp-room-id-display').innerText = roomId;
-            
-            const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', roomId);
-            window.pvpState.unsub = window.onSnapshot(docRef, (snap) => {
-                const data = snap.data(); if(!data) { window.leavePvPRoom(true); return; }
-                window.currentPvPData = data;
-                
-                if(data.state === 'lobby') {
-                    window.inPvPBattle = false;
-                    document.getElementById('battle-screen').style.display = 'none';
-                    document.getElementById('pvp-modal').style.display = 'flex';
-                    document.getElementById('pvp-menu-box').style.display = 'none';
-                    document.getElementById('pvp-lobby-box').style.display = 'block';
-                    
-                    document.getElementById('pvp-p1-avatar').src = data.host.avatar; document.getElementById('pvp-p1-name').innerText = data.host.name; document.getElementById('pvp-p1-status').innerText = data.host.ready ? "✅ 已準備" : "未準備"; document.getElementById('pvp-p1-status').style.color = data.host.ready ? "#2ecc71" : "#e74c3c";
-                    if(data.guest) {
-                        document.getElementById('pvp-p2-avatar').src = data.guest.avatar; document.getElementById('pvp-p2-name').innerText = data.guest.name; document.getElementById('pvp-p2-status').innerText = data.guest.ready ? "✅ 已準備" : "未準備"; document.getElementById('pvp-p2-status').style.color = data.guest.ready ? "#2ecc71" : "#e74c3c";
-                        document.getElementById('pvp-lobby-msg').innerText = "雙方皆已進入房間！"; document.getElementById('pvp-ready-btn').style.display = 'inline-block';
-                        
-                        if(window.pvpState.role === 'host') {
-                            document.getElementById('pvp-start-btn').style.display = 'inline-block';
-                            if (data.host.ready && data.guest.ready) {
-                                document.getElementById('pvp-start-btn').style.background = 'var(--primary)';
-                                document.getElementById('pvp-start-btn').disabled = false;
-                            } else {
-                                document.getElementById('pvp-start-btn').style.background = '#555';
-                                document.getElementById('pvp-start-btn').disabled = true;
-                            }
-                        } else {
-                            document.getElementById('pvp-start-btn').style.display = 'none';
-                        }
-                    } else {
-                        document.getElementById('pvp-p2-avatar').src = ''; document.getElementById('pvp-p2-name').innerText = "等待中"; document.getElementById('pvp-p2-status').innerText = "--"; document.getElementById('pvp-lobby-msg').innerText = "等待對手加入中..."; document.getElementById('pvp-ready-btn').style.display = 'none'; document.getElementById('pvp-start-btn').style.display = 'none';
-                    }
-                } else if(data.state === 'battling') {
-                    if(!window.inPvPBattle) {
-                        window.initPvPCombat();
-                    } else if (data.action) {
-                        window.processPvPTurn(data);
-                    } else if (!data.action && data.turn > window.pvpState.turnProcessed) {
-                        window.pvpState.turnProcessed = data.turn - 1; 
-                        window.renderPvPQuestion(data.quiz);
-                    }
-                } else if (data.state === 'finished') {
-                    if (data.host?.rematch && data.guest?.rematch && window.pvpState.role === 'host') {
-                        window.updateDoc(docRef, {
-                            state: 'lobby',
-                            'host.ready': false,
-                            'guest.ready': false,
-                            'host.rematch': false,
-                            'guest.rematch': false,
-                            'host.hp': window.player.stats.maxHp,
-                            'guest.hp': data.guest.maxHp,
-                            winner: null,
-                            turn: 0,
-                            action: null,
-                            quiz: null
-                        });
-                    }
-                }
-            });
-        };
-
-        window.togglePvPReady = async () => {
-            window.AudioEngine.sfx.click(); const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
-            const isReady = window.pvpState.role === 'host' ? !window.currentPvPData.host.ready : !window.currentPvPData.guest.ready;
-            const updateField = window.pvpState.role === 'host' ? { 'host.ready': isReady } : { 'guest.ready': isReady };
-            await window.updateDoc(docRef, updateField);
-            document.getElementById('pvp-ready-btn').innerText = isReady ? "取消準備" : "準備就緒";
-            document.getElementById('pvp-ready-btn').style.background = isReady ? "#e67e22" : "#2ecc71";
-        };
-
-        window.startPvPBattle = async () => {
-            window.AudioEngine.sfx.click();
-            const data = window.currentPvPData;
-            if (!data.host.ready || !data.guest.ready) return;
-            const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
-            const nextQuiz = window.quizBank[Math.floor(Math.random()*window.quizBank.length)];
-            await window.updateDoc(docRef, { state: 'battling', turn: 1, action: null, quiz: { question: nextQuiz.question, answer: nextQuiz.answer, wrongs: nextQuiz.wrongs }, 'host.hp': data.host.maxHp, 'guest.hp': data.guest.maxHp });
-        };
-
-        window.leavePvPRoom = async (forced = false) => {
-            window.AudioEngine.sfx.click(); if(window.pvpState.unsub) window.pvpState.unsub();
-            if(!forced && window.pvpState.roomId) {
-                try {
-                    if(window.pvpState.role === 'host') await window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId));
-                    else await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId), { guest: null });
-                } catch(e) {}
-            }
-            window.pvpState = { role: null, roomId: null, unsub: null, turnProcessed: 0 }; window.currentPvPData = null; window.inPvPBattle = false; window.isPvP = false;
-            document.getElementById('pvp-modal').style.display = 'none'; document.getElementById('battle-screen').style.display = 'none';
-            window.AudioEngine.playBGM('lobby');
-            if(forced) window.showToast("房間已關閉或對手已離開", "var(--boss)");
-        };
-
-        window.initPvPCombat = async () => {
-            window.inPvPBattle = true; window.isPvP = true; window.pvpState.turnProcessed = 0; document.getElementById('pvp-modal').style.display = 'none';
-            const data = window.currentPvPData; const me = window.pvpState.role === 'host' ? data.host : data.guest; const opp = window.pvpState.role === 'host' ? data.guest : data.host;
-            
-            window.AudioEngine.playBGM('battle');
-            document.getElementById('battle-scene').style.background = 'linear-gradient(to bottom, #8e44ad 0%, #9b59b6 50%, #2c3e50 50%, #1a1a1a 100%)';
-            
-            const playerSprite = document.getElementById('player-sprite');
-            const enemySprite = document.getElementById('enemy-sprite');
-            enemySprite.classList.remove('anim-sink-enemy', 'anim-dodge-enemy', 'anim-dmg');
-            playerSprite.classList.remove('anim-sink-player', 'anim-dodge-player', 'anim-dmg');
-            enemySprite.classList.add('anim-enter-enemy');
-            playerSprite.classList.add('anim-enter-player');
-            
-            playerSprite.src = me.avatar; enemySprite.src = opp.avatar;
-            playerSprite.style.height = SMALL_POKES.includes(Number(me.avatarId)) ? 'clamp(80px, 20vmin, 150px)' : '';
-            enemySprite.style.height = SMALL_POKES.includes(Number(opp.avatarId)) ? 'clamp(60px, 15vmin, 120px)' : '';
-            
-            document.getElementById('battle-player-name').innerText = me.name + " (你)"; document.getElementById('enemy-name').innerText = opp.name;
-            document.getElementById('battle-player-lvl').innerText = window.player.level; document.getElementById('enemy-lvl').innerText = "?";
-            document.getElementById('enemy-boss-tag').style.display = 'none';
-            
-            window.updateHpBar('player', me.hp, me.maxHp); window.updateHpBar('enemy', opp.hp, opp.maxHp);
-            document.getElementById('player-exp-container').style.display = 'none';
-            document.getElementById('battle-screen').style.display = 'flex'; document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
-            
-            window.AudioEngine.sfx.encounter();
-            await window.typeDialog(`連線對戰開始！\n${me.name} VS ${opp.name}`);
-            await window.wait(2200);
-            enemySprite.classList.remove('anim-enter-enemy');
-            playerSprite.classList.remove('anim-enter-player');
-
-            window.renderPvPQuestion(data.quiz);
-        };
-
-        window.renderPvPQuestion = (quizData) => {
-            if(!quizData) return; window.itemUsedThisTurn = false;
-            window.currentQuiz = { question: quizData.question, answer: quizData.answer };
-            window.currentOptions = [quizData.answer, ...quizData.wrongs].sort(() => Math.random() - 0.5);
-            window.typeDialog(`搶答題：\n【 ${quizData.question} 】`).then(() => {
-                const optionsDiv = document.getElementById('battle-options'); optionsDiv.innerHTML = '';
-                window.currentOptions.forEach(opt => { const btn = document.createElement('div'); btn.className = 'battle-btn'; btn.innerText = opt; btn.onclick = () => window.handlePvPAnswerSelection(opt); optionsDiv.appendChild(btn); });
-                
-                const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
-                const surrenderBtn = document.createElement('div'); 
-                surrenderBtn.className = 'action-btn flee'; 
-                surrenderBtn.innerText = '🏃‍♂️ 投降'; 
-                surrenderBtn.onclick = () => window.confirmPvPSurrender();
-                actionsRow.appendChild(surrenderBtn);
-            });
-        };
-
-        window.confirmPvPSurrender = () => {
-            window.AudioEngine.sfx.click();
-            const optionsDiv = document.getElementById('battle-options'); optionsDiv.innerHTML = '';
-            const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
-            
-            window.typeDialog("確定要投降嗎？\n投降後將直接判定失敗。");
-            
-            const yesBtn = document.createElement('div'); yesBtn.className = 'battle-btn'; yesBtn.style.background = '#e74c3c'; yesBtn.innerText = '確定投降';
-            yesBtn.onclick = async () => {
-                window.AudioEngine.sfx.click();
-                const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
-                await window.updateDoc(docRef, { action: { role: window.pvpState.role, surrender: true, turn: window.currentPvPData.turn } });
-            };
-            
-            const noBtn = document.createElement('div'); noBtn.className = 'battle-btn'; noBtn.style.background = '#95a5a6'; noBtn.innerText = '取消';
-            noBtn.onclick = () => { window.AudioEngine.sfx.click(); window.renderPvPQuestion(window.currentPvPData.quiz); };
-            
-            optionsDiv.appendChild(yesBtn); optionsDiv.appendChild(noBtn);
-        };
-
-        window.handlePvPAnswerSelection = async (opt) => {
-            if(window.currentPvPData.action) return; 
-            window.AudioEngine.sfx.click(); document.getElementById('battle-options').innerHTML = '';
-            let isCorrect = (opt === window.currentQuiz.answer);
-            let moveIdx = Math.floor(Math.random() * window.player.moves.length);
-            const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
-            await window.updateDoc(docRef, { action: { role: window.pvpState.role, correct: isCorrect, turn: window.currentPvPData.turn, moveIdx: moveIdx } });
-        };
-
-        window.processPvPTurn = async (data) => {
-            if(!data.action || data.action.turn <= window.pvpState.turnProcessed) return;
-            window.pvpState.turnProcessed = data.action.turn;
-            document.getElementById('battle-options').innerHTML = '';
-            document.getElementById('battle-actions').innerHTML = '';
-            
-            if (data.action.surrender) {
-                const loser = data.action.role;
-                const winner = loser === 'host' ? 'guest' : 'host';
-                const loserName = loser === 'host' ? data.host.name : data.guest.name;
-                await window.typeDialog(`🏳️ ${loserName} 舉起白旗投降了！`);
-                await window.wait(1000);
-                
-                if(window.pvpState.role === 'host') {
-                    await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId), { state: 'finished', winner: winner, [loser+'.hp']: 0 });
-                }
-                const meData = window.pvpState.role === 'host' ? data.host : data.guest;
-                window.updateHpBar(loser === window.pvpState.role ? 'player' : 'enemy', 0, meData.maxHp);
-                window.endPvPBattle(winner === window.pvpState.role);
-                return;
-            }
-
-            const isMe = data.action.role === window.pvpState.role;
-            const attacker = data.action.correct ? data.action.role : (data.action.role === 'host' ? 'guest' : 'host');
-            const defender = attacker === 'host' ? 'guest' : 'host';
-            const attackerName = attacker === window.pvpState.role ? "你" : (attacker === 'host' ? data.host.name : data.guest.name);
-            const aSprite = attacker === window.pvpState.role ? 'player-sprite' : 'enemy-sprite';
-            const dSprite = attacker === window.pvpState.role ? 'enemy-sprite' : 'player-sprite';
-            const aAtk = attacker === 'host' ? data.host.atk : data.guest.atk;
-            
-            const attackerData = attacker === 'host' ? data.host : data.guest;
-            const usedMove = attackerData.moves && attackerData.moves[data.action.moveIdx] ? attackerData.moves[data.action.moveIdx] : { name: "普通攻擊", anim: 'normal' };
-
-            let msg = isMe ? (data.action.correct ? `✅ 你答對了！\n準備發動攻擊！` : `❌ 你答錯了！\n破綻大開！`) : (data.action.correct ? `⚠️ 對手答對了！\n遭到攻擊！` : `✨ 對手答錯了！\n發動反擊！`);
-            await window.typeDialog(msg); await window.wait(600);
-            
-            await window.typeDialog(`${attackerName} 使用了\n【${usedMove.name}】！`); await window.wait(600);
-            
-            if (usedMove.anim) {
-                const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${usedMove.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600);
-            }
-
-            window.AudioEngine.sfx.attack(); window.playAnim(aSprite, attacker === window.pvpState.role ? 'anim-atk-player' : 'anim-atk-enemy'); await window.wait(200); 
-            window.AudioEngine.sfx.hit(); window.playAnim(dSprite, 'anim-dmg');
-            
-            let dmg = Math.max(1, aAtk + Math.floor(Math.random() * 5));
-            await window.typeDialog(`${attackerName} 造成了 ${dmg} 點傷害！`); await window.wait(600);
-            
-            if(window.pvpState.role === 'host') {
-                const newDefHp = Math.max(0, data[defender].hp - dmg);
-                const updateField = defender === 'host' ? { 'host.hp': newDefHp } : { 'guest.hp': newDefHp };
-                await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId), updateField);
-                
-                if(newDefHp <= 0) {
-                    await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId), { state: 'finished', winner: attacker });
-                } else {
-                    const nextQuiz = window.quizBank[Math.floor(Math.random()*window.quizBank.length)];
-                    await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId), { turn: data.turn + 1, action: null, quiz: { question: nextQuiz.question, answer: nextQuiz.answer, wrongs: nextQuiz.wrongs } });
-                }
-            }
-            
-            const meData = window.pvpState.role === 'host' ? data.host : data.guest;
-            const oppData = window.pvpState.role === 'host' ? data.guest : data.host;
-            let currentMeHp = meData.hp; let currentOppHp = oppData.hp;
-            if(defender === window.pvpState.role) currentMeHp = Math.max(0, currentMeHp - dmg); else currentOppHp = Math.max(0, currentOppHp - dmg);
-            window.updateHpBar('player', currentMeHp, meData.maxHp); window.updateHpBar('enemy', currentOppHp, oppData.maxHp);
-            
-            if(data.state === 'finished' || currentMeHp <= 0 || currentOppHp <= 0) {
-                window.endPvPBattle(currentMeHp > 0);
-            }
-        };
-
-        window.endPvPBattle = async (isWin) => {
-            if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause();
-            window.AudioEngine.playSFXTrack(isWin ? 'win' : 'lose');
-            
-            window.playAnim(isWin ? 'enemy-sprite' : 'player-sprite', isWin ? 'anim-sink-enemy' : 'anim-sink-player');
-            await window.wait(600);
-            
-            await window.typeDialog(isWin ? `🎉 對決勝利！你擊敗了對手！` : `💀 對決失敗...你被擊敗了。`);
-            
-            document.getElementById('battle-options').innerHTML = '';
-            const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
-            
-            const contBtn = document.createElement('div'); contBtn.className = 'action-btn'; contBtn.style.padding = "10px"; contBtn.style.fontSize = "1.1rem"; contBtn.style.background = "#2ecc71"; contBtn.style.borderColor = "#27ae60"; contBtn.innerText = '🔄 再來一局'; 
-            contBtn.onclick = async () => { 
-                window.AudioEngine.sfx.click(); 
-                const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
-                if(window.pvpState.role === 'host') {
-                    await window.updateDoc(docRef, { 'host.rematch': true });
-                } else {
-                    await window.updateDoc(docRef, { 'guest.rematch': true });
-                }
-                contBtn.innerText = "等待對手中...";
-                contBtn.style.background = "#e67e22";
-                contBtn.style.borderColor = "#d35400";
-                contBtn.style.pointerEvents = "none";
-            }; 
-            actionsRow.appendChild(contBtn);
-
-            const leaveBtn = document.createElement('div'); leaveBtn.className = 'action-btn'; leaveBtn.style.padding = "10px"; leaveBtn.style.fontSize = "1.1rem"; leaveBtn.innerText = '🔙 離開房間'; 
-            leaveBtn.onclick = () => { window.leavePvPRoom(); }; 
-            actionsRow.appendChild(leaveBtn);
-        };
-    </script>
-</body>
-</html>
+        // 修正：受擊動畫
