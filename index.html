@@ -432,7 +432,7 @@ window.MOE_DATA_STRING = `
                 </div>
                 <div style="font-size:2rem; font-weight:900; color:#9b59b6;">VS</div>
                 <div style="text-align:center;">
-                    <img id="pvp-p2-avatar" src="" style="width:60px; height:60px; image-rendering:pixelated; background:#333; border-radius:50%; border:2px solid #555;">
+                    <img id="pvp-p2-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' font-size='60' font-weight='bold' font-family='sans-serif' text-anchor='middle' dy='.3em' fill='%23aaa'%3E?%3C/text%3E%3C/svg%3E" style="width:60px; height:60px; image-rendering:pixelated; background:#333; border-radius:50%; border:2px solid #555;">
                     <div id="pvp-p2-name" style="color:#fff; font-weight:bold; margin-top:5px;">等待中</div>
                     <div id="pvp-p2-status" style="color:#e74c3c; font-size:0.8rem; font-weight:bold;">--</div>
                 </div>
@@ -1136,7 +1136,7 @@ window.MOE_DATA_STRING = `
         window.openSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); if(window.player && window.player.settings) document.getElementById('auto-open-chest-toggle').checked = window.player.settings.autoOpenChest; document.getElementById('settings-modal').style.display = 'flex'; };
         window.closeSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); document.getElementById('settings-modal').style.display = 'none'; };
         window.toggleAutoOpenChest = (val) => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); if(!window.player.settings) window.player.settings = {}; window.player.settings.autoOpenChest = val; window.saveData(); };
-        window.requestAppFullscreen = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch(e) {} };
+        window.requestAppFullscreen = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); try { if (!document.fullscreenElement) { let p = document.documentElement.requestFullscreen(); if(p) p.catch(e=>console.warn("Fullscreen error", e)); } else { let p = document.exitFullscreen(); if(p) p.catch(e=>console.warn("Fullscreen error", e)); } } catch(e) { console.warn(e); } };
         window.getLocalQuizData = () => { const d = localStorage.getItem('wordHunterQuizData'); return (d && d.trim().length > 20) ? d : window.MOE_DATA_STRING; };
         window.saveLocalQuizData = (rawStr) => { localStorage.setItem('wordHunterQuizData', rawStr); const d = document.getElementById('db-last-update'); if(d) d.innerText = new Date().toLocaleString(); };
         window.parseQuizData = (rawStr) => { window.quizBank = []; if(!rawStr) return; window.currentRawQuizData = rawStr; rawStr.trim().split('\n').forEach(line => { if(!line || line.startsWith('//')) return; const parts = line.split('|'); if(parts.length === 4) { window.quizBank.push({ question: window.formatZhuyin(parts[1]), answer: window.formatZhuyin(parts[2]), wrongs: parts[3].split(',').map(w => window.formatZhuyin(w)) }); } }); };
@@ -1363,7 +1363,7 @@ window.MOE_DATA_STRING = `
         };
 
         window.refreshShopEquipments = () => { const now = Date.now(); const twelveHours = 12 * 60 * 60 * 1000; if (!window.player.shopEquips || !Array.isArray(window.player.shopEquips) || !window.player.shopLastRefresh || now - window.player.shopLastRefresh >= twelveHours) { window.player.shopEquips = []; for(let i=0; i<10; i++) window.player.shopEquips.push(window.generateRandomItemFromChest(0, true)); window.player.shopLastRefresh = now; window.saveData(); } };
-        window.updateShopTimer = () => { const now = Date.now(); const diff = (window.player.shopLastRefresh + 12 * 60 * 60 * 1000) - now; if (diff <= 0) { window.refreshShopEquipments(); window.renderShop(); } else { const h = Math.floor(diff / 3600000).toString().padStart(2, '0'); const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0'); const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0'); const timerEl = document.getElementById('shop-refresh-timer'); if(timerEl) timerEl.innerText = `${h}:${m}:${s}`; } };
+        window.updateShopTimer = () => { if(!window.player) return; const now = Date.now(); const diff = (window.player.shopLastRefresh + 12 * 60 * 60 * 1000) - now; if (diff <= 0) { window.refreshShopEquipments(); window.renderShop(); } else { const h = Math.floor(diff / 3600000).toString().padStart(2, '0'); const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0'); const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0'); const timerEl = document.getElementById('shop-refresh-timer'); if(timerEl) timerEl.innerText = `${h}:${m}:${s}`; } };
 
         window.renderShop = () => {
             document.getElementById('shop-gold-display').innerText = window.player.gold || 0;
@@ -1898,10 +1898,11 @@ window.MOE_DATA_STRING = `
                             document.getElementById('pvp-start-btn').style.display = 'none';
                         }
                     } else {
-                        document.getElementById('pvp-p2-avatar').src = ''; document.getElementById('pvp-p2-name').innerText = "等待中"; document.getElementById('pvp-p2-status').innerText = "--"; document.getElementById('pvp-lobby-msg').innerText = "等待對手加入中..."; document.getElementById('pvp-ready-btn').style.display = 'none'; document.getElementById('pvp-start-btn').style.display = 'none';
+                        document.getElementById('pvp-p2-avatar').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' font-size='60' font-weight='bold' font-family='sans-serif' text-anchor='middle' dy='.3em' fill='%23aaa'%3E?%3C/text%3E%3C/svg%3E"; document.getElementById('pvp-p2-name').innerText = "等待中"; document.getElementById('pvp-p2-status').innerText = "--"; document.getElementById('pvp-lobby-msg').innerText = "等待對手加入中..."; document.getElementById('pvp-ready-btn').style.display = 'none'; document.getElementById('pvp-start-btn').style.display = 'none';
                     }
                 } else if(data.state === 'battling') {
-                    if(!window.inPvPBattle) {
+                    let isNewMatch = (data.turn === 1 && !data.action && window.pvpState.turnProcessed !== 0);
+                    if(!window.inPvPBattle || isNewMatch) {
                         window.initPvPCombat();
                     } else if (data.action) {
                         window.processPvPTurn(data);
@@ -1911,18 +1912,17 @@ window.MOE_DATA_STRING = `
                     }
                 } else if (data.state === 'finished') {
                     if (data.host?.rematch && data.guest?.rematch && window.pvpState.role === 'host') {
+                        const nextQuiz = window.quizBank[Math.floor(Math.random()*window.quizBank.length)];
                         window.updateDoc(docRef, {
-                            state: 'lobby',
-                            'host.ready': false,
-                            'guest.ready': false,
-                            'host.rematch': false,
-                            'guest.rematch': false,
+                            state: 'battling',
                             'host.hp': window.player.stats.maxHp,
                             'guest.hp': data.guest.maxHp,
+                            'host.rematch': false,
+                            'guest.rematch': false,
                             winner: null,
-                            turn: 0,
+                            turn: 1,
                             action: null,
-                            quiz: null
+                            quiz: { question: nextQuiz.question, answer: nextQuiz.answer, wrongs: nextQuiz.wrongs }
                         });
                     }
                 }
