@@ -333,7 +333,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260417</div><div>題庫版本：20260421</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260501 (PvP連線對戰版)</div>
             </div>
         </div>
     </div>
@@ -876,7 +876,31 @@ window.MOE_DATA_STRING = `
             m_sacredfire: {name:"神聖之火", type:'damage', power:100, anim:'fire', desc:"神秘燃燒的火焰，可能會造成灼傷。"},
             m_sacredfire2: {name:"聖之火焰", type:'damage', power:120, anim:'fire', desc:"淨化一切邪惡的聖火，威力巨大。"},
             m_extremespeed: {name:"神速", type:'damage', power:80, anim:'normal', desc:"以迅雷不及掩耳之勢突擊對手。"},
-            m_surf: {name:"衝浪", type:'damage', power:90, anim:'water', desc:"利用大浪攻擊對手。"}
+            m_surf: {name:"衝浪", type:'damage', power:90, anim:'water', desc:"利用大浪攻擊對手。"},
+            m_pound: {name:"拍擊", type:'damage', power:40, anim:'normal', desc:"用長長的尾巴或手拍打對手。"},
+            m_transform: {name:"變身", type:'buff', stat:'dodge', amount:0.2, anim:'normal', desc:"改變自己的細胞，提升閃避率。"},
+            m_psywave: {name:"精神波", type:'damage', power:50, anim:'normal', desc:"向對手發射神奇的念力波。"},
+            m_thundershock: {name:"電擊", type:'damage', power:40, anim:'electric', desc:"發出電流攻擊對手。"},
+            m_growl: {name:"叫聲", type:'debuff', stat:'atk', amount:5, anim:'normal', desc:"發出可愛的叫聲降低對手攻擊。"},
+            m_shockwave: {name:"電擊波", type:'damage', power:60, anim:'electric', desc:"發射快速的電流，必定命中。"},
+            m_thunderbolt: {name:"十萬伏特", type:'damage', power:90, anim:'electric', desc:"向對手發出強力的電流。"},
+            m_discharge: {name:"放電", type:'damage', power:80, anim:'electric', desc:"釋放周圍的電流攻擊。"},
+            m_thunder: {name:"打雷", type:'damage', power:110, anim:'electric', desc:"向對手劈下落雷。"},
+            m_waterpulse: {name:"水之波動", type:'damage', power:60, anim:'water', desc:"用水的震動攻擊對手。"},
+            m_smokescreen: {name:"煙幕", type:'buff', stat:'dodge', amount:0.15, anim:'normal', desc:"噴出煙幕提升閃避率。"},
+            m_watershuriken: {name:"飛水手裡劍", type:'damage', power:75, anim:'water', desc:"用黏液製成的手裡劍連續攻擊。"},
+            m_nightslash: {name:"暗襲要害", type:'damage', power:70, anim:'dark', critBonus:0.2, desc:"容易擊中要害的劈斬。"},
+            m_hydropump: {name:"水炮", type:'damage', power:110, anim:'water', desc:"向對手猛烈地噴射大量水。"},
+            m_liquidation: {name:"水流裂破", type:'damage', power:85, anim:'water', desc:"用水之力量撞擊，可能降低防禦。"},
+            m_fairywind: {name:"妖精之風", type:'damage', power:40, anim:'normal', desc:"颳起妖精之風攻擊對手。"},
+            m_drainingkiss: {name:"吸取之吻", type:'drain', power:50, anim:'normal', desc:"吸取對手HP來回復自己。"},
+            m_disarmingvoice: {name:"魅惑之聲", type:'damage', power:40, anim:'normal', desc:"發出魅惑的聲音攻擊。"},
+            m_lightscreen: {name:"光牆", type:'buff', stat:'def', amount:20, anim:'normal', desc:"製造出神奇的牆壁提升防禦。"},
+            m_astonish: {name:"驚嚇", type:'damage', power:30, anim:'dark', desc:"大叫驚嚇對手。"},
+            m_shadowclaw: {name:"暗影爪", type:'damage', power:70, anim:'dark', critBonus:0.2, desc:"用暗影做成的爪子劈開對手，容易擊中要害。"},
+            m_playrough: {name:"嬉鬧", type:'damage', power:90, anim:'normal', desc:"與對手猛烈地嬉鬧攻擊。"},
+            m_charm: {name:"魅惑", type:'debuff', stat:'atk', amount:10, anim:'normal', desc:"凝視對手使其大幅降低攻擊。"},
+            m_flamewheel: {name:"火焰輪", type:'damage', power:60, anim:'fire', desc:"讓火焰覆蓋全身猛撞。"}
         };
         
         window.POKEMON_LEARNSETS = {
@@ -888,6 +912,14 @@ window.MOE_DATA_STRING = `
             "478": [{lv:1,m:'m_iceshard'},{lv:1,m:'m_leer'},{lv:20,m:'m_icywind'},{lv:30,m:'m_icebeam'},{lv:40,m:'m_destinybond'}],
             "407": [{lv:1,m:'m_absorb'},{lv:1,m:'m_poison'},{lv:20,m:'m_razorleaf'},{lv:30,m:'m_stunspore'},{lv:40,m:'m_petaldance'}],
             "477": [{lv:1,m:'m_shadowpunch'},{lv:1,m:'m_leer'},{lv:20,m:'m_nightshade'},{lv:30,m:'m_curse'},{lv:40,m:'m_hyperbeam'}],
+            "151": [{lv:1,m:'m_pound'},{lv:10,m:'m_transform'},{lv:20,m:'m_psywave'},{lv:30,m:'m_psychic'},{lv:40,m:'m_recover'},{lv:50,m:'m_aurasphere'},{lv:60,m:'m_psystrike'}],
+            "25": [{lv:1,m:'m_thundershock'},{lv:5,m:'m_growl'},{lv:10,m:'m_quickattack'},{lv:15,m:'m_shockwave'},{lv:20,m:'m_thunderbolt'},{lv:30,m:'m_discharge'},{lv:40,m:'m_thunder'}],
+            "6": [{lv:1,m:'m_scratch'},{lv:1,m:'m_growl'},{lv:9,m:'m_ember'},{lv:15,m:'m_dragonrage'},{lv:24,m:'m_slash'},{lv:36,m:'m_flamethrower'},{lv:46,m:'m_firespin'},{lv:55,m:'m_fireblast'}],
+            "658": [{lv:1,m:'m_bubble'},{lv:8,m:'m_quickattack'},{lv:15,m:'m_waterpulse'},{lv:20,m:'m_smokescreen'},{lv:28,m:'m_watershuriken'},{lv:36,m:'m_nightslash'},{lv:44,m:'m_hydropump'},{lv:52,m:'m_liquidation'}],
+            "700": [{lv:1,m:'m_tackle'},{lv:1,m:'m_growl'},{lv:15,m:'m_fairywind'},{lv:20,m:'m_drainingkiss'},{lv:30,m:'m_moonblast'},{lv:40,m:'m_disarmingvoice'},{lv:50,m:'m_lightscreen'}],
+            "778": [{lv:1,m:'m_scratch'},{lv:1,m:'m_astonish'},{lv:10,m:'m_shadowclaw'},{lv:20,m:'m_playrough'},{lv:30,m:'m_curse'},{lv:40,m:'m_charm'},{lv:50,m:'m_destinybond'}],
+            "609": [{lv:1,m:'m_astonish'},{lv:1,m:'m_ember'},{lv:20,m:'m_nightshade'},{lv:30,m:'m_flamewheel'},{lv:40,m:'m_shadowball'},{lv:50,m:'m_flamethrower'},{lv:60,m:'m_fireblast'}],
+            "359": [{lv:1,m:'m_scratch'},{lv:1,m:'m_leer'},{lv:10,m:'m_pursuit'},{lv:20,m:'m_slash'},{lv:30,m:'m_crunch'},{lv:40,m:'m_swordsdance'},{lv:50,m:'m_nightslash'}],
             
             // Enemies
             "10": [{lv:1,m:'m_tackle'}], "16": [{lv:1,m:'m_quickattack'}], "19": [{lv:1,m:'m_tailwhip'},{lv:1,m:'m_tackle'}], "18": [{lv:1,m:'m_gust'},{lv:1,m:'m_wingattack'}],
@@ -895,7 +927,7 @@ window.MOE_DATA_STRING = `
             "41": [{lv:1,m:'m_leechlife'},{lv:1,m:'m_supersonic'}], "66": [{lv:1,m:'m_karatechop'},{lv:1,m:'m_crosschop'}], "74": [{lv:1,m:'m_rockthrow'},{lv:1,m:'m_earthquake'}], "95": [{lv:1,m:'m_earthquake'},{lv:1,m:'m_slam'}],
             "92": [{lv:1,m:'m_hypnosis'},{lv:1,m:'m_nightshade'}], "200": [{lv:1,m:'m_confuseray'},{lv:1,m:'m_destinybond'}], "353": [{lv:1,m:'m_curse'},{lv:1,m:'m_shadowball'}], "94": [{lv:1,m:'m_dreameater'},{lv:1,m:'m_nightshade'}],
             "123": [{lv:1,m:'m_quickattack'},{lv:1,m:'m_swordsdance'}], "127": [{lv:1,m:'m_guillotine'},{lv:1,m:'m_visegrip'}], "214": [{lv:1,m:'m_hornattack'},{lv:1,m:'m_megahorn'}], "143": [{lv:1,m:'m_bodyslam'},{lv:1,m:'m_rest'},{lv:1,m:'m_snore'}],
-            "126": [{lv:1,m:'m_firepunch'},{lv:1,m:'m_flamethrower'}], "218": [{lv:1,m:'m_rocktomb'},{lv:1,m:'m_fireblast'}], "324": [{lv:1,m:'m_ember'},{lv:1,m:'m_flamethrower'}], "6": [{lv:1,m:'m_fireblast'},{lv:1,m:'m_firespin'},{lv:1,m:'m_hyperbeam'}],
+            "126": [{lv:1,m:'m_firepunch'},{lv:1,m:'m_flamethrower'}], "218": [{lv:1,m:'m_rocktomb'},{lv:1,m:'m_fireblast'}], "324": [{lv:1,m:'m_ember'},{lv:1,m:'m_flamethrower'}],
             "124": [{lv:1,m:'m_icywind'},{lv:1,m:'m_icepunch'},{lv:1,m:'m_lovelykiss'}], "215": [{lv:1,m:'m_iceshard'},{lv:1,m:'m_pursuit'},{lv:1,m:'m_nastyplot'}], "361": [{lv:1,m:'m_iceshard'},{lv:1,m:'m_bite'},{lv:1,m:'m_protect'}], "144": [{lv:1,m:'m_icebeam'},{lv:1,m:'m_blizzard'},{lv:1,m:'m_reflect'},{lv:1,m:'m_agility'}],
             "130": [{lv:1,m:'m_bite'},{lv:1,m:'m_watergun'},{lv:1,m:'m_hyperbeam'}], "142": [{lv:1,m:'m_wingattack'},{lv:1,m:'m_rockslide'},{lv:1,m:'m_agility'}], "149": [{lv:1,m:'m_hyperbeam'},{lv:1,m:'m_outrage'},{lv:1,m:'m_roost'},{lv:1,m:'m_agility'}],
             "248": [{lv:1,m:'m_crunch'},{lv:1,m:'m_rockslide'},{lv:1,m:'m_earthquake'},{lv:1,m:'m_icefang_fear'}], "376": [{lv:1,m:'m_meteormash'},{lv:1,m:'m_metalclaw'},{lv:1,m:'m_psychic'},{lv:1,m:'m_flashcannon'}], "373": [{lv:1,m:'m_firefang'},{lv:1,m:'m_dragondance'},{lv:1,m:'m_outrage'},{lv:1,m:'m_hyperbeam'}], "249": [{lv:1,m:'m_aeroblast'},{lv:1,m:'m_psychic'},{lv:1,m:'m_recover'},{lv:1,m:'m_hyperbeam'}],
@@ -916,7 +948,7 @@ window.MOE_DATA_STRING = `
         const dailyRewards=[{day:1,gold:50,item:'hp1',count:1},{day:2,gold:100,item:'atk1',count:1},{day:3,gold:150,item:'hp1',count:3},{day:4,gold:200,item:'def1',count:1},{day:5,gold:300,item:'hp1',count:5},{day:6,gold:400,item:'atk1',count:2},{day:7,gold:500,item:'hp1',count:10,extra:'equip'}];
         
         let mapZones=[];
-        const pokeNames={10:"綠毛蟲",16:"波波",19:"小拉達",18:"大比鳥",43:"走路草",46:"派拉斯",52:"喵喵",45:"霸王花",41:"超音蝠",66:"腕力",74:"小拳石",95:"大岩蛇",92:"鬼斯",200:"夢妖",353:"怨影娃娃",94:"耿鬼",123:"飛天螳螂",127:"大甲",214:"赫拉克羅斯",143:"卡比獸",126:"鴨嘴火獸",218:"熔岩蟲",324:"煤炭龜",6:"噴火龍",124:"迷唇姐",215:"紐拉",361:"雪童子",144:"急凍鳥",130:"暴鯉龍",68:"怪力",142:"化石翼龍",149:"快龍",248:"班基拉斯",376:"巨金怪",373:"暴飛龍",249:"洛奇亞",250:"鳳王",445:"烈咬陸鯊",635:"三首惡龍",612:"雙斧戰龍",150:"超夢",384:"烈空坐", 183:"瑪力露", 222:"太陽珊瑚", 72:"瑪瑙水母", 226:"巨翅飛魚"};
+        const pokeNames={10:"綠毛蟲",16:"波波",19:"小拉達",18:"大比鳥",43:"走路草",46:"派拉斯",52:"喵喵",45:"霸王花",41:"超音蝠",66:"腕力",74:"小拳石",95:"大岩蛇",92:"鬼斯",200:"夢妖",353:"怨影娃娃",94:"耿鬼",123:"飛天螳螂",127:"大甲",214:"赫拉克羅斯",143:"卡比獸",126:"鴨嘴火獸",218:"熔岩蟲",324:"煤炭龜",6:"噴火龍",124:"迷唇姐",215:"紐拉",361:"雪童子",144:"急凍鳥",130:"暴鯉龍",68:"怪力",142:"化石翼龍",149:"快龍",248:"班基拉斯",376:"巨金怪",373:"暴飛龍",249:"洛奇亞",250:"鳳王",445:"烈咬陸鯊",635:"三首惡龍",612:"雙斧戰龍",150:"超夢",384:"烈空坐", 183:"瑪力露", 222:"太陽珊瑚", 72:"瑪瑙水母", 226:"巨翅飛魚", 151:"夢幻", 25:"皮卡丘", 658:"甲賀忍蛙", 700:"仙子伊布", 778:"謎擬Q", 609:"水晶燈火靈", 359:"阿勃梭魯"};
         const chestNames=["破舊木寶箱","堅固鐵寶箱","閃亮銅寶箱","精緻銀寶箱","璀璨金寶箱","稀有白金寶箱","紫水晶寶箱","傳說翡翠寶箱","史詩鑽石寶箱","幻之星龍寶箱"];
         
         const avatarDatabase=[
@@ -927,12 +959,26 @@ window.MOE_DATA_STRING = `
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/282.gif",
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/478.gif",
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/407.gif",
-            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/477.gif"
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/477.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/151.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/6.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/658.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/700.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/778.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/609.gif",
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/359.gif"
         ];
         
         const nameDataObj={prefixes:["真新鎮","常磐市","尼比市","華藍市","枯葉市","紫苑鎮","紅蓮島"],suffixes:["小智","小茂","訓練家","冠軍","培育家","大師","捕蟲少年"]};
-        window.getSprite = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
-        const SMALL_POKES = [10, 16, 19, 43, 46, 52, 41, 66, 74, 92, 200, 353, 361, 183, 222, 72];
+        window.getSprite = (id) => {
+            const numId = Number(id);
+            if (numId > 649) {
+                return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`;
+            }
+            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
+        };
+        const SMALL_POKES = [10, 16, 19, 43, 46, 52, 41, 66, 74, 92, 200, 353, 361, 183, 222, 72, 25, 151, 778];
 
         // ======= 玩家狀態 & PvP 狀態 =======
         window.isAnimating = false; window.selectedAvatarUrl = avatarDatabase[0];
