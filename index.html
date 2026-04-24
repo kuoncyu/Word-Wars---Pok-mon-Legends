@@ -333,7 +333,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260424A</div><div>題庫版本：20260417</div><div>更新資訊：新增八款寶可夢角色、修復對戰圖片顯示錯誤</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>開發工具：Gemini</div><div>程式版本：20260501 (PvP連線對戰版)</div>
             </div>
         </div>
     </div>
@@ -1533,7 +1533,7 @@ window.MOE_DATA_STRING = `
         window.showEnemyInfo = (id, minLv, isBoss, isRaid) => {
             window.AudioEngine.sfx.click(); document.getElementById('ei-name').innerText = pokeNames[id] || '???'; document.getElementById('ei-sprite').src = window.getSprite(id);
             let eLv = isRaid ? window.player.level : (minLv + 5); 
-            document.getElementById('ei-lvl').innerText = `~${eLv}`; document.getElementById('ei-hp').innerText = Math.floor(eLv * (isBoss ? 35 : 10) + (isBoss ? 180 : 30)); document.getElementById('ei-atk').innerText = Math.floor((eLv * 2 + 5) * (isBoss ? 1.2 : 1)); document.getElementById('ei-dodge').innerText = isBoss ? "30%" : "0%";
+            document.getElementById('ei-lvl').innerText = `~${eLv}`; document.getElementById('ei-hp').innerText = Math.floor(eLv * (isBoss ? 35 : 10) + (isBoss ? 180 : 30)) * 2; document.getElementById('ei-atk').innerText = Math.floor((eLv * 2 + 5) * (isBoss ? 1.2 : 1)); document.getElementById('ei-dodge').innerText = isBoss ? "30%" : "0%";
             let eMoves = window.getEnemyMoves(id.toString(), eLv, isBoss, window.inspectingZoneIdx);
             document.getElementById('ei-moves').innerHTML = eMoves.map(m => `<div style="background:#222; border:1px solid #444; padding:5px; border-radius:4px; text-align:center; font-size:0.9rem; color:#fff; cursor:pointer;" onclick="window.showToast('${m.name}: ${m.desc}', '#e74c3c')">${m.name}</div>`).join('');
             document.getElementById('enemy-info-modal').style.display = 'flex';
@@ -1562,7 +1562,7 @@ window.MOE_DATA_STRING = `
             let eLv = baseLv + (isBossEncounter ? 2 : 0);
             let spriteId = isBossEncounter ? zone.bosses[Math.floor(Math.random() * zone.bosses.length)] : zone.enemies[Math.floor(Math.random() * zone.enemies.length)]; window.currentCombatZoneLevel = eLv; window.inspectingZoneIdx = zoneIdx;
             
-            let eMaxHp = Math.floor(eLv * (isBossEncounter ? 35 : 10) + (isBossEncounter ? 180 : 30)); let eAtk = Math.floor((eLv * 2 + 5) * (isBossEncounter ? 1.2 : 1));
+            let eMaxHp = Math.floor(eLv * (isBossEncounter ? 35 : 10) + (isBossEncounter ? 180 : 30)) * 2; let eAtk = Math.floor((eLv * 2 + 5) * (isBossEncounter ? 1.2 : 1));
             window.currentEnemy = { name: pokeNames[spriteId] || "野生寶可夢", level: eLv, maxHp: eMaxHp, hp: eMaxHp, atk: eAtk, def: Math.floor(eLv * 1.5), sprite: window.getSprite(spriteId), isBoss: isBossEncounter, dodgeRate: isBossEncounter ? 0.3 : 0, moves: window.getEnemyMoves(spriteId.toString(), eLv, isBossEncounter, zoneIdx) };
             
             window.AudioEngine.playBGM(isBossEncounter ? 'boss' : 'battle');
@@ -1748,7 +1748,9 @@ window.MOE_DATA_STRING = `
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
             await window.typeDialog(`${window.currentEnemy.name} 倒下了！\n戰鬥勝利！`); await window.wait(500);
             
-            let expGain = Math.floor(Math.random() * 5) + window.currentEnemy.level * 2; let goldGain = Math.floor(Math.random() * 15) + window.currentEnemy.level * 5; 
+            let baseExpGain = Math.floor(Math.random() * 5) + window.currentEnemy.level * 2;
+            let expGain = window.currentEnemy.isBoss ? baseExpGain * 5 : baseExpGain * 2;
+            let goldGain = Math.floor(Math.random() * 15) + window.currentEnemy.level * 5; 
             if(mapZones[window.inspectingZoneIdx] && mapZones[window.inspectingZoneIdx].isWeekendRaid) { expGain *= 2; goldGain *= 2; }
             
             window.player.gold += goldGain; await window.typeDialog(`獲得了 ${expGain} 點經驗值\n獲得了 💰${goldGain} 金幣！`); await window.wait(600);
