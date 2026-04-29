@@ -1401,8 +1401,8 @@ window.MOE_DATA_STRING = `
             if (!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} }; 
             
             // 校正舊版存檔的經驗值上限
-            if (!window.player.maxExp || window.player.maxExp < window.player.level * 500) {
-                window.player.maxExp = window.player.level * 500;
+            if (!window.player.maxExp || window.player.maxExp < window.player.level * 100) {
+                window.player.maxExp = window.player.level * 100;
             }
 
             window.checkWeeklyReset(); window.recalcStats(); 
