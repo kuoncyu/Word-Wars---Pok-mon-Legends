@@ -333,7 +333,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260428</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
             </div>
         </div>
     </div>
@@ -1401,8 +1401,8 @@ window.MOE_DATA_STRING = `
             if (!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} }; 
             
             // 校正舊版存檔的經驗值上限
-            if (!window.player.maxExp || window.player.maxExp < window.player.level * 100) {
-                window.player.maxExp = window.player.level * 100;
+            if (!window.player.maxExp || window.player.maxExp < window.player.level * 500) {
+                window.player.maxExp = window.player.level * 500;
             }
 
             window.checkWeeklyReset(); window.recalcStats(); 
@@ -1461,7 +1461,7 @@ window.MOE_DATA_STRING = `
                 window.player.consumables[id]--;
                 window.player.level++;
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
-                window.player.maxExp = window.player.level * 100; // 更新下一級的經驗值要求
+                window.player.maxExp = window.player.level * 500; // 更新下一級的經驗值要求
                 window.AudioEngine.playSFXTrack('levelup');
                 window.showToast(`✨ 吃下了神奇軟糖！達到了 Lv.${window.player.level}！`, '#f1c40f');
             } else if (item.type === 'change_char') {
@@ -2038,13 +2038,13 @@ window.handleAnswerSelection = async (opt) => {
             window.updateUI(); window.saveData(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(600); window.typeDialog(`請選擇正確讀音或國字：\n【 ${window.currentQuiz.question} 】`).then(() => window.renderBattleOptions());
         };
 
-       window.winCombat = async () => {
+window.winCombat = async () => {
             if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('win');
             window.playAnim('enemy-sprite', 'anim-sink-enemy'); await window.wait(600);
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
             await window.typeDialog(`${window.currentEnemy.name} 倒下了！\n戰鬥勝利！`); await window.wait(500);
             
-            // 【修改點】：小怪經驗約等於 等級 * 10，Boss 經驗為 5 倍
+            // 小怪經驗約等於 等級 * 10，Boss 經驗為 5 倍
             let baseExpGain = (window.currentEnemy.level * 10) + Math.floor(Math.random() * 5);
             let expGain = window.currentEnemy.isBoss ? baseExpGain * 5 : baseExpGain;
             
@@ -2060,7 +2060,7 @@ window.handleAnswerSelection = async (opt) => {
             while (window.player.exp >= window.player.maxExp) {
                 expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = '100%'; await window.wait(600);
                 
-                // 【修改點】：升級後，下一級的經驗值要求設為 等級 * 100
+                // 【修改點】：升級後，下一級的經驗值要求大幅下修，設為 等級 * 100
                 window.player.level++; 
                 window.player.exp -= window.player.maxExp; 
                 window.player.maxExp = window.player.level * 100; 
