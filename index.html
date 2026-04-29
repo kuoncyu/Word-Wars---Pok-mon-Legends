@@ -102,7 +102,8 @@ window.MOE_DATA_STRING = `
         .tab-page.active { display: block; }
         .stat-card { background: var(--panel-bg); border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
         .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 15px; }
-        .profile-avatar { width: 80px; height: 80px; border-radius: 10px; border: 2px solid var(--accent); background: #111; object-fit: contain; padding: 5px; image-rendering: pixelated; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 10px; border: 2px solid var(--accent); background: #111; object-fit: contain; padding: 5px; image-rendering: pixelated; cursor: pointer; transition: transform 0.2s; }
+        .profile-avatar:active { transform: scale(0.95); }
         .profile-gold { color: #f1c40f !important; font-weight: bold; text-shadow: 0 0 5px rgba(241,196,15,0.5); }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-item { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; text-align: center; }
@@ -333,7 +334,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429a</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
             </div>
         </div>
     </div>
@@ -597,7 +598,7 @@ window.MOE_DATA_STRING = `
         <div id="tab-battle" class="tab-page active">
             <div class="stat-card">
                 <div class="profile-header">
-                    <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar">
+                    <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
                     <div class="profile-info">
                         <h3 id="ui-name">無名獵人</h3>
                         <p>等級 <span id="ui-level" style="color:var(--luck); font-weight:bold;">1</span></p>
