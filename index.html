@@ -333,12 +333,12 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260428</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
             </div>
         </div>
     </div>
 
-    <!-- 管理員介面 -->
+    <!-- 管理員介面 -->https://github.com/kuoncyu/Word-Wars---Pok-mon-Legends/blob/main/index.html
     <div id="admin-modal" class="modal-overlay" style="z-index: 8000;">
         <div class="modal-box" style="padding: 25px; background:#2c3e50; border-color:#e74c3c;">
             <h2 style="color:var(--boss); margin-top:0;">🛡️ 管理員專區</h2>
@@ -1035,7 +1035,7 @@ window.MOE_DATA_STRING = `
 
         // ======= 玩家狀態 & PvP 狀態 =======
         window.isAnimating = false; window.selectedAvatarUrl = avatarDatabase[0];
-       window.player = { bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null }, name: "無名獵人", account: "", password: "", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 500, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true } };
+       window.player = { bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null }, name: "無名獵人", account: "", password: "", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 100, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true } };
         window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; 
         window.itemUsedThisTurn = false; window.lastQuiz = null; window.pendingMoveToLearn = null; window.currentEnemy = {}; window.currentQuiz = null; window.currentOptions = []; window.currentCombatZoneLevel = 1; window.currentChestTier = 1; window.inspectingZoneIdx = 0;
         
@@ -1400,9 +1400,9 @@ window.MOE_DATA_STRING = `
             if (!window.player.buffs) window.player.buffs = { expMulti: 1, expExpire: 0, goldMulti: 1, goldExpire: 0 }; 
             if (!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} }; 
             
-            // 校正舊版存檔的經驗值上限
-            if (!window.player.maxExp || window.player.maxExp < window.player.level * 500) {
-                window.player.maxExp = window.player.level * 500;
+            // 【修改點】：校正舊版存檔的經驗值上限，將原本的計算方式改為 等級 * 100
+            if (!window.player.maxExp || window.player.maxExp !== window.player.level * 100) {
+                window.player.maxExp = window.player.level * 100;
             }
 
             window.checkWeeklyReset(); window.recalcStats(); 
@@ -1461,7 +1461,8 @@ window.MOE_DATA_STRING = `
                 window.player.consumables[id]--;
                 window.player.level++;
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
-                window.player.maxExp = window.player.level * 500; // 更新下一級的經驗值要求
+                // 【修改點】：軟糖升級後，下一級經驗值要求改為 等級 * 100
+                window.player.maxExp = window.player.level * 100; 
                 window.AudioEngine.playSFXTrack('levelup');
                 window.showToast(`✨ 吃下了神奇軟糖！達到了 Lv.${window.player.level}！`, '#f1c40f');
             } else if (item.type === 'change_char') {
@@ -1471,7 +1472,8 @@ window.MOE_DATA_STRING = `
                 if(window.player.level <= 1) { window.showToast(`已經是1等了，無法重置！`, 'var(--boss)'); return; }
                 window.player.consumables[id]--;
                 const candyCount = window.player.level - 1;
-                window.player.level = 1; window.player.exp = 0; window.player.maxExp = 500; // 重置後經驗上限改為500
+                // 【修改點】：重置後經驗上限改為 100
+                window.player.level = 1; window.player.exp = 0; window.player.maxExp = 100; 
                 window.player.stats.maxHp = 100; window.player.stats.atk = 10; window.player.stats.def = 5;
                 window.player.consumables['rare_candy'] = (window.player.consumables['rare_candy'] || 0) + candyCount;
                 window.recalcStats(); window.player.stats.hp = window.player.stats.maxHp;
