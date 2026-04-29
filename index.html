@@ -1470,21 +1470,6 @@ window.MOE_DATA_STRING = `
                 window.player.maxExp = window.player.level * 100; 
                 window.AudioEngine.playSFXTrack('levelup');
                 window.showToast(`✨ 吃下了神奇軟糖！達到了 Lv.${window.player.level}！`, '#f1c40f');
-                
-                // 【新增】：讓吃軟糖也能正常觸發學習新招式
-                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; 
-                let newMoveData = pool.find(m => m.lv === window.player.level);
-                if(newMoveData) {
-                    let mDef = MOVES[newMoveData.m]; 
-                    if(window.player.moves.length < 4) { 
-                        window.player.moves.push({ id: newMoveData.m, ...mDef }); 
-                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 1500);
-                    } else { 
-                        window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
-                        document.getElementById('item-detail-modal').style.display = 'none'; // 先關閉道具視窗以免重疊
-                        setTimeout(() => window.promptLearnMove(newMoveData).then(learned => { window.updateUI(); window.saveData(); }), 1000); 
-                    }
-                }
             } else if (item.type === 'change_char') {
                 window.openChangeCharModal(id);
                 return; // 不在這裡直接扣除道具，等玩家選擇確認後再處理
