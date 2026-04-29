@@ -765,61 +765,40 @@ window.MOE_DATA_STRING = `
         </div>
     </div>
 
-   /* 戰鬥畫面 */
-        #battle-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #2c3e50; z-index: 2000; display: none; flex-direction: column; }
-        .battle-scene { 
-            flex: 1; position: relative; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); border-bottom: 4px solid #111; 
-            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%); 
-        }
-        .battle-stat-box { position: absolute; background: rgba(255, 255, 255, 0.95); border: 3px solid #333; border-radius: 10px; padding: 1vmin 2vmin; width: 45%; max-width: 280px; color: #000; font-weight: bold; box-shadow: 4px 4px 0 rgba(0,0,0,0.3); z-index: 10; }
-        .stat-name-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: clamp(0.9rem, 2.5vmin, 1.2rem); align-items: baseline;}
-        .boss-tag { background: #e74c3c; color: #fff; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; margin-right: 5px; vertical-align: middle; }
-        .hp-bar-bg { background: #555; height: clamp(6px, 1.5vmin, 12px); border-radius: 5px; width: 100%; border: 2px solid #222; overflow: hidden; position: relative; }
-        .hp-bar-fill { height: 100%; background: #2ecc71; width: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
-        .exp-bar-bg { background: #444; height: clamp(4px, 1vmin, 8px); border-radius: 4px; width: 100%; border: 1px solid #111; overflow: hidden; position: relative; margin-top: 4px; }
-        .exp-bar-fill { height: 100%; background: #3498db; width: 0%; transition: width 0.5s ease-in-out; }
-        .hp-numbers { text-align: right; font-size: clamp(0.8rem, 2vmin, 1rem); margin-top: 4px; color: #333; }
-        .status-tag { display: none; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; margin-right: 5px; vertical-align: middle; color: white; }
-        .status-psn { background: #9b59b6; display: inline-block; }
-        .status-slp { background: #7f8c8d; display: inline-block; }
-        .status-cnf { background: #e67e22; display: inline-block; }
+    <!-- 戰鬥畫面 (PvE & PvP 共用，以狀態切換) -->
+    <div id="battle-screen">
+        <div class="battle-scene" id="battle-scene">
+            <div id="fx-layer"></div>
+            <div class="battle-stat-box enemy-stat-box">
+                <div class="stat-name-row">
+                    <div><span id="enemy-boss-tag" class="boss-tag" style="display:none;">霸主</span><span id="enemy-name">野生字靈</span><span id="enemy-status" class="status-tag"></span></div>
+                    <span>Lv.<span id="enemy-lvl">1</span></span>
+                </div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemy-hp-fill"></div></div>
+                <div class="hp-numbers" id="enemy-hp-text" style="display:none;"><span>100</span> / <span>100</span></div>
+            </div>
+            <img id="enemy-sprite" class="enemy-sprite" src="">
 
-        .enemy-stat-box { top: 5vmin; left: 5vmin; border-bottom-right-radius: 20px; }
-        .player-stat-box { bottom: 5vmin; right: 5vmin; border-top-left-radius: 20px; }
-        
-        .enemy-sprite { position: absolute; bottom: 38%; right: 8vmin; width: 28vmin; height: 28vmin; object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.3)); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
-        .player-sprite { position: absolute; bottom: 5vmin; left: 8vmin; width: 35vmin; height: 35vmin; object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5)); transform: scaleX(-1); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
-        .boss-glow { filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8)) drop-shadow(0 10px 5px rgba(0,0,0,0.3)); animation: boss-breathe 2s infinite alternate; }
-        @keyframes boss-breathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
-
-        #fx-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 8; pointer-events:none; }
-
-        .battle-ui-panel { height: 35vh; min-height: 200px; background: #111; display: flex; flex-direction: column; padding: 10px 15px 15px 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
-        .battle-dialog { background: #fff; color: #000; border: 4px solid #444; border-radius: 10px; padding: clamp(10px, 2vmin, 15px); font-size: clamp(1.1rem, 2.5vmin, 1.3rem); min-height: 80px; margin-bottom: 10px; font-weight: bold; line-height: 1.4; box-shadow: inset 2px 2px 0 #ccc; display: flex; align-items: center; justify-content: center; text-align: center; }
-        
-        .battle-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; margin-bottom: 10px;}
-        .battle-actions-row { display: flex; justify-content: center; gap: 8px; margin-top: auto; }
-        
-        .battle-btn { background: #f1c40f; color: #000; border: 3px solid #d35400; border-radius: 8px; font-size: clamp(1rem, 2.5vmin, 1.3rem); font-weight: bold; cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center; padding: 5px; text-align: center; min-height: 45px; }
-        .battle-btn:active { background: #e67e22; transform: scale(0.95); }
-        
-        .action-btn { background: #2980b9; color: #ecf0f1; border: 2px solid #2471a3; border-radius: 6px; font-size: 0.9rem; padding: 8px 5px; font-weight: bold; cursor: pointer; transition: 0.1s; flex: 1; text-align: center; }
-        .action-btn:active { transform: scale(0.95); filter: brightness(0.8); }
-        .action-btn.report { background: #8e44ad; border-color: #732d91; }
-        .action-btn.flee { background: #7f8c8d; border-color: #616a6b; }
-
-        @media (orientation: landscape) and (max-height: 600px) {
-            .battle-ui-panel { height: 45vh; min-height: auto; flex-direction: row; align-items: stretch; gap: 10px; position: relative; padding: 10px;}
-            .battle-dialog { width: 35%; margin-bottom: 0; min-height: 100%; font-size: 1rem; flex: none;}
-            .battle-options-grid { width: 45%; flex: none; grid-template-columns: 1fr 1fr; margin-bottom: 0; align-content: center; gap: 5px; }
-            .battle-actions-row { position: static; flex-direction: column; width: 20%; justify-content: center; gap: 5px; flex: none; margin-top: 0;}
-            .action-btn { font-size: 0.85rem; padding: 6px; flex: 1; width: 100%; margin: 0; min-height: 35px;}
-            .enemy-sprite { height: clamp(80px, 25vmin, 150px); bottom: 35%; right: 10vmin; top: auto; }
-            .player-sprite { height: clamp(100px, 30vmin, 180px); bottom: 5vmin; left: 10vmin; }
-            .battle-stat-box { transform: scale(0.8); transform-origin: top center; }
-            .player-stat-box { transform-origin: bottom center; }
-        }
-
+            <div class="battle-stat-box player-stat-box">
+                <div class="stat-name-row">
+                    <div><span id="battle-player-name">獵人</span><span id="player-status" class="status-tag"></span></div>
+                    <span>Lv.<span id="battle-player-lvl">1</span></span>
+                </div>
+                <div class="hp-bar-bg"><div class="hp-bar-fill" id="player-hp-fill"></div></div>
+                <div class="exp-bar-bg" id="player-exp-container"><div class="exp-bar-fill" id="player-exp-fill"></div></div>
+                <div class="hp-numbers"><span id="player-current-hp">100</span> / <span id="player-max-hp">100</span></div>
+            </div>
+            <img id="player-sprite" class="player-sprite" src="">
+        </div>
+        <div class="battle-ui-panel">
+            <div id="battle-dialog" class="battle-dialog">野生寶可夢出現了！</div>
+            <div style="text-align: right; padding: 5px 10px 5px 0; max-width: 800px; margin: 0 auto;">
+                <button onclick="window.showQuizHistoryModal()" style="padding: 8px 15px; background: #8e44ad; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s;">📜 察看答題紀錄</button>
+            </div>
+            <div id="battle-options" class="battle-options-grid"></div>
+            <div id="battle-actions" class="battle-actions-row"></div>
+        </div>
+    </div>
 
     <!-- ================== 核心腳本 ================== -->
     <script>
