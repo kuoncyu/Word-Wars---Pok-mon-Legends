@@ -227,7 +227,7 @@ window.MOE_DATA_STRING = `
         .anim-dmg { animation: take-damage 0.4s ease; }
         
         @keyframes flashy-crit { 0% { filter: brightness(1); transform: scale(1); } 10% { filter: brightness(3) invert(1) sepia(1) hue-rotate(300deg); transform: scale(1.5) rotate(15deg); } 20% { filter: brightness(3) invert(1) sepia(1) hue-rotate(300deg); transform: scale(1.3) rotate(-15deg) translate(-20px, -20px); } 30% { transform: scale(1.4) rotate(10deg) translate(20px, 20px); } 100% { filter: brightness(1); transform: scale(1) rotate(0) translate(0,0); } }
-        .anim-crit-dmg { animation: flashy-crit 0.7s ease-out; box-shadow: 0 0 50px #e74c3c; border-radius: 50%; }
+        .anim-crit-dmg { animation: flashy-crit 0.5s ease-out; box-shadow: 0 0 50px #e74c3c; border-radius: 50%; }
 
         @keyframes screen-shake { 0%, 100% { transform: translate(0, 0) rotate(0); } 10%, 30%, 50%, 70%, 90% { transform: translate(-10px, -10px) rotate(-2deg); } 20%, 40%, 60%, 80% { transform: translate(10px, 10px) rotate(2deg); } }
         .anim-screen-shake { animation: screen-shake 0.5s; }
@@ -279,6 +279,10 @@ window.MOE_DATA_STRING = `
         #chat-btn { position: fixed; top: 65px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
         #chat-btn:hover { background: rgba(0,0,0,0.6); border-color: var(--luck); opacity: 1; }
 
+        /* 新增：信箱按鈕 */
+        #mail-btn { position: fixed; top: 120px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #mail-btn:hover { background: rgba(0,0,0,0.6); border-color: #3498db; opacity: 1; }
+
         /* 聊天室面板 */
         #chat-panel { display: none; position: fixed; top: 120px; right: 10px; width: 320px; height: 450px; max-width: 90vw; max-height: 60vh; background: rgba(20, 20, 25, 0.95); border: 2px solid var(--luck); border-radius: 10px; z-index: 8600; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         #chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
@@ -307,10 +311,13 @@ window.MOE_DATA_STRING = `
 
     <div id="settings-btn">⚙️</div>
     <div id="chat-btn">💬<span id="chat-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:0.7rem; font-weight:bold; border:1px solid #fff;">0</span></div>
+    
+    <!-- 新增：信箱按鈕 -->
+    <div id="mail-btn">📫<span id="mail-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:0.7rem; font-weight:bold; border:1px solid #fff;">!</span></div>
 
     <div id="chat-panel">
         <div style="background:var(--luck); color:#000; padding:10px; font-weight:bold; text-align:center; display:flex; justify-content:space-between; align-items:center;">
-            <span>🌐 世界頻道 (10分鐘後刪除)</span>
+            <span>🌐 世界頻道 (保留近1小時/100則)</span>
             <span style="cursor:pointer; font-size:1.2rem;" onclick="window.toggleChat()">❌</span>
         </div>
         <div id="chat-messages"></div>
@@ -334,7 +341,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429a</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260428</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
             </div>
         </div>
     </div>
@@ -355,11 +362,87 @@ window.MOE_DATA_STRING = `
                 <button class="btn" style="background: #e67e22;" onclick="window.viewErrorReports()">📋 處理錯誤回報</button>
                 <div id="admin-account-list" style="max-height: 200px; overflow-y:auto; display:none; background:#111; padding:10px; border-radius:8px; margin-top:5px; font-size:0.9rem; color:#ccc;"></div>
                 <div id="admin-reports-list" style="max-height: 300px; overflow-y:auto; display:none; background:#111; padding:10px; border-radius:8px; margin-top:5px; font-size:0.9rem; color:#ccc; text-align:left;"></div>
+                
+                <!-- 新增：金手指與禮包專區 -->
+                <hr style="border-color:#444; margin: 10px 0;">
+                <h3 style="color:#f1c40f; margin-top:0; margin-bottom:10px;">👑 金手指專區</h3>
+                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #f39c12;">
+                    
+                    <input type="text" id="admin-target-acc" class="input-box" placeholder="目標帳號 (留空則修改自己)" style="width:100%; padding:8px; margin-bottom:15px; border-color:#e67e22;">
+
+                    <div style="margin-bottom:10px;">
+                        <label style="color:#aaa; font-size:0.9rem;">設定等級:</label>
+                        <div style="display:flex; gap:5px; margin-top:5px;">
+                            <input type="number" id="admin-set-level" class="input-box" style="padding:8px;" value="1">
+                            <button class="btn" style="background:#3498db; width:auto; padding:8px 15px;" onclick="window.adminSetLevel()">套用</button>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="color:#aaa; font-size:0.9rem;">設定金幣:</label>
+                        <div style="display:flex; gap:5px; margin-top:5px;">
+                            <input type="number" id="admin-set-gold" class="input-box" style="padding:8px;" value="10000">
+                            <button class="btn" style="background:#f1c40f; color:#000; width:auto; padding:8px 15px;" onclick="window.adminSetGold()">套用</button>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color:#f39c12; margin-top:0; margin-bottom:10px; border-top:1px dashed #555; padding-top:15px;">🎁 發送全服限時禮包 (有效期限 24H)</h4>
+                    <input type="text" id="admin-mail-title" class="input-box" placeholder="禮包標題 (例: 兒童節禮包)" style="width:100%; padding:8px; margin-bottom:5px;">
+                    <textarea id="admin-mail-msg" class="input-box" placeholder="祝福訊息內容..." style="width:100%; padding:10px; margin-bottom:15px; height:80px;"></textarea>
+                    
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
+                        <!-- 金幣與經驗值 -->
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <input type="number" id="admin-mail-gold" class="input-box" placeholder="金幣數量" style="padding:10px;">
+                            <input type="number" id="admin-mail-exp" class="input-box" placeholder="經驗值數量" style="padding:10px;">
+                        </div>
+                        
+                        <!-- 神奇軟糖 -->
+                        <input type="number" id="admin-mail-candy" class="input-box" placeholder="神奇軟糖數量" style="width:100%; padding:10px;">
+                        
+                        <!-- 商店道具下拉選單與數量 -->
+                        <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid #444;">
+                            <select id="admin-mail-extra-item" class="input-box" style="padding:10px; flex: 2; font-size: 0.9rem; text-align: left;">
+                                <option value="">(不附贈商店道具)</option>
+                            </select>
+                            <input type="number" id="admin-mail-extra-count" class="input-box" placeholder="數量" style="padding:10px; flex: 1;">
+                        </div>
+
+                        <!-- 寶箱下拉選單與數量 -->
+                        <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid #444;">
+                            <select id="admin-mail-chest-tier" class="input-box" style="padding:10px; flex: 2; font-size: 0.9rem; text-align: left;">
+                                <option value="0">(不附贈寶箱)</option>
+                                <option value="1">破舊木寶箱</option>
+                                <option value="2">堅固鐵寶箱</option>
+                                <option value="3">閃亮銅寶箱</option>
+                                <option value="4">精緻銀寶箱</option>
+                                <option value="5">璀璨金寶箱</option>
+                                <option value="6">稀有白金寶箱</option>
+                                <option value="7">紫水晶寶箱</option>
+                                <option value="8">傳說翡翠寶箱</option>
+                                <option value="9">史詩鑽石寶箱</option>
+                                <option value="10">幻之星龍寶箱</option>
+                            </select>
+                            <input type="number" id="admin-mail-chest-count" class="input-box" placeholder="數量" style="padding:10px; flex: 1;">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" style="background:#e67e22; padding: 15px; font-size: 1.2rem;" onclick="window.adminSendMail()">寄送全服禮包信件</button>
+                </div>
+
                 <button class="btn" style="background:#555; margin-top: 10px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
             </div>
         </div>
     </div>
     
+    <!-- 新增：信箱介面 -->
+    <div id="mail-modal" class="modal-overlay" style="z-index: 8600;">
+        <div class="modal-box" style="padding: 20px; max-width: 400px; background: #2c3e50; border-color: #3498db;">
+            <h2 style="color:#3498db; margin-top:0;">📫 系統信箱</h2>
+            <div id="mail-list-container" style="max-height: 50vh; overflow-y: auto; margin-bottom:15px; padding-right:5px;"></div>
+            <button class="btn" style="background:#555;" onclick="document.getElementById('mail-modal').style.display='none'">關閉</button>
+        </div>
+    </div>
+
     <!-- 物品詳情 -->
     <div id="item-detail-modal" class="modal-overlay" style="z-index: 7800;">
         <div class="modal-box" style="padding: 25px;">
@@ -505,31 +588,44 @@ window.MOE_DATA_STRING = `
         </div>
     </div>
 
-    <!-- 上一題回顧與疑義回報 Modal -->
-    <div id="last-quiz-modal" class="modal-overlay" style="z-index: 6200;">
+    <!-- 最近答題紀錄與疑義回報 Modal -->
+    <div id="quiz-history-modal" class="modal-overlay" style="z-index: 6200;">
         <div class="modal-box" style="padding: 20px; max-width: 400px; background: #222; border-radius: 15px;">
-            <h2 style="color:var(--accent); margin-top:0;">🔍 上一題回顧</h2>
-            <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:15px; text-align:center;">
-                <div style="color:#aaa; font-size:0.9rem; margin-bottom:5px;">題目：</div>
-                <div id="last-quiz-question" style="font-size:1.5rem; color:#fff; font-weight:bold; margin-bottom:15px;"></div>
-                <div style="color:#aaa; font-size:0.9rem; margin-bottom:5px;">正確解答：</div>
-                <div id="last-quiz-answer" style="font-size:1.5rem; color:var(--luck); font-weight:bold;"></div>
+            <h2 style="color:var(--accent); margin-top:0;">📜 最近答題紀錄 (最多5筆)</h2>
+            
+            <button class="btn" id="qh-back-btn" style="background:#555; margin-bottom: 10px; display: none;" onclick="window.showQuizHistoryModal()">🔙 返回紀錄列表</button>
+            
+            <!-- 列表視圖 -->
+            <div id="quiz-history-list" style="max-height: 35vh; overflow-y: auto; margin-bottom: 15px;">
+                <!-- JavaScript 動態生成 -->
             </div>
-            <div id="report-form-area" style="display:none; background:#1a1a1a; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--boss);">
-                <p style="margin-top:0; color:#ccc; font-size:0.9rem;">請輸入正確注音或建議內容：</p>
-                <!-- 移除了唯讀限制，讓玩家也可以用自帶鍵盤 -->
-                <input type="text" id="report-input" class="input-box" placeholder="使用下方鍵盤或系統鍵盤輸入" style="width:100%; padding:10px; font-size:1.2rem; margin-bottom:5px;">
-                <div id="zy-keyboard" class="zy-keyboard"></div>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn" style="background:#555; padding:8px;" onclick="document.getElementById('report-form-area').style.display='none'">取消</button>
-                    <button class="btn" style="background:var(--boss); padding:8px;" onclick="window.submitReport()">送出回報</button>
+            
+            <!-- 詳細視圖與回報 -->
+            <div id="quiz-history-detail" style="display:none; background:#111; padding:15px; border-radius:8px; margin-bottom:15px; text-align:center; border: 1px solid #444;">
+                <div style="color:#aaa; font-size:0.9rem; margin-bottom:5px;">題目：</div>
+                <div id="qh-question" style="font-size:1.5rem; color:#fff; font-weight:bold; margin-bottom:15px;"></div>
+                <div style="color:#aaa; font-size:0.9rem; margin-bottom:5px;">正確解答：</div>
+                <div id="qh-answer" style="font-size:1.5rem; color:var(--luck); font-weight:bold; margin-bottom:20px;"></div>
+                
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <a id="qh-dict-concise" href="#" target="_blank" class="btn" style="background:#2ecc71; text-decoration:none;">📖 教育部簡編本字典</a>
+                    <a id="qh-dict-revised" href="#" target="_blank" class="btn" style="background:#3498db; text-decoration:none;">📖 教育部重編本字典</a>
+                    <button class="btn" style="background:var(--boss);" onclick="window.openReportForm()">⚠️ 題庫有誤？提出疑義</button>
                 </div>
             </div>
-            <div id="last-quiz-buttons" style="display:flex; flex-direction:column; gap:10px;">
-                <a id="dict-link" href="#" target="_blank" class="btn" style="background:#3498db; text-decoration:none; display:block;">📖 教育部辭典尋找此字</a>
-                <button class="btn" style="background:var(--boss);" onclick="document.getElementById('report-form-area').style.display='block'; document.getElementById('last-quiz-modal').scrollTop = document.getElementById('last-quiz-modal').scrollHeight;">⚠️ 題庫有誤？提出疑義</button>
-                <button class="btn" style="background:#555;" onclick="document.getElementById('last-quiz-modal').style.display='none'">返回</button>
+
+            <!-- 回報表單 -->
+            <div id="qh-report-form-area" style="display:none; background:#1a1a1a; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--boss);">
+                <p style="margin-top:0; color:#ccc; font-size:0.9rem;">請輸入正確注音或建議內容：</p>
+                <input type="text" id="qh-report-input" class="input-box" placeholder="使用下方鍵盤或系統鍵盤輸入" style="width:100%; padding:10px; font-size:1.2rem; margin-bottom:5px;">
+                <div id="zy-keyboard" class="zy-keyboard"></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn" style="background:#555; padding:8px;" onclick="document.getElementById('qh-report-form-area').style.display='none'">取消</button>
+                    <button class="btn" style="background:var(--boss); padding:8px;" onclick="window.submitQuizReport()">送出回報</button>
+                </div>
             </div>
+
+            <button class="btn" style="background:#555; margin-top: 5px;" onclick="document.getElementById('quiz-history-modal').style.display='none'">關閉視窗</button>
         </div>
     </div>
 
@@ -625,6 +721,8 @@ window.MOE_DATA_STRING = `
                 <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#e3350d; flex: 1;" onclick="window.initCombat()">🌲 快速遇敵</button>
                 <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#9b59b6; flex: 1;" onclick="window.openPvPMenu()">📡 連線對戰</button>
             </div>
+            <!-- 新增戰鬥分頁內的紀錄按鈕 -->
+            <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#8e44ad; width: 100%; margin-top: 10px;" onclick="window.showQuizHistoryModal()">📜 察看最近答題紀錄</button>
         </div>
         <div id="tab-inventory" class="tab-page">
             <h2 style="margin-top:0; color:var(--accent);">🎒 您的背包庫存</h2>
@@ -667,40 +765,61 @@ window.MOE_DATA_STRING = `
         </div>
     </div>
 
-    <!-- 戰鬥畫面 (PvE & PvP 共用，以狀態切換) -->
-    <div id="battle-screen">
-        <div class="battle-scene" id="battle-scene">
-            <div id="fx-layer"></div>
-            <div class="battle-stat-box enemy-stat-box">
-                <div class="stat-name-row">
-                    <div><span id="enemy-boss-tag" class="boss-tag" style="display:none;">霸主</span><span id="enemy-name">野生字靈</span><span id="enemy-status" class="status-tag"></span></div>
-                    <span>Lv.<span id="enemy-lvl">1</span></span>
-                </div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemy-hp-fill"></div></div>
-                <div class="hp-numbers" id="enemy-hp-text" style="display:none;"><span>100</span> / <span>100</span></div>
-            </div>
-            <img id="enemy-sprite" class="enemy-sprite" src="">
+   /* 戰鬥畫面 */
+        #battle-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #2c3e50; z-index: 2000; display: none; flex-direction: column; }
+        .battle-scene { 
+            flex: 1; position: relative; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); border-bottom: 4px solid #111; 
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%); 
+        }
+        .battle-stat-box { position: absolute; background: rgba(255, 255, 255, 0.95); border: 3px solid #333; border-radius: 10px; padding: 1vmin 2vmin; width: 45%; max-width: 280px; color: #000; font-weight: bold; box-shadow: 4px 4px 0 rgba(0,0,0,0.3); z-index: 10; }
+        .stat-name-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: clamp(0.9rem, 2.5vmin, 1.2rem); align-items: baseline;}
+        .boss-tag { background: #e74c3c; color: #fff; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; margin-right: 5px; vertical-align: middle; }
+        .hp-bar-bg { background: #555; height: clamp(6px, 1.5vmin, 12px); border-radius: 5px; width: 100%; border: 2px solid #222; overflow: hidden; position: relative; }
+        .hp-bar-fill { height: 100%; background: #2ecc71; width: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
+        .exp-bar-bg { background: #444; height: clamp(4px, 1vmin, 8px); border-radius: 4px; width: 100%; border: 1px solid #111; overflow: hidden; position: relative; margin-top: 4px; }
+        .exp-bar-fill { height: 100%; background: #3498db; width: 0%; transition: width 0.5s ease-in-out; }
+        .hp-numbers { text-align: right; font-size: clamp(0.8rem, 2vmin, 1rem); margin-top: 4px; color: #333; }
+        .status-tag { display: none; font-size: 0.7rem; padding: 2px 5px; border-radius: 4px; margin-right: 5px; vertical-align: middle; color: white; }
+        .status-psn { background: #9b59b6; display: inline-block; }
+        .status-slp { background: #7f8c8d; display: inline-block; }
+        .status-cnf { background: #e67e22; display: inline-block; }
 
-            <div class="battle-stat-box player-stat-box">
-                <div class="stat-name-row">
-                    <div><span id="battle-player-name">獵人</span><span id="player-status" class="status-tag"></span></div>
-                    <span>Lv.<span id="battle-player-lvl">1</span></span>
-                </div>
-                <div class="hp-bar-bg"><div class="hp-bar-fill" id="player-hp-fill"></div></div>
-                <div class="exp-bar-bg" id="player-exp-container"><div class="exp-bar-fill" id="player-exp-fill"></div></div>
-                <div class="hp-numbers"><span id="player-current-hp">100</span> / <span id="player-max-hp">100</span></div>
-            </div>
-            <img id="player-sprite" class="player-sprite" src="">
-        </div>
-        <div class="battle-ui-panel">
-            <div id="battle-dialog" class="battle-dialog">野生寶可夢出現了！</div>
-            <div style="text-align: right; padding: 5px 10px 5px 0; max-width: 800px; margin: 0 auto;">
-                <button onclick="window.showQuizHistoryModal()" style="padding: 8px 15px; background: #8e44ad; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s;">📜 察看答題紀錄</button>
-            </div>
-            <div id="battle-options" class="battle-options-grid"></div>
-            <div id="battle-actions" class="battle-actions-row"></div>
-        </div>
-    </div>
+        .enemy-stat-box { top: 5vmin; left: 5vmin; border-bottom-right-radius: 20px; }
+        .player-stat-box { bottom: 5vmin; right: 5vmin; border-top-left-radius: 20px; }
+        
+        .enemy-sprite { position: absolute; bottom: 38%; right: 8vmin; width: 28vmin; height: 28vmin; object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.3)); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
+        .player-sprite { position: absolute; bottom: 5vmin; left: 8vmin; width: 35vmin; height: 35vmin; object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5)); transform: scaleX(-1); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
+        .boss-glow { filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8)) drop-shadow(0 10px 5px rgba(0,0,0,0.3)); animation: boss-breathe 2s infinite alternate; }
+        @keyframes boss-breathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+
+        #fx-layer { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 8; pointer-events:none; }
+
+        .battle-ui-panel { height: 35vh; min-height: 200px; background: #111; display: flex; flex-direction: column; padding: 10px 15px 15px 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
+        .battle-dialog { background: #fff; color: #000; border: 4px solid #444; border-radius: 10px; padding: clamp(10px, 2vmin, 15px); font-size: clamp(1.1rem, 2.5vmin, 1.3rem); min-height: 80px; margin-bottom: 10px; font-weight: bold; line-height: 1.4; box-shadow: inset 2px 2px 0 #ccc; display: flex; align-items: center; justify-content: center; text-align: center; }
+        
+        .battle-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; margin-bottom: 10px;}
+        .battle-actions-row { display: flex; justify-content: center; gap: 8px; margin-top: auto; }
+        
+        .battle-btn { background: #f1c40f; color: #000; border: 3px solid #d35400; border-radius: 8px; font-size: clamp(1rem, 2.5vmin, 1.3rem); font-weight: bold; cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center; padding: 5px; text-align: center; min-height: 45px; }
+        .battle-btn:active { background: #e67e22; transform: scale(0.95); }
+        
+        .action-btn { background: #2980b9; color: #ecf0f1; border: 2px solid #2471a3; border-radius: 6px; font-size: 0.9rem; padding: 8px 5px; font-weight: bold; cursor: pointer; transition: 0.1s; flex: 1; text-align: center; }
+        .action-btn:active { transform: scale(0.95); filter: brightness(0.8); }
+        .action-btn.report { background: #8e44ad; border-color: #732d91; }
+        .action-btn.flee { background: #7f8c8d; border-color: #616a6b; }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .battle-ui-panel { height: 45vh; min-height: auto; flex-direction: row; align-items: stretch; gap: 10px; position: relative; padding: 10px;}
+            .battle-dialog { width: 35%; margin-bottom: 0; min-height: 100%; font-size: 1rem; flex: none;}
+            .battle-options-grid { width: 45%; flex: none; grid-template-columns: 1fr 1fr; margin-bottom: 0; align-content: center; gap: 5px; }
+            .battle-actions-row { position: static; flex-direction: column; width: 20%; justify-content: center; gap: 5px; flex: none; margin-top: 0;}
+            .action-btn { font-size: 0.85rem; padding: 6px; flex: 1; width: 100%; margin: 0; min-height: 35px;}
+            .enemy-sprite { height: clamp(80px, 25vmin, 150px); bottom: 35%; right: 10vmin; top: auto; }
+            .player-sprite { height: clamp(100px, 30vmin, 180px); bottom: 5vmin; left: 10vmin; }
+            .battle-stat-box { transform: scale(0.8); transform-origin: top center; }
+            .player-stat-box { transform-origin: bottom center; }
+        }
+
 
     <!-- ================== 核心腳本 ================== -->
     <script>
@@ -739,7 +858,18 @@ window.MOE_DATA_STRING = `
             if(window.db && window.player.account) {
                 try {
                     await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'accounts', window.player.account), { password: window.player.password, data: JSON.stringify(window.player) }, { merge: true });
-                    if (window.user) { await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'leaderboard', window.player.account), { name: window.player.name, avatar: window.player.avatar, level: window.player.level, timestamp: Date.now() }, { merge: true }); }
+                    if (window.user) { 
+                        // 同步戰績與歷史紀錄至英雄榜
+                        await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'leaderboard', window.player.account), { 
+                            name: window.player.name, 
+                            avatar: window.player.avatar, 
+                            level: window.player.level, 
+                            timestamp: Date.now(),
+                            wins: window.player.pvpWins || 0,
+                            losses: window.player.pvpLosses || 0,
+                            pvpHistory: window.player.pvpHistory || []
+                        }, { merge: true }); 
+                    }
                 } catch(e) {} 
             }
         };
@@ -1041,9 +1171,9 @@ window.MOE_DATA_STRING = `
 
         // ======= 玩家狀態 & PvP 狀態 =======
         window.isAnimating = false; window.selectedAvatarUrl = avatarDatabase[0];
-       window.player = { bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null }, name: "無名獵人", account: "", password: "", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 100, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true } };
+       window.player = { bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null }, name: "無名獵人", account: "", password: "", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 100, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true }, pvpWins: 0, pvpLosses: 0, pvpHistory: [] };
         window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; 
-        window.itemUsedThisTurn = false; window.lastQuiz = null; window.pendingMoveToLearn = null; window.currentEnemy = {}; window.currentQuiz = null; window.currentOptions = []; window.currentCombatZoneLevel = 1; window.currentChestTier = 1; window.inspectingZoneIdx = 0;
+        window.itemUsedThisTurn = false; window.quizHistory = []; window.pendingMoveToLearn = null; window.currentEnemy = {}; window.currentQuiz = null; window.currentOptions = []; window.currentCombatZoneLevel = 1; window.currentChestTier = 1; window.inspectingZoneIdx = 0;
         
         window.isPvP = false; window.pvpState = { role: null, roomId: null, unsub: null, turnProcessed: 0 }; window.currentPvPData = null; window.inPvPBattle = false;
 
@@ -1133,6 +1263,7 @@ window.MOE_DATA_STRING = `
             window.initAvatarSelection(); window.initZyKeyboard(); 
             window.makeDraggableAndClickable('settings-btn', window.openSettings);
             window.makeDraggableAndClickable('chat-btn', window.toggleChat);
+            window.makeDraggableAndClickable('mail-btn', window.openMailModal); // 初始化信箱拖曳與點擊
         });
 
         // 登入/註冊畫面切換
@@ -1185,6 +1316,7 @@ window.MOE_DATA_STRING = `
             window.player.stats.hp = window.player.stats.maxHp; 
             window.checkDailyLogin(); window.updateUI(); window.saveData(); 
             window.syncQuizFromFirebase(false); // 強制背景更新題庫
+            window.initMailSystem(); // 初始化信件系統
         };
 
         window.logoutGame = async () => {
@@ -1221,7 +1353,27 @@ window.MOE_DATA_STRING = `
         window.exportQuizData = () => { window.AudioEngine.sfx.click(); const url = URL.createObjectURL(new Blob([window.currentRawQuizData], { type: 'text/plain;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 匯出成功", "#2ecc71"); };
         window.importQuizData = (event) => { window.AudioEngine.sfx.click(); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { window.saveLocalQuizData(e.target.result); window.parseQuizData(e.target.result); window.showToast("✅ 匯入成功！", "#2ecc71"); event.target.value = ''; }; reader.readAsText(file); };
 
-        window.adminLogin = async () => { window.AudioEngine.sfx.click(); const pwd = prompt(""); if (pwd === "07210609") { window.showToast("管理員登入成功", "#2ecc71"); document.getElementById('settings-modal').style.display = 'none'; document.getElementById('admin-modal').style.display = 'flex'; } };
+        window.adminLogin = async () => { 
+            window.AudioEngine.sfx.click(); 
+            const pwd = prompt(""); 
+            if (pwd === "07210609") { 
+                window.showToast("管理員登入成功", "#2ecc71"); 
+                document.getElementById('settings-modal').style.display = 'none'; 
+                
+                // 動態載入全道具選項到禮包的下拉選單
+                const itemSelect = document.getElementById('admin-mail-extra-item');
+                if(itemSelect && itemSelect.options.length <= 1) {
+                    Object.keys(consumableItems).forEach(k => {
+                        if (k === 'rare_candy') return; // 神奇軟糖已經有獨立欄位
+                        const opt = document.createElement('option');
+                        opt.value = k;
+                        opt.innerText = `${consumableItems[k].icon} ${consumableItems[k].name}`;
+                        itemSelect.appendChild(opt);
+                    });
+                }
+                document.getElementById('admin-modal').style.display = 'flex'; 
+            } 
+        };
         
         window.viewPlayerAccounts = async () => {
             window.AudioEngine.sfx.click(); const listDiv = document.getElementById('admin-account-list'); listDiv.style.display = 'block'; listDiv.innerHTML = "載入中..."; document.getElementById('admin-reports-list').style.display = 'none';
@@ -1241,9 +1393,12 @@ window.MOE_DATA_STRING = `
                 if (snap.empty) { listDiv.innerHTML = "目前沒有任何錯誤回報。"; return; }
                 let html = '';
                 snap.forEach(d => {
-                    const data = d.data(); const reportId = d.id; const searchWord = data.question.replace(/[「」【】]/g, ''); const link = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+                    const data = d.data(); const reportId = d.id; const searchWord = data.question.replace(/[「」【】]/g, ''); 
+                    const linkConcise = `https://dict.concised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+                    const linkRevised = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+                    
                     let rawLine = ''; if(window.currentRawQuizData) { const lines = window.currentRawQuizData.split('\n'); for(let l of lines) { const p = l.split('|'); if(p.length === 4 && window.formatZhuyin(p[1]) === data.question) { rawLine = l; break; } } }
-                    html += `<div style="border:1px solid #e74c3c; padding:10px; margin-bottom:10px; border-radius:5px; background:#1a1a1a;"><div style="margin-bottom:5px;"><strong style="color:var(--accent);">題目:</strong> ${data.question}</div><div style="margin-bottom:5px;"><strong style="color:#aaa;">原答案:</strong> ${data.originalAnswer}</div><div style="margin-bottom:5px;"><strong style="color:#2ecc71;">玩家建議:</strong> ${data.userSuggestion}</div><div style="margin-bottom:5px;"><a href="${link}" target="_blank" style="color:#3498db; text-decoration:underline;">📖 查閱教育部字典</a></div><div style="margin-bottom:5px; color:#aaa; font-size:0.8rem;">修改為 (格式: 題型|題目|答案|錯項)：</div><input type="text" id="report-edit-${reportId}" value="${rawLine}" style="width:100%; background:#000; color:#fff; padding:8px; border:1px solid #555; border-radius:4px; margin-bottom:5px;"><div style="display:flex; gap:10px;"><button onclick="window.approveReport('${reportId}', '${data.question}')" style="flex:1; background:#2ecc71; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">✅ 確認並覆蓋</button><button onclick="window.deleteReport('${reportId}')" style="background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">🗑️ 忽略刪除</button></div></div>`;
+                    html += `<div style="border:1px solid #e74c3c; padding:10px; margin-bottom:10px; border-radius:5px; background:#1a1a1a;"><div style="margin-bottom:5px;"><strong style="color:var(--accent);">題目:</strong> ${data.question}</div><div style="margin-bottom:5px;"><strong style="color:#aaa;">原答案:</strong> ${data.originalAnswer}</div><div style="margin-bottom:5px;"><strong style="color:#2ecc71;">玩家建議:</strong> ${data.userSuggestion}</div><div style="margin-bottom:5px;"><a href="${linkConcise}" target="_blank" style="color:#2ecc71; text-decoration:underline; margin-right: 15px;">📖 簡編本</a><a href="${linkRevised}" target="_blank" style="color:#3498db; text-decoration:underline;">📖 重編本</a></div><div style="margin-bottom:5px; color:#aaa; font-size:0.8rem;">修改為 (格式: 題型|題目|答案|錯項)：</div><input type="text" id="report-edit-${reportId}" value="${rawLine}" style="width:100%; background:#000; color:#fff; padding:8px; border:1px solid #555; border-radius:4px; margin-bottom:5px;"><div style="display:flex; gap:10px;"><button onclick="window.approveReport('${reportId}', '${data.question}')" style="flex:1; background:#2ecc71; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">✅ 確認並覆蓋</button><button onclick="window.deleteReport('${reportId}')" style="background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;">🗑️ 忽略刪除</button></div></div>`;
                 });
                 listDiv.innerHTML = html;
             } catch (e) { listDiv.innerHTML = "載入失敗或無權限"; }
@@ -1278,33 +1433,69 @@ window.MOE_DATA_STRING = `
             }
         };
 
-        window.openLastQuizModal = () => {
+        window.showQuizHistoryModal = () => {
             window.AudioEngine.sfx.click();
-            if(!window.lastQuiz) return;
-            document.getElementById('last-quiz-question').innerText = window.lastQuiz.question;
-            document.getElementById('last-quiz-answer').innerText = window.lastQuiz.answer;
-            const searchWord = window.lastQuiz.question.replace(/[「」【】]/g, '');
-            document.getElementById('dict-link').href = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
-            document.getElementById('report-form-area').style.display = 'none';
-            document.getElementById('report-input').value = '';
-            document.getElementById('last-quiz-modal').style.display = 'flex';
+            const listDiv = document.getElementById('quiz-history-list');
+            if (window.quizHistory.length === 0) {
+                listDiv.innerHTML = '<p style="color:#888; text-align:center;">尚無答題紀錄</p>';
+            } else {
+                listDiv.innerHTML = window.quizHistory.map((q, idx) => `
+                    <div style="background:#1a1a1a; padding:12px; border-radius:8px; margin-bottom:8px; border-left:4px solid var(--accent); cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="window.selectQuizHistory(${idx})">
+                        <div style="text-align:left;">
+                            <div style="color:#fff; font-weight:bold; font-size:1.1rem; margin-bottom:3px;">${q.question}</div>
+                            <div style="color:var(--luck); font-size:0.9rem;">答: ${q.answer}</div>
+                        </div>
+                        <div style="color:#888; font-size:1.5rem;">🔍</div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('quiz-history-list').style.display = 'block';
+            document.getElementById('quiz-history-detail').style.display = 'none';
+            document.getElementById('qh-report-form-area').style.display = 'none';
+            document.getElementById('qh-back-btn').style.display = 'none';
+            document.getElementById('quiz-history-modal').style.display = 'flex';
         };
 
-        window.submitReport = async () => {
-            const suggestion = document.getElementById('report-input').value.trim();
+        window.selectQuizHistory = (idx) => {
+            window.AudioEngine.sfx.click();
+            const q = window.quizHistory[idx];
+            window.selectedReportQuiz = q;
+            document.getElementById('qh-question').innerText = q.question;
+            document.getElementById('qh-answer').innerText = q.answer;
+            
+            const searchWord = q.question.replace(/[「」【】]/g, '');
+            document.getElementById('qh-dict-concise').href = `https://dict.concised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+            document.getElementById('qh-dict-revised').href = `https://dict.revised.moe.edu.tw/search.jsp?md=1&word=${encodeURIComponent(searchWord)}`;
+            
+            document.getElementById('quiz-history-list').style.display = 'none';
+            document.getElementById('quiz-history-detail').style.display = 'block';
+            document.getElementById('qh-report-form-area').style.display = 'none';
+            document.getElementById('qh-back-btn').style.display = 'inline-block';
+        };
+
+        window.openReportForm = () => {
+            window.AudioEngine.sfx.click();
+            document.getElementById('qh-report-form-area').style.display = 'block';
+            document.getElementById('qh-report-input').value = '';
+            document.getElementById('quiz-history-modal').scrollTop = document.getElementById('quiz-history-modal').scrollHeight;
+        };
+
+        window.submitQuizReport = async () => {
+            const suggestion = document.getElementById('qh-report-input').value.trim();
             if(!suggestion) return window.showToast("請輸入建議", "var(--boss)");
             window.AudioEngine.sfx.click();
             window.showToast("送出中...", "#f1c40f");
             try {
                 await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'reports', Date.now().toString()), {
-                    question: window.lastQuiz.question,
-                    originalAnswer: window.lastQuiz.answer,
+                    question: window.selectedReportQuiz.question,
+                    originalAnswer: window.selectedReportQuiz.answer,
                     userSuggestion: suggestion,
                     timestamp: Date.now(),
                     uid: window.user ? window.user.uid : 'anonymous'
                 });
                 window.showToast("✅ 回報成功，感謝您的協助！", "#2ecc71");
-                document.getElementById('last-quiz-modal').style.display = 'none';
+                window.showQuizHistoryModal(); // 回到列表
             } catch(e) { window.showToast("回報失敗", "var(--boss)"); }
         };
 
@@ -1314,21 +1505,36 @@ window.MOE_DATA_STRING = `
             if(typeof window.unreadChatCount === 'undefined') { window.unreadChatCount = 0; window.lastChatTime = Date.now(); }
             const chatRef = window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat');
             window.onSnapshot(chatRef, (snap) => {
-                const msgs = [];
+                let allMsgs = [];
                 const now = Date.now();
                 let hasNew = false;
+                
                 snap.forEach(d => {
                     const m = d.data();
-                    if(now - m.time <= 10 * 60 * 1000) {
-                        msgs.push({id: d.id, ...m});
+                    allMsgs.push({id: d.id, ...m});
+                });
+
+                // 排序：舊到新
+                allMsgs.sort((a,b) => a.time - b.time);
+
+                // 過濾掉超過一小時 (60 * 60 * 1000 毫秒) 或超出最近 100 則的訊息
+                const oneHourAgo = now - (60 * 60 * 1000);
+                const msgsToKeep = [];
+
+                for (let i = 0; i < allMsgs.length; i++) {
+                    const m = allMsgs[i];
+                    // 條件：必須在一小時內，且必須是陣列最後的 100 筆之內
+                    if (m.time > oneHourAgo && i >= allMsgs.length - 100) {
+                        msgsToKeep.push(m);
                         if(m.time > window.lastChatTime && m.uid !== window.user?.uid) {
                             hasNew = true;
                             window.lastChatTime = Math.max(window.lastChatTime, m.time);
                         }
                     } else {
-                        window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat', d.id)).catch(e=>e);
+                        // 刪除過期或超出的訊息
+                        window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat', m.id)).catch(e=>e);
                     }
-                });
+                }
                 
                 const panel = document.getElementById('chat-panel');
                 if(hasNew && panel.style.display !== 'flex') {
@@ -1338,13 +1544,13 @@ window.MOE_DATA_STRING = `
                     badge.style.display = 'block';
                 }
                 
-                msgs.sort((a,b) => a.time - b.time);
                 const box = document.getElementById('chat-messages');
-                box.innerHTML = msgs.map(m => {
+                box.innerHTML = msgsToKeep.map(m => {
                     const t = new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                     const isMe = m.uid === window.user?.uid;
                     return `<div style="margin-bottom:8px; text-align:${isMe?'right':'left'}; animation: float-up 0.3s ease-out forwards; animation-name: none;"><span style="font-size:0.7rem;color:#888;">${t}</span> <span style="color:${isMe?'var(--luck)':'var(--accent)'};font-weight:bold;">${m.name}</span><br><div style="display:inline-block;background:${isMe?'#2c3e50':'#333'};padding:8px 12px;border-radius:10px;font-size:0.95rem;max-width:85%;word-wrap:break-word;text-align:left; margin-top:2px;">${m.text}</div></div>`;
                 }).join('');
+                
                 if(panel.style.display === 'flex') {
                     setTimeout(() => box.scrollTop = box.scrollHeight, 50);
                     window.lastChatTime = Date.now();
@@ -1384,7 +1590,7 @@ window.MOE_DATA_STRING = `
         };
 
         window.initAvatarSelection = () => { const grid = document.getElementById('avatar-grid'); avatarDatabase.forEach((url, index) => { const img = document.createElement('img'); img.src = url; img.className = 'avatar-option' + (index === 0 ? ' selected' : ''); img.onclick = () => { document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected')); img.classList.add('selected'); window.selectedAvatarUrl = url; window.AudioEngine.sfx.click(); }; grid.appendChild(img); }); };
-        window.initZyKeyboard = () => { const kb = document.getElementById('zy-keyboard'); const input = document.getElementById('report-input'); kb.innerHTML = ''; const zhuyinChars = ['ㄅ','ㄆ','ㄇ','ㄈ','ㄉ','ㄊ','ㄋ','ㄌ','ㄍ','ㄎ','ㄏ','ㄐ','ㄑ','ㄒ','ㄓ','ㄔ','ㄕ','ㄖ','ㄗ','ㄘ','ㄙ','ㄧ','ㄨ','ㄩ','ㄚ','ㄛ','ㄜ','ㄝ','ㄞ','ㄟ','ㄠ','ㄡ','ㄢ','ㄣ','ㄤ','ㄥ','ㄦ','ˊ','ˇ','ˋ','˙']; zhuyinChars.forEach(char => { const btn = document.createElement('div'); btn.className = 'zy-key'; btn.innerText = char; btn.onclick = () => { input.value += char; window.AudioEngine.sfx.click(); }; kb.appendChild(btn); }); const delBtn = document.createElement('div'); delBtn.className = 'zy-key zy-key-del'; delBtn.innerText = '刪除'; delBtn.onclick = () => { input.value = input.value.slice(0, -1); window.AudioEngine.sfx.click(); }; kb.appendChild(delBtn); };
+        window.initZyKeyboard = () => { const kb = document.getElementById('zy-keyboard'); const input = document.getElementById('qh-report-input'); kb.innerHTML = ''; const zhuyinChars = ['ㄅ','ㄆ','ㄇ','ㄈ','ㄉ','ㄊ','ㄋ','ㄌ','ㄍ','ㄎ','ㄏ','ㄐ','ㄑ','ㄒ','ㄓ','ㄔ','ㄕ','ㄖ','ㄗ','ㄘ','ㄙ','ㄧ','ㄨ','ㄩ','ㄚ','ㄛ','ㄜ','ㄝ','ㄞ','ㄟ','ㄠ','ㄡ','ㄢ','ㄣ','ㄤ','ㄥ','ㄦ','ˊ','ˇ','ˋ','˙']; zhuyinChars.forEach(char => { const btn = document.createElement('div'); btn.className = 'zy-key'; btn.innerText = char; btn.onclick = () => { input.value += char; window.AudioEngine.sfx.click(); }; kb.appendChild(btn); }); const delBtn = document.createElement('div'); delBtn.className = 'zy-key zy-key-del'; delBtn.innerText = '刪除'; delBtn.onclick = () => { input.value = input.value.slice(0, -1); window.AudioEngine.sfx.click(); }; kb.appendChild(delBtn); };
         window.generateRandomName = () => { window.AudioEngine.sfx.click(); document.getElementById('player-name-input').value = nameDataObj.prefixes[Math.floor(Math.random() * nameDataObj.prefixes.length)] + nameDataObj.suffixes[Math.floor(Math.random() * nameDataObj.suffixes.length)]; document.getElementById('player-name-input').focus(); };
         window.recalcStats = () => { let baseMaxHp = window.player.level * 15 + 85; let baseAtk = window.player.level * 3 + 7; let baseDef = window.player.level * 1 + 4; let baseCrit = 0; let baseDodge = 0; let baseLuck = 0; Object.values(window.player.equipment).forEach(eq => { if(eq) { baseMaxHp += (eq.hp||0); baseAtk += (eq.atk||0); baseDef += (eq.def||0); baseCrit += (eq.crit||0); baseDodge += (eq.dodge||0); baseLuck += (eq.luck||0); } }); window.player.stats.maxHp = baseMaxHp; window.player.stats.atk = baseAtk; window.player.stats.def = baseDef; window.player.stats.crit = baseCrit; window.player.stats.dodge = baseDodge; window.player.stats.luck = baseLuck; if(window.player.stats.hp > baseMaxHp) window.player.stats.hp = baseMaxHp; };
         
@@ -1406,6 +1612,9 @@ window.MOE_DATA_STRING = `
             if (!window.player.buffs) window.player.buffs = { expMulti: 1, expExpire: 0, goldMulti: 1, goldExpire: 0 }; 
             if (!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} }; 
             
+            // 【新增】：初始化已領取的信件列表
+            if (!window.player.claimedMails) window.player.claimedMails = [];
+
             // 【修改點】：校正舊版存檔的經驗值上限，將原本的計算方式改為 等級 * 100
             if (!window.player.maxExp || window.player.maxExp !== window.player.level * 100) {
                 window.player.maxExp = window.player.level * 100;
@@ -1889,15 +2098,22 @@ window.MOE_DATA_STRING = `
             const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
             if (!window.isPvP) {
                 const bagBtn = document.createElement('div'); bagBtn.className = 'action-btn'; bagBtn.innerText = '🎒 道具'; bagBtn.onclick = () => window.openBattleBag(); actionsRow.appendChild(bagBtn);
-                const reviewBtn = document.createElement('div'); reviewBtn.className = 'action-btn report'; reviewBtn.innerText = '🔍 上一題'; reviewBtn.onclick = () => window.openLastQuizModal(); if(!window.lastQuiz) { reviewBtn.style.opacity = '0.5'; reviewBtn.onclick = null; } actionsRow.appendChild(reviewBtn);
+                const reviewBtn = document.createElement('div'); reviewBtn.className = 'action-btn report'; reviewBtn.innerText = '📜 答題紀錄'; reviewBtn.onclick = () => window.showQuizHistoryModal(); actionsRow.appendChild(reviewBtn);
                 const fleeBtn = document.createElement('div'); fleeBtn.className = 'action-btn flee'; fleeBtn.innerText = '🏃‍♂️ 逃跑'; fleeBtn.onclick = () => window.fleeCombat(false); actionsRow.appendChild(fleeBtn);
             }
         };
 
-window.handleAnswerSelection = async (opt) => {
+        window.handleAnswerSelection = async (opt) => {
             window.AudioEngine.sfx.click(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
             let isCorrect = (opt === window.currentQuiz.answer); let msg = `你選擇了「${opt}」\n`; msg += isCorrect ? `✅ 答對了！` : `❌ 答錯了！正確是：${window.currentQuiz.answer}`;
-            window.lastQuiz = window.currentQuiz; await window.typeDialog(msg);
+            
+            // 寫入答題歷史
+            if(window.currentQuiz) {
+                window.quizHistory.unshift(window.currentQuiz);
+                if(window.quizHistory.length > 5) window.quizHistory.pop();
+            }
+            
+            await window.typeDialog(msg);
             await window.wait(400); 
             window.executeCombatTurn(isCorrect);
         };
@@ -1980,7 +2196,18 @@ window.handleAnswerSelection = async (opt) => {
                 let atkStat = (attacker.atk || 10) + (aBuffs.atk || 0); let defStat = (defender.def || 5) + (dBuffs.def || 0); let critChance = (attacker.crit || 0) + (aBuffs.crit || 0) + (move.critBonus ? move.critBonus * 100 : 0); 
                 let isCrit = Math.random() * 100 < critChance;
                 
-                if (isCrit) { window.AudioEngine.sfx.superEffective(); window.playAnim(`${dId}-sprite`, 'anim-crit-dmg'); window.playAnim('battle-scene', 'anim-screen-shake'); window.showFloatingText('💥 暴擊！', `${dId}-sprite`, '#e74c3c'); } 
+                if (isCrit) { 
+                    window.AudioEngine.sfx.superEffective(); 
+                    window.playAnim(`${dId}-sprite`, 'anim-crit-dmg'); 
+                    window.playAnim('battle-scene', 'anim-screen-shake'); 
+                    window.showFloatingText('💥 暴擊！', `${dId}-sprite`, '#e74c3c'); 
+                    
+                    // 動態移除爆擊紅光特效 (0.5秒後消除)
+                    setTimeout(() => {
+                        const el = document.getElementById(`${dId}-sprite`);
+                        if(el) el.classList.remove('anim-crit-dmg');
+                    }, 500);
+                } 
                 else { window.AudioEngine.sfx.hit(); window.playAnim(`${dId}-sprite`, 'anim-dmg'); }
                 
                 let baseDmg = Math.max(1, Math.floor((atkStat * move.power / 30) - (defStat / 2))) + Math.floor(Math.random() * 5); let dmg = isCrit ? baseDmg * 2 : baseDmg;
@@ -2364,6 +2591,13 @@ window.winCombat = async () => {
             if(window.currentPvPData.action) return; 
             window.AudioEngine.sfx.click(); document.getElementById('battle-options').innerHTML = '';
             let isCorrect = (opt === window.currentQuiz.answer);
+            
+            // 寫入答題歷史
+            if(window.currentQuiz) {
+                window.quizHistory.unshift(window.currentQuiz);
+                if(window.quizHistory.length > 5) window.quizHistory.pop();
+            }
+
             let moveIdx = Math.floor(Math.random() * window.player.moves.length);
             const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
             await window.updateDoc(docRef, { action: { role: window.pvpState.role, correct: isCorrect, turn: window.currentPvPData.turn, moveIdx: moveIdx } });
@@ -2412,6 +2646,8 @@ window.winCombat = async () => {
             }
 
             window.AudioEngine.sfx.attack(); window.playAnim(aSprite, attacker === window.pvpState.role ? 'anim-atk-player' : 'anim-atk-enemy'); await window.wait(200); 
+            
+            // 由於 PvP 無爆擊系統，維持一般傷害抖動
             window.AudioEngine.sfx.hit(); window.playAnim(dSprite, 'anim-dmg');
             
             let dmg = Math.max(1, aAtk + Math.floor(Math.random() * 5));
@@ -2494,6 +2730,273 @@ window.winCombat = async () => {
             leaveBtn.onclick = () => { window.leavePvPRoom(); }; 
             actionsRow.appendChild(leaveBtn);
         };
+
+        // ================= 信件與金手指管理系統 =================
+        window.activeMails = [];
+        window.initMailSystem = () => {
+            if(!window.db) return;
+            const mailRef = window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'mails');
+            window.onSnapshot(mailRef, (snap) => {
+                const now = Date.now();
+                window.activeMails = [];
+                let hasNew = false;
+                snap.forEach(d => {
+                    const mail = { id: d.id, ...d.data() };
+                    if (now < mail.expiresAt) {
+                        window.activeMails.push(mail);
+                        if (!window.player.claimedMails.includes(mail.id)) hasNew = true;
+                    } else {
+                        window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'mails', d.id)).catch(()=>{});
+                    }
+                });
+                window.activeMails.sort((a,b) => b.timestamp - a.timestamp);
+                const badge = document.getElementById('mail-badge');
+                if (hasNew) { badge.style.display = 'block'; badge.innerText = '!'; } 
+                else { badge.style.display = 'none'; }
+                if(document.getElementById('mail-modal').style.display === 'flex') window.renderMailList();
+            });
+        };
+
+        window.openMailModal = () => {
+            window.AudioEngine.sfx.click();
+            window.renderMailList();
+            document.getElementById('mail-modal').style.display = 'flex';
+        };
+
+        window.renderMailList = () => {
+            const list = document.getElementById('mail-list-container');
+            if (!window.activeMails || window.activeMails.length === 0) {
+                list.innerHTML = "<p style='color:#aaa; text-align:center;'>目前沒有信件</p>";
+                return;
+            }
+            list.innerHTML = window.activeMails.map(mail => {
+                const isClaimed = window.player.claimedMails.includes(mail.id);
+                let attachText = [];
+                if(mail.gold) attachText.push(`💰${mail.gold}金幣`);
+                if(mail.exp) attachText.push(`✨${mail.exp}經驗`);
+                if(mail.items) {
+                    Object.keys(mail.items).forEach(k => {
+                        const iDef = consumableItems[k];
+                        if(iDef) attachText.push(`${iDef.icon}${iDef.name}x${mail.items[k]}`);
+                    });
+                }
+                if(mail.chests) {
+                    Object.keys(mail.chests).forEach(tier => {
+                        attachText.push(`🧰${chestNames[tier-1]||'寶箱'}x${mail.chests[tier]}`);
+                    });
+                }
+                return `
+                <div class="mail-item" style="background:#1a1a1a; padding:15px; border-radius:8px; border:1px solid ${isClaimed?'#444':'var(--accent)'}; margin-bottom:10px; text-align:left; opacity:${isClaimed?0.6:1};">
+                    <div style="font-weight:bold; color:var(--accent); font-size:1.1rem; margin-bottom:5px;">${mail.title}</div>
+                    <div style="color:#ccc; font-size:0.9rem; margin-bottom:10px; line-height:1.4; white-space:pre-wrap;">${mail.message}</div>
+                    <div style="color:#f1c40f; font-size:0.85rem; margin-bottom:10px; font-weight:bold;">附件: ${attachText.length > 0 ? attachText.join(', ') : '無'}</div>
+                    <button class="btn" style="background:${isClaimed ? '#555' : 'var(--primary)'}; width:100%;" ${isClaimed ? 'disabled' : `onclick="window.claimMail('${mail.id}')"`}>
+                        ${isClaimed ? '已領取' : '🎁 領取禮包'}
+                    </button>
+                </div>
+                `;
+            }).join('');
+        };
+
+        window.claimMail = (mailId) => {
+            if (window.player.claimedMails.includes(mailId)) return;
+            const mail = window.activeMails.find(m => m.id === mailId);
+            if(!mail) return;
+            
+            window.AudioEngine.sfx.item();
+            window.player.claimedMails.push(mailId);
+            
+            if (mail.gold) window.player.gold += mail.gold;
+            if (mail.items) {
+                Object.keys(mail.items).forEach(k => {
+                    window.player.consumables[k] = (window.player.consumables[k] || 0) + mail.items[k];
+                });
+            }
+            if (mail.chests) {
+                Object.keys(mail.chests).forEach(k => {
+                    window.player.chests[k] = (window.player.chests[k] || 0) + mail.chests[k];
+                });
+            }
+            
+            let expMsg = '';
+            if (mail.exp) {
+                window.addExpOutsideCombat(mail.exp);
+                expMsg = ` 及 ${mail.exp} 經驗值`;
+            }
+
+            window.updateUI();
+            window.saveData();
+            window.renderMailList();
+            
+            const hasNew = window.activeMails.some(m => !window.player.claimedMails.includes(m.id));
+            document.getElementById('mail-badge').style.display = hasNew ? 'block' : 'none';
+            window.showToast(`✅ 禮包領取成功！獲得附件物品${expMsg}！`, "#2ecc71");
+        };
+
+        window.addExpOutsideCombat = (expGain) => {
+            window.player.exp += expGain;
+            let leveledUp = false;
+            while (window.player.exp >= window.player.maxExp) {
+                leveledUp = true;
+                window.player.level++; 
+                window.player.exp -= window.player.maxExp; 
+                window.player.maxExp = window.player.level * 100; 
+                window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
+                
+                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; 
+                let newMoveData = pool.find(m => m.lv === window.player.level);
+                if(newMoveData) {
+                    let mDef = MOVES[newMoveData.m]; 
+                    if(window.player.moves.length < 4) { 
+                        window.player.moves.push({ id: newMoveData.m, ...mDef }); 
+                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 1500);
+                    } else { 
+                        window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
+                        setTimeout(() => window.promptLearnMove(newMoveData).then(() => { window.updateUI(); window.saveData(); }), 1000); 
+                    }
+                }
+            }
+            if (leveledUp) {
+                window.AudioEngine.playSFXTrack('levelup');
+                setTimeout(() => window.showToast(`🎉 升級了！達到了 Lv.${window.player.level}！`, '#f1c40f'), 500);
+            }
+        };
+
+        window.adminSetLevel = async () => {
+            window.AudioEngine.sfx.click();
+            const lv = parseInt(document.getElementById('admin-set-level').value);
+            const targetAcc = document.getElementById('admin-target-acc').value.trim();
+            if(!lv || lv < 1) return;
+
+            if(!targetAcc || targetAcc === window.player.account) {
+                // 修改自己
+                window.player.level = lv;
+                window.player.exp = 0;
+                window.player.maxExp = window.player.level * 100;
+                window.recalcStats();
+                window.player.stats.hp = window.player.stats.maxHp;
+                
+                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["448"];
+                let availableMoves = pool.filter(m => m.lv <= window.player.level);
+                if(availableMoves.length === 0) availableMoves = [pool[0]];
+                let latestMoves = availableMoves.slice(-4).map(m => m.m);
+                window.player.moves = latestMoves.map(mid => ({ id: mid, ...MOVES[mid] }));
+                
+                window.updateUI(); window.saveData();
+                window.showToast(`✅ 您的等級已修改為 Lv.${lv}！`, "#2ecc71");
+            } else {
+                // 修改遠端指定玩家
+                if(!window.db) return window.showToast("資料庫未連線", "var(--boss)");
+                window.showToast("正在修改目標玩家資料...", "#f1c40f");
+                try {
+                    const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'accounts', targetAcc);
+                    const snap = await window.getDoc(docRef);
+                    if(!snap.exists()) return window.showToast("找不到該帳號", "var(--boss)");
+                    
+                    const pData = JSON.parse(snap.data().data);
+                    pData.level = lv;
+                    pData.exp = 0;
+                    pData.maxExp = lv * 100;
+                    
+                    // 為目標玩家重算屬性
+                    let baseMaxHp = pData.level * 15 + 85; let baseAtk = pData.level * 3 + 7; let baseDef = pData.level * 1 + 4; let baseCrit = 0; let baseDodge = 0; let baseLuck = 0; 
+                    if(pData.equipment) {
+                        Object.values(pData.equipment).forEach(eq => { if(eq) { baseMaxHp += (eq.hp||0); baseAtk += (eq.atk||0); baseDef += (eq.def||0); baseCrit += (eq.crit||0); baseDodge += (eq.dodge||0); baseLuck += (eq.luck||0); } }); 
+                    }
+                    pData.stats.maxHp = baseMaxHp; pData.stats.atk = baseAtk; pData.stats.def = baseDef; pData.stats.crit = baseCrit; pData.stats.dodge = baseDodge; pData.stats.luck = baseLuck;
+                    pData.stats.hp = baseMaxHp;
+
+                    // 為目標玩家重算招式
+                    let pool = window.POKEMON_LEARNSETS[pData.avatarId] || window.POKEMON_LEARNSETS["448"];
+                    let availableMoves = pool.filter(m => m.lv <= pData.level);
+                    if(availableMoves.length === 0) availableMoves = [pool[0]];
+                    let latestMoves = availableMoves.slice(-4).map(m => m.m);
+                    pData.moves = latestMoves.map(mid => ({ id: mid, ...MOVES[mid] }));
+
+                    await window.updateDoc(docRef, { data: JSON.stringify(pData) });
+                    await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'leaderboard', targetAcc), { level: lv }, { merge: true });
+
+                    window.showToast(`✅ 玩家 [${targetAcc}] 等級已修改為 Lv.${lv}！`, "#2ecc71");
+                } catch(e) { window.showToast("修改失敗，請檢查權限", "var(--boss)"); }
+            }
+        };
+        
+        window.adminSetGold = async () => {
+            window.AudioEngine.sfx.click();
+            const g = parseInt(document.getElementById('admin-set-gold').value);
+            const targetAcc = document.getElementById('admin-target-acc').value.trim();
+            if(g === null || g === undefined || g < 0) return;
+
+            if(!targetAcc || targetAcc === window.player.account) {
+                // 修改自己
+                window.player.gold = g;
+                window.updateUI(); window.saveData();
+                window.showToast(`✅ 您的金幣已修改為 ${g}！`, "#2ecc71");
+            } else {
+                // 修改遠端指定玩家
+                if(!window.db) return window.showToast("資料庫未連線", "var(--boss)");
+                window.showToast("正在修改目標玩家資料...", "#f1c40f");
+                try {
+                    const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'accounts', targetAcc);
+                    const snap = await window.getDoc(docRef);
+                    if(!snap.exists()) return window.showToast("找不到該帳號", "var(--boss)");
+                    
+                    const pData = JSON.parse(snap.data().data);
+                    pData.gold = g;
+                    
+                    await window.updateDoc(docRef, { data: JSON.stringify(pData) });
+                    window.showToast(`✅ 玩家 [${targetAcc}] 金幣已修改為 ${g}！`, "#2ecc71");
+                } catch(e) { window.showToast("修改失敗，請檢查權限", "var(--boss)"); }
+            }
+        };
+
+        window.adminSendMail = async () => {
+            const title = document.getElementById('admin-mail-title').value.trim();
+            const msg = document.getElementById('admin-mail-msg').value.trim();
+            const gold = parseInt(document.getElementById('admin-mail-gold').value) || 0;
+            const exp = parseInt(document.getElementById('admin-mail-exp').value) || 0;
+            const candy = parseInt(document.getElementById('admin-mail-candy').value) || 0;
+            const extraItem = document.getElementById('admin-mail-extra-item').value;
+            const extraCount = parseInt(document.getElementById('admin-mail-extra-count').value) || 0;
+            const chestTier = parseInt(document.getElementById('admin-mail-chest-tier').value) || 0;
+            const chestCount = parseInt(document.getElementById('admin-mail-chest-count').value) || 0;
+            
+            if(!title || !msg) return window.showToast("標題與內容不能為空", "var(--boss)");
+            if(!window.db) return window.showToast("資料庫未連線", "var(--boss)");
+            
+            window.showToast("寄送中...", "#f1c40f");
+            
+            const itemsDict = {};
+            if (candy > 0) itemsDict['rare_candy'] = candy;
+            if (extraItem && extraCount > 0) itemsDict[extraItem] = (itemsDict[extraItem] || 0) + extraCount;
+
+            const mailData = {
+                title: title,
+                message: msg,
+                gold: gold,
+                exp: exp,
+                items: itemsDict,
+                chests: (chestTier > 0 && chestCount > 0) ? { [chestTier]: chestCount } : {},
+                timestamp: Date.now(),
+                expiresAt: Date.now() + 24 * 60 * 60 * 1000 // 有效期 24 小時
+            };
+            
+            try {
+                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'mails', Date.now().toString()), mailData);
+                window.showToast("✅ 全服禮包寄送成功！", "#2ecc71");
+                document.getElementById('admin-mail-title').value = '';
+                document.getElementById('admin-mail-msg').value = '';
+                document.getElementById('admin-mail-gold').value = '';
+                document.getElementById('admin-mail-exp').value = '';
+                document.getElementById('admin-mail-candy').value = '';
+                document.getElementById('admin-mail-extra-item').value = '';
+                document.getElementById('admin-mail-extra-count').value = '';
+                document.getElementById('admin-mail-chest-count').value = '';
+            } catch(e) {
+                window.showToast("寄送失敗", "var(--boss)");
+            }
+        };
+
     </script>
 </body>
 </html>
