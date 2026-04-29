@@ -341,7 +341,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429-2</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式、雙字典系統</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260428</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
             </div>
         </div>
     </div>
@@ -792,9 +792,6 @@ window.MOE_DATA_STRING = `
         </div>
         <div class="battle-ui-panel">
             <div id="battle-dialog" class="battle-dialog">野生寶可夢出現了！</div>
-            <div style="text-align: right; padding: 5px 10px 5px 0; max-width: 800px; margin: 0 auto;">
-                <button onclick="window.showQuizHistoryModal()" style="padding: 8px 15px; background: #8e44ad; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s;">📜 察看答題紀錄</button>
-            </div>
             <div id="battle-options" class="battle-options-grid"></div>
             <div id="battle-actions" class="battle-actions-row"></div>
         </div>
@@ -1659,6 +1656,21 @@ window.MOE_DATA_STRING = `
                 window.player.maxExp = window.player.level * 100; 
                 window.AudioEngine.playSFXTrack('levelup');
                 window.showToast(`✨ 吃下了神奇軟糖！達到了 Lv.${window.player.level}！`, '#f1c40f');
+                
+                // 檢查是否學到新招式
+                let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; 
+                let newMoveData = pool.find(m => m.lv === window.player.level);
+                if(newMoveData) {
+                    let mDef = MOVES[newMoveData.m]; 
+                    if(window.player.moves.length < 4) { 
+                        window.player.moves.push({ id: newMoveData.m, ...mDef }); 
+                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 1500);
+                    } else { 
+                        window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
+                        document.getElementById('item-detail-modal').style.display = 'none'; // 先關閉道具視窗以免重疊
+                        setTimeout(() => window.promptLearnMove(newMoveData).then(learned => { window.updateUI(); window.saveData(); }), 1000); 
+                    }
+                }
             } else if (item.type === 'change_char') {
                 window.openChangeCharModal(id);
                 return; // 不在這裡直接扣除道具，等玩家選擇確認後再處理
@@ -2077,7 +2089,7 @@ window.MOE_DATA_STRING = `
             const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
             if (!window.isPvP) {
                 const bagBtn = document.createElement('div'); bagBtn.className = 'action-btn'; bagBtn.innerText = '🎒 道具'; bagBtn.onclick = () => window.openBattleBag(); actionsRow.appendChild(bagBtn);
-                const reviewBtn = document.createElement('div'); reviewBtn.className = 'action-btn report'; reviewBtn.innerText = '📜 答題紀錄'; reviewBtn.onclick = () => window.showQuizHistoryModal(); actionsRow.appendChild(reviewBtn);
+                const reviewBtn = document.createElement('div'); reviewBtn.className = 'action-btn report'; reviewBtn.innerText = '⚠️ 錯題回報'; reviewBtn.onclick = () => window.showQuizHistoryModal(); actionsRow.appendChild(reviewBtn);
                 const fleeBtn = document.createElement('div'); fleeBtn.className = 'action-btn flee'; fleeBtn.innerText = '🏃‍♂️ 逃跑'; fleeBtn.onclick = () => window.fleeCombat(false); actionsRow.appendChild(fleeBtn);
             }
         };
