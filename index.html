@@ -341,7 +341,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429-4</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示以及通知、商店物品上架、預覽招式...等等</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
             </div>
         </div>
     </div>
@@ -830,6 +830,13 @@ window.MOE_DATA_STRING = `
         };
         window.typeDialog = (text) => new Promise(res => { document.getElementById('battle-dialog').innerHTML = text.replace(/\n/g, '<br>'); setTimeout(res, 800); });
         
+        // 新增：動態計算等級經驗上限的函數
+        window.calculateMaxExp = (level) => {
+            if (level >= 81) return level * 200;
+            if (level >= 61) return level * 150;
+            return level * 100;
+        };
+
         window.saveData = async () => { 
             if (!window.player) return;
             localStorage.setItem('wordHunterSave', JSON.stringify(window.player)); 
@@ -1629,9 +1636,10 @@ window.MOE_DATA_STRING = `
             // 【新增】：初始化已領取的信件列表
             if (!window.player.claimedMails) window.player.claimedMails = [];
 
-            // 【修改點】：校正舊版存檔的經驗值上限，將原本的計算方式改為 等級 * 100
-            if (!window.player.maxExp || window.player.maxExp !== window.player.level * 100) {
-                window.player.maxExp = window.player.level * 100;
+            // 【修改點】：校正經驗值上限
+            const expectedMaxExp = window.calculateMaxExp(window.player.level);
+            if (!window.player.maxExp || window.player.maxExp !== expectedMaxExp) {
+                window.player.maxExp = expectedMaxExp;
             }
 
             window.checkWeeklyReset(); window.recalcStats(); 
@@ -1690,24 +1698,28 @@ window.MOE_DATA_STRING = `
                 window.player.consumables[id]--;
                 window.player.level++;
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
-                // 【修改點】：軟糖升級後，下一級經驗值要求改為 等級 * 100
-                window.player.maxExp = window.player.level * 100; 
+                
+                // 【修改點】：使用新的等級經驗計算函數
+                window.player.maxExp = window.calculateMaxExp(window.player.level); 
                 window.AudioEngine.playSFXTrack('levelup');
                 window.showToast(`✨ 吃下了神奇軟糖！達到了 Lv.${window.player.level}！`, '#f1c40f');
                 
-                // 檢查是否學到新招式
+                // 檢查是否學到新招式，確保能夠彈窗並讓玩家放棄學習
                 let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; 
                 let newMoveData = pool.find(m => m.lv === window.player.level);
                 if(newMoveData) {
                     let mDef = MOVES[newMoveData.m]; 
                     if(window.player.moves.length < 4) { 
                         window.player.moves.push({ id: newMoveData.m, ...mDef }); 
-                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 1500);
+                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 500);
+                        window.updateUI(); window.saveData();
                     } else { 
                         window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
                         document.getElementById('item-detail-modal').style.display = 'none'; // 先關閉道具視窗以免重疊
-                        setTimeout(() => window.promptLearnMove(newMoveData).then(learned => { window.updateUI(); window.saveData(); }), 1000); 
+                        setTimeout(() => window.promptLearnMove(newMoveData).then(learned => { window.updateUI(); window.saveData(); }), 500); 
                     }
+                } else {
+                    window.updateUI(); window.saveData();
                 }
             } else if (item.type === 'change_char') {
                 window.openChangeCharModal(id);
@@ -1716,8 +1728,8 @@ window.MOE_DATA_STRING = `
                 if(window.player.level <= 1) { window.showToast(`已經是1等了，無法重置！`, 'var(--boss)'); return; }
                 window.player.consumables[id]--;
                 const candyCount = window.player.level - 1;
-                // 【修改點】：重置後經驗上限改為 100
-                window.player.level = 1; window.player.exp = 0; window.player.maxExp = 100; 
+                // 【修改點】：重置後經驗上限改為新的等級計算標準
+                window.player.level = 1; window.player.exp = 0; window.player.maxExp = window.calculateMaxExp(1); 
                 window.player.stats.maxHp = 100; window.player.stats.atk = 10; window.player.stats.def = 5;
                 window.player.consumables['rare_candy'] = (window.player.consumables['rare_candy'] || 0) + candyCount;
                 window.recalcStats(); window.player.stats.hp = window.player.stats.maxHp;
@@ -2337,7 +2349,7 @@ window.MOE_DATA_STRING = `
             window.updateUI(); window.saveData(); document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg); await window.wait(600); window.typeDialog(`請選擇正確讀音或國字：\n【 ${window.currentQuiz.question} 】`).then(() => window.renderBattleOptions());
         };
 
-window.winCombat = async () => {
+        window.winCombat = async () => {
             if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('win');
             window.playAnim('enemy-sprite', 'anim-sink-enemy'); await window.wait(600);
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
@@ -2359,10 +2371,10 @@ window.winCombat = async () => {
             while (window.player.exp >= window.player.maxExp) {
                 expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = '100%'; await window.wait(600);
                 
-                // 【修改點】：升級後，下一級的經驗值要求大幅下修，設為 等級 * 100
+                // 【修改點】：升級後，下一級的經驗值要求改為新的階梯函數
                 window.player.level++; 
                 window.player.exp -= window.player.maxExp; 
-                window.player.maxExp = window.player.level * 100; 
+                window.player.maxExp = window.calculateMaxExp(window.player.level); 
                 
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
                 window.AudioEngine.playSFXTrack('levelup'); document.getElementById('battle-scene').classList.add('anim-lvl-up'); setTimeout(() => document.getElementById('battle-scene').classList.remove('anim-lvl-up'), 1600);
@@ -2422,9 +2434,37 @@ window.winCombat = async () => {
                 const modal = document.getElementById('learn-move-modal'); document.getElementById('lm-new-name').innerText = MOVES[newMoveData.m].name; const grid = document.getElementById('lm-moves-grid'); grid.innerHTML = '';
                 window.player.moves.forEach((m, idx) => {
                     const btn = document.createElement('button'); btn.className = 'btn'; btn.style.background = '#34495e'; btn.innerText = `忘記 【${m.name}】`;
-                    btn.onclick = async () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; let oldName = window.player.moves[idx].name; window.player.moves[idx] = { id: newMoveData.m, ...MOVES[newMoveData.m] }; window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`忘記了【${oldName}】...\n並且學會了【${MOVES[newMoveData.m].name}】！`); await window.wait(800); window.pendingMoveToLearn = null; resolve(true); }; grid.appendChild(btn);
+                    btn.onclick = async () => { 
+                        window.AudioEngine.sfx.click(); modal.style.display = 'none'; 
+                        let oldName = window.player.moves[idx].name; 
+                        window.player.moves[idx] = { id: newMoveData.m, ...MOVES[newMoveData.m] }; 
+                        window.AudioEngine.playSFXTrack('levelup'); 
+                        
+                        // 修正：依據是否在戰鬥中，顯示不同的提示，避免吃軟糖時對話框卡死
+                        if (document.getElementById('battle-screen').style.display === 'flex') {
+                            await window.typeDialog(`忘記了【${oldName}】...\n並且學會了【${MOVES[newMoveData.m].name}】！`); 
+                            await window.wait(800); 
+                        } else {
+                            window.showToast(`忘記了【${oldName}】，並學會了【${MOVES[newMoveData.m].name}】！`, '#3498db');
+                        }
+                        
+                        window.pendingMoveToLearn = null; resolve(true); 
+                    }; 
+                    grid.appendChild(btn);
                 });
-                document.getElementById('lm-cancel-btn').onclick = async () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; await window.typeDialog(`放棄學習【${MOVES[newMoveData.m].name}】了。`); await window.wait(600); window.pendingMoveToLearn = null; resolve(false); };
+                document.getElementById('lm-cancel-btn').onclick = async () => { 
+                    window.AudioEngine.sfx.click(); modal.style.display = 'none'; 
+                    
+                    // 修正：依據是否在戰鬥中，顯示不同的提示
+                    if (document.getElementById('battle-screen').style.display === 'flex') {
+                        await window.typeDialog(`放棄學習【${MOVES[newMoveData.m].name}】了。`); 
+                        await window.wait(600); 
+                    } else {
+                        window.showToast(`放棄學習【${MOVES[newMoveData.m].name}】。`, '#e74c3c');
+                    }
+                    
+                    window.pendingMoveToLearn = null; resolve(false); 
+                };
                 modal.style.display = 'flex';
             });
         };
@@ -2904,7 +2944,8 @@ window.winCombat = async () => {
                 leveledUp = true;
                 window.player.level++; 
                 window.player.exp -= window.player.maxExp; 
-                window.player.maxExp = window.player.level * 100; 
+                // 【修改點】：使用新的等級經驗計算函數
+                window.player.maxExp = window.calculateMaxExp(window.player.level); 
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
                 
                 let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["default"]; 
@@ -2913,10 +2954,10 @@ window.winCombat = async () => {
                     let mDef = MOVES[newMoveData.m]; 
                     if(window.player.moves.length < 4) { 
                         window.player.moves.push({ id: newMoveData.m, ...mDef }); 
-                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 1500);
+                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 500);
                     } else { 
                         window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
-                        setTimeout(() => window.promptLearnMove(newMoveData).then(() => { window.updateUI(); window.saveData(); }), 1000); 
+                        setTimeout(() => window.promptLearnMove(newMoveData).then(() => { window.updateUI(); window.saveData(); }), 500); 
                     }
                 }
             }
@@ -2936,7 +2977,7 @@ window.winCombat = async () => {
                 // 修改自己
                 window.player.level = lv;
                 window.player.exp = 0;
-                window.player.maxExp = window.player.level * 100;
+                window.player.maxExp = window.calculateMaxExp(lv);
                 window.recalcStats();
                 window.player.stats.hp = window.player.stats.maxHp;
                 
@@ -2960,7 +3001,7 @@ window.winCombat = async () => {
                     const pData = JSON.parse(snap.data().data);
                     pData.level = lv;
                     pData.exp = 0;
-                    pData.maxExp = lv * 100;
+                    pData.maxExp = window.calculateMaxExp(lv);
                     
                     // 為目標玩家重算屬性
                     let baseMaxHp = pData.level * 15 + 85; let baseAtk = pData.level * 3 + 7; let baseDef = pData.level * 1 + 4; let baseCrit = 0; let baseDodge = 0; let baseLuck = 0; 
@@ -3063,4 +3104,4 @@ window.winCombat = async () => {
 
     </script>
 </body>
-</html>
+    </html>
