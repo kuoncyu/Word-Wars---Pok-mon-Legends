@@ -1461,7 +1461,7 @@ window.MOE_DATA_STRING = `
                 window.player.consumables[id]--;
                 window.player.level++;
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
-                window.player.maxExp = window.player.level * 500; // 更新下一級的經驗值要求
+                window.player.maxExp = window.player.level * 100; // 更新下一級的經驗值要求
                 window.AudioEngine.playSFXTrack('levelup');
                 window.showToast(`✨ 吃下了神奇軟糖！達到了 Lv.${window.player.level}！`, '#f1c40f');
             } else if (item.type === 'change_char') {
@@ -2060,10 +2060,10 @@ window.handleAnswerSelection = async (opt) => {
             while (window.player.exp >= window.player.maxExp) {
                 expBar.style.transition = 'width 0.5s ease-in-out'; expBar.style.width = '100%'; await window.wait(600);
                 
-                // 【修改點】：升級後，下一級的經驗值要求設為 等級 * 500
+                // 【修改點】：升級後，下一級的經驗值要求設為 等級 * 100
                 window.player.level++; 
                 window.player.exp -= window.player.maxExp; 
-                window.player.maxExp = window.player.level * 500; 
+                window.player.maxExp = window.player.level * 100; 
                 
                 window.player.stats.atk += 3; window.player.stats.def += 1; window.player.stats.maxHp += 15; window.player.stats.hp = window.player.stats.maxHp;
                 window.AudioEngine.playSFXTrack('levelup'); document.getElementById('battle-scene').classList.add('anim-lvl-up'); setTimeout(() => document.getElementById('battle-scene').classList.remove('anim-lvl-up'), 1600);
