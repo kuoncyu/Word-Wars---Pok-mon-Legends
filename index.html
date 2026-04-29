@@ -341,7 +341,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429-3</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式、對戰紀錄...等等</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429-4</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示以及通知、商店物品上架、預覽招式...等等</div>
             </div>
         </div>
     </div>
@@ -696,9 +696,11 @@ window.MOE_DATA_STRING = `
                 <div class="profile-header">
                     <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
                     <div class="profile-info">
-                        <h3 id="ui-name">無名獵人</h3>
-                        <p>等級 <span id="ui-level" style="color:var(--luck); font-weight:bold;">1</span></p>
-                        <p class="profile-gold">💰 金幣: <span id="ui-gold">0</span></p>
+                        <h3 id="ui-name" style="margin-top: 0; margin-bottom: 5px;">無名獵人</h3>
+                        <p style="margin: 0 0 5px 0;">等級 <span id="ui-level" style="color:var(--luck); font-weight:bold;">1</span></p>
+                        <p class="profile-gold" style="margin: 0;">💰 金幣: <span id="ui-gold">0</span></p>
+                        <!-- 新增：Buff 狀態與倒數計時顯示區 -->
+                        <div id="ui-buffs" style="margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px;"></div>
                     </div>
                 </div>
                 <div style="margin-bottom: 15px;">
@@ -1290,9 +1292,20 @@ window.MOE_DATA_STRING = `
             window.checkIntegrity(); window.lastQuiz = null; window.AudioEngine.playBGM('lobby');
             document.getElementById('login-screen').style.display = 'none'; document.getElementById('game-container').style.display = 'flex'; 
             window.player.stats.hp = window.player.stats.maxHp; 
+            
+            // 紀錄登入時間，並初始化聊天與廣播上線狀態
+            window.sessionStartTime = Date.now();
+            window.initChat();
+            window.broadcastLogin();
+
             window.checkDailyLogin(); window.updateUI(); window.saveData(); 
             window.syncQuizFromFirebase(false); // 強制背景更新題庫
             window.initMailSystem(); // 初始化信件系統
+            
+            // 啟動 Buff 倒數計時器
+            if(window.buffTimerInterval) clearInterval(window.buffTimerInterval);
+            window.buffTimerInterval = setInterval(window.updateBuffTimers, 1000);
+            window.updateBuffTimers(); 
         };
 
         window.logoutGame = async () => {
@@ -1475,10 +1488,26 @@ window.MOE_DATA_STRING = `
             } catch(e) { window.showToast("回報失敗", "var(--boss)"); }
         };
 
+        window.broadcastLogin = async () => {
+            if(!window.db || !window.user) return;
+            try {
+                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat', 'login_' + Date.now().toString() + '_' + window.user.uid), {
+                    uid: window.user.uid,
+                    name: window.player.name,
+                    text: 'login_event',
+                    isSystem: true,
+                    time: Date.now()
+                });
+            } catch(e) {}
+        };
+
         window.initChat = () => {
             if(!window.db) return;
+            if(window.chatInitialized) return; // 避免重複綁定監聽器
             window.chatInitialized = true;
             if(typeof window.unreadChatCount === 'undefined') { window.unreadChatCount = 0; window.lastChatTime = Date.now(); }
+            if(!window.processedSysEvents) window.processedSysEvents = new Set();
+            
             const chatRef = window.collection(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat');
             window.onSnapshot(chatRef, (snap) => {
                 let allMsgs = [];
@@ -1502,9 +1531,22 @@ window.MOE_DATA_STRING = `
                     // 條件：必須在一小時內，且必須是陣列最後的 100 筆之內
                     if (m.time > oneHourAgo && i >= allMsgs.length - 100) {
                         msgsToKeep.push(m);
-                        if(m.time > window.lastChatTime && m.uid !== window.user?.uid) {
-                            hasNew = true;
-                            window.lastChatTime = Math.max(window.lastChatTime, m.time);
+                        
+                        // 處理系統上線事件
+                        if (m.isSystem && m.text === 'login_event') {
+                            if (window.sessionStartTime && m.time > window.sessionStartTime && m.uid !== window.user?.uid && !window.processedSysEvents.has(m.id)) {
+                                window.processedSysEvents.add(m.id);
+                                window.showToast(`🔔 ${m.name} 上線了，趕緊邀請他/她一起對戰吧！`, "#3498db");
+                            }
+                            m.displayHtml = `<div style="margin-bottom:8px; text-align:center;"><span style="font-size:0.8rem;color:#f39c12;background:rgba(243,156,18,0.2);padding:2px 8px;border-radius:10px;">✨ ${m.name} 剛剛上線了</span></div>`;
+                        } else {
+                            if(m.time > window.lastChatTime && m.uid !== window.user?.uid) {
+                                hasNew = true;
+                                window.lastChatTime = Math.max(window.lastChatTime, m.time);
+                            }
+                            const t = new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            const isMe = m.uid === window.user?.uid;
+                            m.displayHtml = `<div style="margin-bottom:8px; text-align:${isMe?'right':'left'}; animation: float-up 0.3s ease-out forwards; animation-name: none;"><span style="font-size:0.7rem;color:#888;">${t}</span> <span style="color:${isMe?'var(--luck)':'var(--accent)'};font-weight:bold;">${m.name}</span><br><div style="display:inline-block;background:${isMe?'#2c3e50':'#333'};padding:8px 12px;border-radius:10px;font-size:0.95rem;max-width:85%;word-wrap:break-word;text-align:left; margin-top:2px;">${m.text}</div></div>`;
                         }
                     } else {
                         // 刪除過期或超出的訊息
@@ -1521,11 +1563,7 @@ window.MOE_DATA_STRING = `
                 }
                 
                 const box = document.getElementById('chat-messages');
-                box.innerHTML = msgsToKeep.map(m => {
-                    const t = new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    const isMe = m.uid === window.user?.uid;
-                    return `<div style="margin-bottom:8px; text-align:${isMe?'right':'left'}; animation: float-up 0.3s ease-out forwards; animation-name: none;"><span style="font-size:0.7rem;color:#888;">${t}</span> <span style="color:${isMe?'var(--luck)':'var(--accent)'};font-weight:bold;">${m.name}</span><br><div style="display:inline-block;background:${isMe?'#2c3e50':'#333'};padding:8px 12px;border-radius:10px;font-size:0.95rem;max-width:85%;word-wrap:break-word;text-align:left; margin-top:2px;">${m.text}</div></div>`;
-                }).join('');
+                box.innerHTML = msgsToKeep.map(m => m.displayHtml).join('');
                 
                 if(panel.style.display === 'flex') {
                     setTimeout(() => box.scrollTop = box.scrollHeight, 50);
@@ -1705,12 +1743,16 @@ window.MOE_DATA_STRING = `
             } else if (item.type === 'buff_exp') {
                 window.player.consumables[id]--;
                 if(!window.player.buffs) window.player.buffs = { expMulti: 1, expExpire: 0, goldMulti: 1, goldExpire: 0 };
-                window.player.buffs.expMulti = item.val; window.player.buffs.expExpire = Date.now() + 3600000;
+                window.player.buffs.expMulti = item.val; 
+                // 修改：如果已經有相同狀態，時間會疊加而不是重置
+                window.player.buffs.expExpire = Math.max(Date.now(), window.player.buffs.expExpire || 0) + 3600000;
                 window.showToast(`✨ 經驗值 ${item.val} 倍效果啟動 (持續1小時)！`, '#2ecc71');
             } else if (item.type === 'buff_gold') {
                 window.player.consumables[id]--;
                 if(!window.player.buffs) window.player.buffs = { expMulti: 1, expExpire: 0, goldMulti: 1, goldExpire: 0 };
-                window.player.buffs.goldMulti = item.val; window.player.buffs.goldExpire = Date.now() + 3600000;
+                window.player.buffs.goldMulti = item.val; 
+                // 修改：如果已經有相同狀態，時間會疊加而不是重置
+                window.player.buffs.goldExpire = Math.max(Date.now(), window.player.buffs.goldExpire || 0) + 3600000;
                 window.showToast(`💰 金幣 ${item.val} 倍效果啟動 (持續1小時)！`, '#f1c40f');
             } else if (item.type === 'hp') { 
                 window.player.consumables[id]--;
@@ -1847,6 +1889,34 @@ window.MOE_DATA_STRING = `
         };
         window.buyShopEquip = (idx, cost) => { if(window.player.gold >= cost) { window.AudioEngine.sfx.equip(); window.player.gold -= cost; const item = window.player.shopEquips[idx]; item.sold = true; const newItem = { ...item }; delete newItem.sold; delete newItem.price; window.player.bag.push(newItem); window.showToast(`✅ 購買了 ${newItem.name}，已放入背包！`, "#2ecc71"); window.updateUI(); window.saveData(); } else { window.AudioEngine.sfx.hit(); window.showToast(`金幣不足！`, "var(--boss)"); } };
 
+        // 新增：更新 Buff 倒數計時顯示
+        window.updateBuffTimers = () => {
+            if (!window.player || !window.player.buffs) return;
+            const now = Date.now();
+            let html = '';
+            
+            if (window.player.buffs.expExpire > now) {
+                const diff = window.player.buffs.expExpire - now;
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                const timeStr = h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+                html += `<div style="font-size:0.75rem; background:rgba(46, 204, 113, 0.2); border:1px solid #2ecc71; padding:2px 5px; border-radius:4px; color:#2ecc71; display:inline-block;">✨經驗x${window.player.buffs.expMulti} (${timeStr})</div>`;
+            }
+            
+            if (window.player.buffs.goldExpire > now) {
+                const diff = window.player.buffs.goldExpire - now;
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                const timeStr = h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+                html += `<div style="font-size:0.75rem; background:rgba(241, 196, 15, 0.2); border:1px solid #f1c40f; padding:2px 5px; border-radius:4px; color:#f1c40f; display:inline-block;">💰金幣x${window.player.buffs.goldMulti} (${timeStr})</div>`;
+            }
+            
+            const buffContainer = document.getElementById('ui-buffs');
+            if (buffContainer) buffContainer.innerHTML = html;
+        };
+
         window.updateUI = () => {
             document.getElementById('ui-name').innerText = window.player.name; document.getElementById('ui-level').innerText = window.player.level; document.getElementById('ui-exp').innerText = `${window.player.exp} / ${window.player.maxExp}`; document.getElementById('ui-atk').innerText = window.player.stats.atk; document.getElementById('ui-def').innerText = window.player.stats.def; document.getElementById('ui-hp').innerText = `${window.player.stats.hp} / ${window.player.stats.maxHp}`; document.getElementById('ui-gold').innerText = window.player.gold || 0; document.getElementById('ui-avatar').src = window.player.avatar; document.getElementById('ui-crit').innerText = `${window.player.stats.crit}%`; document.getElementById('ui-dodge').innerText = `${Math.min(60, window.player.stats.dodge)}%`; document.getElementById('ui-luck').innerText = `${Math.min(60, window.player.stats.luck)}%`;
             let mHtml = ''; for(let i=0; i<4; i++) { if(window.player.moves[i]) mHtml += `<div class="move-slot" style="cursor:pointer;" onclick="window.showToast('${window.player.moves[i].name}: ${window.player.moves[i].desc}', '#3498db')">${window.player.moves[i].name}</div>`; else mHtml += `<div class="move-slot move-empty">-</div>`; } document.getElementById('ui-moves').innerHTML = mHtml;
@@ -1870,6 +1940,9 @@ window.MOE_DATA_STRING = `
                     return `<div class="inv-item" style="${grayStyle}" onclick="window.openItemDetail('bag', ${obj.idx})"><div class="inv-header" style="color:${color}"><span>${i.icon} ${i.name} <span class="inv-quality-tag" style="background:${color}">${['破舊的','普通的','良好的','精緻的','高級的','皇家的'][i.qualityIndex]}</span>${equippedTag}</span><span style="color:#888; font-size:0.9rem;">Lv.${i.level}</span></div><div class="inv-stats">${i.atk ? `<span>🗡️ 攻擊 +${i.atk}</span>` : ''}${i.hp ? `<span>❤️ 生命 +${i.hp}</span>` : ''}${i.def ? `<span>🛡️ 防禦 +${i.def}</span>` : ''}${i.crit ? `<span>⚡ 爆擊 +${i.crit}%</span>` : ''}${i.dodge ? `<span>🌫️ 閃避 +${i.dodge}%</span>` : ''}${i.luck ? `<span>🍀 幸運 +${i.luck}%</span>` : ''}</div></div>`;
                 }).join('');
             }
+            
+            // 呼叫更新計時器
+            window.updateBuffTimers();
         };
 
         window.openItemDetail = (source, indexOrKey) => {
