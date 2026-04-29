@@ -2488,6 +2488,80 @@ window.winCombat = async () => {
             leaveBtn.onclick = () => { window.leavePvPRoom(); }; 
             actionsRow.appendChild(leaveBtn);
         };
+    // ======= 新增：戰鬥歷史紀錄與字典查詢系統 =======
+        window.quizHistory = []; // 儲存最近 5 筆答題紀錄
+
+        window.openDictionary = (keyword, type) => {
+            // 處理查詢字詞，自動去除可能影響搜尋的標點符號，提高字典查詢準確率
+            let cleanKeyword = keyword.replace(/[「」『』【】（）()《》〈〉？?！!，,。.:：]/g, "").trim();
+            let url = "";
+            if (type === 'concise') {
+                url = `https://dict.concised.moe.edu.tw/search.jsp?q=${encodeURIComponent(cleanKeyword)}`;
+            } else {
+                url = `https://dict.revised.moe.edu.tw/search.jsp?q=${encodeURIComponent(cleanKeyword)}`;
+            }
+            window.open(url, '_blank');
+        };
+
+        window.reportQuiz = (questionText) => {
+            // 錯題回報提示：強調簡編本為主，重編本為輔
+            const reportMsg = `⚠️ 已記錄您的錯題回報！\n\n題目：「${questionText}」\n\n【管理員審核標準】\n錯題查核將以「教育部國語辭典簡編本」為主，「重編本」為輔。感謝您的回報！`;
+            if (window.showToast) {
+                window.showToast(reportMsg, '#e74c3c');
+            } else {
+                alert(reportMsg);
+            }
+        };
+
+        window.showQuizHistoryModal = () => {
+            if (window.AudioEngine && window.AudioEngine.sfx && window.AudioEngine.sfx.click) window.AudioEngine.sfx.click();
+            let modal = document.getElementById('quiz-history-modal');
+            
+            // 如果還沒有建立過這個彈窗，就動態生成一個並插入畫面
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'quiz-history-modal';
+                modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; display:flex; justify-content:center; align-items:center;';
+                
+                const content = document.createElement('div');
+                content.id = 'quiz-history-content';
+                content.style.cssText = 'background:var(--bg-color, #fff); padding:20px; border-radius:10px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto; color:var(--text-color, #333); border: 2px solid #3498db; box-shadow: 0 4px 15px rgba(0,0,0,0.5);';
+                
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+            }
+            
+            const content = document.getElementById('quiz-history-content');
+            let html = `<h3 style="text-align:center; margin-bottom:15px; border-bottom:2px solid #3498db; padding-bottom:10px;">📜 最近 5 次答題記錄</h3>`;
+            
+            if (window.quizHistory.length === 0) {
+                html += `<p style="text-align:center; color:#7f8c8d; font-weight:bold;">目前尚無戰鬥答題記錄。</p>`;
+            } else {
+                // 反轉陣列，讓最新回答的一題顯示在最上面
+                const reversedHistory = [...window.quizHistory].reverse();
+                reversedHistory.forEach((q, i) => {
+                    const isCorrect = q.userAnswer === q.correctAnswer;
+                    html += `
+                    <div style="margin-bottom: 15px; padding: 12px; border: 1px solid ${isCorrect ? '#2ecc71' : '#e74c3c'}; border-radius: 8px; background: ${isCorrect ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)'};">
+                        <p style="margin: 0 0 8px 0; font-weight: bold; line-height: 1.4;">Q: ${q.question}</p>
+                        <p style="margin: 0 0 5px 0; font-size: 0.95em;">你的答案: <span style="font-weight:bold; color: ${isCorrect ? '#27ae60' : '#c0392b'};">${q.userAnswer}</span></p>
+                        ${!isCorrect ? `<p style="margin: 0 0 10px 0; font-size: 0.95em; color:#27ae60; font-weight:bold;">正確答案: ${q.correctAnswer}</p>` : ''}
+                        
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+                            <button onclick="window.openDictionary('${q.searchKeyword || q.question}', 'concise')" style="flex:1; padding: 8px 5px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size:0.85em; font-weight:bold;">📖 簡編本 (主)</button>
+                            <button onclick="window.openDictionary('${q.searchKeyword || q.question}', 'revised')" style="flex:1; padding: 8px 5px; background: #2980b9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size:0.85em; font-weight:bold;">📚 重編本</button>
+                            <button onclick="window.reportQuiz('${q.question}')" style="flex:1; padding: 8px 5px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size:0.85em; font-weight:bold;">⚠️ 錯題回報</button>
+                        </div>
+                    </div>`;
+                });
+            }
+            
+            html += `<button onclick="document.getElementById('quiz-history-modal').style.display='none'" style="display:block; width:100%; padding:12px; margin-top:20px; background:#95a5a6; color:white; border:none; border-radius:5px; cursor:pointer; font-size:1.1em; font-weight:bold;">關閉紀錄</button>`;
+            
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+        };
+        // ==============================================
     </script>
 </body>
 </html>
