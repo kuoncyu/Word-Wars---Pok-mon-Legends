@@ -210,8 +210,10 @@ window.MOE_DATA_STRING = `
         /* ---------------- 動畫特效 ---------------- */
         @keyframes attack-right { 0%, 100% { transform: scaleX(-1) translateX(0); } 20% { transform: scaleX(-1) translateX(30px); } 50% { transform: scaleX(-1) translateX(-60px); } }
         @keyframes attack-left { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-30px); } 50% { transform: translateX(60px); } }
+        @keyframes attack-ally { 0%, 100% { transform: scaleX(-1) translateX(0); } 20% { transform: scaleX(-1) translateX(20px); } 50% { transform: scaleX(-1) translateX(-40px); } }
         .anim-atk-player { animation: attack-right 0.4s ease; }
         .anim-atk-enemy { animation: attack-left 0.4s ease; }
+        .anim-atk-ally { animation: attack-ally 0.4s ease; }
         
         @keyframes flashy-dodge-right { 0%, 100% { transform: scaleX(-1) translateX(0) scale(1); opacity: 1; filter: blur(0); } 50% { transform: scaleX(-1) translateX(120px) scale(1.1) skewX(20deg); opacity: 0.4; filter: blur(4px) drop-shadow(0 0 20px #3498db); } }
         @keyframes flashy-dodge-left { 0%, 100% { transform: translateX(0) scale(1); opacity: 1; filter: blur(0); } 50% { transform: translateX(120px) scale(1.1) skewX(-20deg); opacity: 0.4; filter: blur(4px) drop-shadow(0 0 20px #3498db); } }
@@ -296,6 +298,11 @@ window.MOE_DATA_STRING = `
         .zy-key { background: #444; color: #fff; padding: 12px 0; text-align: center; border-radius: 5px; cursor: pointer; border: 1px solid #666; font-size: 1.1rem; }
         .zy-key:active { background: var(--accent); color: #000; }
         
+        /* 地下城與神獸召喚 Modal */
+        #dungeon-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 6600; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .dungeon-box { background: #1a1a2e; border: 2px solid #e74c3c; border-radius: 15px; width: 100%; max-width: 400px; padding: 25px; text-align: center; }
+        #summon-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 8000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
         /* PvP Modal */
         #pvp-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 6500; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .pvp-box { background: #111; border: 2px solid #9b59b6; border-radius: 15px; width: 100%; max-width: 400px; padding: 25px; text-align: center; }
@@ -341,7 +348,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260430</div><div>題庫版本：20260417</div><div>更新資訊：商品價錢與購買限制、每日登陸獎勵提升、加倍券使用限制調整</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260430</div><div>題庫版本：20260417</div><div>更新資訊：修正加倍券bug、雙人地下城系統、隨等級提高每日登入獎勵</div>
             </div>
         </div>
     </div>
@@ -527,6 +534,61 @@ window.MOE_DATA_STRING = `
                 <button id="pvp-start-btn" class="btn" style="background:#555; flex:1; display:none;" onclick="window.startPvPBattle()" disabled>開始對戰</button>
             </div>
             <button class="btn" style="background:#e74c3c; margin-top:15px;" onclick="window.leavePvPRoom()">離開房間</button>
+        </div>
+    </div>
+
+    <!-- 地下城連線選單 -->
+    <div id="dungeon-modal" class="modal-overlay" style="z-index: 6600;">
+        <div class="dungeon-box" id="dungeon-menu-box">
+            <h2 id="dungeon-title-text" style="color:#e74c3c; margin-top:0; text-shadow: 0 0 10px #c0392b;">🏰 雙人地下城 (10/10)</h2>
+            <div id="dungeon-refresh-timer-display" style="color:var(--luck); font-size:0.95rem; margin-bottom:10px; font-weight:bold;">每日重置倒數: --:--:--</div>
+            <p style="color:#ccc; font-size:0.9rem;">與另一位玩家組隊挑戰強大的首領！<br>難度極高，但獎勵非常豐厚！<br><span style="color:#f1c40f;">第5層(Lv.81+)有1%機率掉落神獸召喚卷！</span></p>
+            <select id="dungeon-tier-select" class="input-box" style="width:100%; margin-bottom:15px; font-size: 1.1rem; padding: 10px;"></select>
+            <button class="btn" style="background:#e74c3c; margin-bottom:15px; padding:15px; font-size:1.2rem;" onclick="window.createDungeonRoom()">👑 建立地下城隊伍</button>
+            <div style="margin:20px 0; border-top:1px dashed #555;"></div>
+            <input type="text" id="dungeon-join-code" class="input-box" placeholder="輸入 4 碼隊伍號" style="width:100%; margin-bottom:10px; font-size:1.5rem; letter-spacing:3px;">
+            <button class="btn" style="background:#3498db; padding:15px; font-size:1.2rem;" onclick="window.joinDungeonRoom()">🔗 加入隊伍</button>
+            <button class="btn" style="background:#555; margin-top:20px;" onclick="document.getElementById('dungeon-modal').style.display='none'">取消</button>
+        </div>
+
+        <div class="dungeon-box" id="dungeon-lobby-box" style="display:none;">
+            <h2 style="color:#f1c40f; margin-top:0;">地下城集結</h2>
+            <h1 id="dungeon-room-id-display" style="font-size:3rem; letter-spacing:5px; margin:10px 0; color:#fff;">----</h1>
+            <p style="color:#aaa; font-size:0.9rem;" id="dungeon-lobby-msg">等待隊友加入中...</p>
+            
+            <div style="display:flex; justify-content:space-around; align-items:center; margin:20px 0; background:#111; padding:15px; border-radius:10px;">
+                <div style="text-align:center;">
+                    <img id="dungeon-p1-avatar" src="" style="width:60px; height:60px; image-rendering:pixelated; background:#333; border-radius:50%; border:2px solid #555;">
+                    <div id="dungeon-p1-name" style="color:#fff; font-weight:bold; margin-top:5px;">隊長</div>
+                    <div id="dungeon-p1-status" style="color:#e74c3c; font-size:0.8rem; font-weight:bold;">未準備</div>
+                </div>
+                <div style="font-size:1.5rem; font-weight:900; color:#e74c3c;">&</div>
+                <div style="text-align:center;">
+                    <img id="dungeon-p2-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' font-size='60' font-weight='bold' font-family='sans-serif' text-anchor='middle' dy='.3em' fill='%23aaa'%3E?%3C/text%3E%3C/svg%3E" style="width:60px; height:60px; image-rendering:pixelated; background:#333; border-radius:50%; border:2px solid #555;">
+                    <div id="dungeon-p2-name" style="color:#fff; font-weight:bold; margin-top:5px;">等待中</div>
+                    <div id="dungeon-p2-status" style="color:#e74c3c; font-size:0.8rem; font-weight:bold;">--</div>
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                <button id="dungeon-ready-btn" class="btn" style="background:#2ecc71; flex:1; display:none;" onclick="window.toggleDungeonReady()">準備就緒</button>
+                <button id="dungeon-start-btn" class="btn" style="background:#e74c3c; flex:1; display:none;" onclick="window.startDungeonBattle()" disabled>開始討伐</button>
+            </div>
+            <button class="btn" style="background:#555; margin-top:15px;" onclick="window.leaveDungeonRoom()">離開隊伍</button>
+        </div>
+    </div>
+
+    <!-- 神獸召喚選單 -->
+    <div id="summon-modal" class="modal-overlay" style="z-index: 8000;">
+        <div class="modal-box" style="padding: 20px; max-width: 450px; background: #2c3e50; border-color: #f1c40f; box-shadow: 0 0 30px rgba(241, 196, 15, 0.5);">
+            <h2 style="color:#f1c40f; margin-top:0; text-shadow: 0 0 10px #f39c12;">📜 神獸召喚</h2>
+            <p style="font-size:1rem; color:#ccc; margin-bottom:15px;">傳說中的寶可夢聽從了召喚！<br>選擇一隻作為你的新先鋒，將自動學會專屬招式！</p>
+            <div id="summon-grid" class="avatar-grid" style="grid-template-columns: repeat(3, 1fr); max-height: 40vh; overflow-y: auto; padding: 5px;"></div>
+            <button type="button" class="btn" style="background:#3498db; margin-top:10px;" onclick="window.openPokedexModal(window.summonSelectedUrl, null)">🔍 預覽神獸資訊</button>
+            <div style="display:flex; gap:10px; margin-top: 15px;">
+                <button class="btn" id="summon-cancel-btn" style="background:#555; flex:1;">取消召喚</button>
+                <button class="btn" id="summon-confirm-btn" style="background:#f1c40f; color:#000; flex:1;">確認締結契約</button>
+            </div>
         </div>
     </div>
 
@@ -718,10 +780,11 @@ window.MOE_DATA_STRING = `
                 </div>
             </div>
             <button id="daily-chest-btn" class="btn" style="background:#f39c12; margin-bottom:10px; display:none;" onclick="window.openDailyLoginModal()">🎁 查看每日獎勵</button>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#3498db; flex: 1;" onclick="window.openMapModal()">🗺️ 選擇地圖</button>
-                <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#e3350d; flex: 1;" onclick="window.initCombat()">🌲 快速遇敵</button>
-                <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#9b59b6; flex: 1;" onclick="window.openPvPMenu()">📡 連線對戰</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn" style="padding: 15px; font-size: 1.1rem; background:#3498db; flex: 1; min-width: 45%;" onclick="window.openMapModal()">🗺️ 選擇地圖</button>
+                <button class="btn" style="padding: 15px; font-size: 1.1rem; background:#e3350d; flex: 1; min-width: 45%;" onclick="window.initCombat()">🌲 快速遇敵</button>
+                <button class="btn" style="padding: 15px; font-size: 1.1rem; background:#9b59b6; flex: 1; min-width: 45%;" onclick="window.openPvPMenu()">📡 連線對戰</button>
+                <button class="btn" style="padding: 15px; font-size: 1.1rem; background:#e74c3c; flex: 1; min-width: 45%; border: 2px solid #f1c40f;" onclick="window.openDungeonMenu()">🏰 雙人地下城</button>
             </div>
             <!-- 新增戰鬥分頁內的紀錄按鈕 -->
             <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#8e44ad; width: 100%; margin-top: 10px;" onclick="window.showQuizHistoryModal()">📜 察看最近答題紀錄</button>
@@ -792,8 +855,18 @@ window.MOE_DATA_STRING = `
                 <div class="hp-bar-bg"><div class="hp-bar-fill" id="player-hp-fill"></div></div>
                 <div class="exp-bar-bg" id="player-exp-container"><div class="exp-bar-fill" id="player-exp-fill"></div></div>
                 <div class="hp-numbers"><span id="player-current-hp">100</span> / <span id="player-max-hp">100</span></div>
+                <div id="ally-hp-info" style="display:none; font-size: 0.85rem; color: #3498db; margin-top: 4px; font-weight: bold; border-top: 1px dashed #ccc; padding-top: 2px;">隊友 HP: <span id="ally-current-hp">100</span></div>
             </div>
             <img id="player-sprite" class="player-sprite" src="">
+           <!-- 雙人地下城專用：隊友血條與模型 (調整位置至我方左側，緊貼我方血條) -->
+            <div class="battle-stat-box" id="ally-stat-box" style="display:none; position:absolute; bottom: 5vmin; right: calc(7vmin + min(45%, 280px)); border-radius: 10px; padding: 0.5vmin 1vmin; width: 30%; max-width: 200px; z-index: 9;">
+                <div class="stat-name-row" style="font-size: 0.8rem; justify-content:flex-start; gap:5px;">
+                    <div style="background:#3498db; color:#fff; padding:2px 4px; border-radius:4px; font-size:0.6rem;">隊友</div>
+                    <span id="ally-battle-name" style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">隊友</span>
+                </div>
+                <div class="hp-bar-bg" style="height: 6px;"><div class="hp-bar-fill" id="ally-hp-fill"></div></div>
+            </div>
+            <img id="ally-sprite" class="player-sprite" src="" style="display:none; position:absolute; left: -2vmin; bottom: 20vmin; max-width: 30vmin; height: clamp(80px, 20vmin, 160px); object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5)) brightness(0.85); transform: scaleX(-1); z-index: 4; image-rendering: pixelated; transition: transform 0.3s ease;">
         </div>
         <div class="battle-ui-panel">
             <div id="battle-dialog" class="battle-dialog">野生寶可夢出現了！</div>
@@ -822,7 +895,7 @@ window.MOE_DATA_STRING = `
                 document.getElementById('player-current-hp').innerText = Math.floor(cur); 
                 document.getElementById('player-max-hp').innerText = Math.floor(max); 
             }
-            if(tgt === 'enemy' && window.isPvP) {
+            if(tgt === 'enemy' && (window.isPvP || window.inDungeonBattle)) {
                 document.getElementById('enemy-hp-text').style.display = 'block';
                 document.getElementById('enemy-hp-text').innerHTML = `<span>${Math.floor(cur)}</span> / <span>${Math.floor(max)}</span>`;
             } else if (tgt === 'enemy') {
@@ -1064,7 +1137,13 @@ window.MOE_DATA_STRING = `
             m_firepunch_tm: {name:"火焰拳", type:'damage', power:75, anim:'fire', status:'burn', chance:0.2, desc:"帶有火焰的拳頭。威力: 75 (20%機率灼傷，每回合扣血)"},
             m_icepunch_tm: {name:"冰凍拳", type:'damage', power:75, anim:'ice', status:'freeze', chance:0.2, desc:"帶有冷氣的拳頭。威力: 75 (20%機率冰凍，無法行動)"},
             m_poisonpowder: {name:"毒粉", type:'status', status:'poison', chance:0.75, anim:'poison', desc:"撒出毒粉。威力: 0 (75%機率使對手中毒)"},
-            m_razorleaf: {name:"飛葉快刀", type:'damage', power:55, anim:'grass', critBonus:0.2, desc:"發射鋒利的葉片。威力: 55 (容易擊中要害)"}
+            m_razorleaf: {name:"飛葉快刀", type:'damage', power:55, anim:'grass', critBonus:0.2, desc:"發射鋒利的葉片。威力: 55 (容易擊中要害)"},
+            m_judgment: {name:"制裁光礫", type:'damage', power:100, anim:'normal', desc:"釋放無數光礫，威力強大。威力: 100"},
+            m_roaroftime: {name:"時光咆哮", type:'damage', power:150, anim:'normal', desc:"扭曲時間的強大咆哮。威力: 150"},
+            m_originpulse: {name:"根源波動", type:'damage', power:110, anim:'water', desc:"用無數青亮光線攻擊。威力: 110"},
+            m_coreenforcer: {name:"核心懲罰者", type:'damage', power:100, anim:'ground', desc:"消除對手的特性與力量。威力: 100"},
+            m_dragonascent: {name:"畫龍點睛", type:'damage', power:120, anim:'flying', desc:"從天而降的強力攻擊。威力: 120"},
+            m_magicalleaf: {name:"魔法葉", type:'damage', power:60, anim:'grass', desc:"散落不會被閃避的葉片。威力: 60"}
         };
         
         window.POKEMON_LEARNSETS = {
@@ -1105,7 +1184,12 @@ window.MOE_DATA_STRING = `
             "183": [{lv:1,m:'m_watergun'},{lv:1,m:'m_bubble'},{lv:1,m:'m_rollout'},{lv:1,m:'m_tackle'}],
             "222": [{lv:1,m:'m_bubblebeam'},{lv:1,m:'m_rocktomb'},{lv:1,m:'m_recover'},{lv:1,m:'m_spikes'}],
             "72": [{lv:1,m:'m_poisonsting'},{lv:1,m:'m_acid'},{lv:1,m:'m_supersonic'},{lv:1,m:'m_wrap'}],
-            "226": [{lv:1,m:'m_surf'},{lv:1,m:'m_airslash'},{lv:1,m:'m_aquaring'},{lv:1,m:'m_hurricane'}]
+            "226": [{lv:1,m:'m_surf'},{lv:1,m:'m_airslash'},{lv:1,m:'m_aquaring'},{lv:1,m:'m_hurricane'}],
+            "493": [{lv:1,m:'m_tackle'},{lv:10,m:'m_recover'},{lv:20,m:'m_hyperbeam'},{lv:30,m:'m_earthquake'},{lv:40,m:'m_extremespeed'},{lv:50,m:'m_judgment'}],
+            "483": [{lv:1,m:'m_metalclaw'},{lv:10,m:'m_dragonrage'},{lv:20,m:'m_flashcannon'},{lv:30,m:'m_dragonpulse'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_roaroftime'}],
+            "382": [{lv:1,m:'m_watergun'},{lv:10,m:'m_waterpulse'},{lv:20,m:'m_icebeam'},{lv:30,m:'m_surf'},{lv:40,m:'m_hydropump'},{lv:50,m:'m_originpulse'}],
+            "718": [{lv:1,m:'m_bite'},{lv:10,m:'m_dragonrage'},{lv:20,m:'m_crunch'},{lv:30,m:'m_dragonpulse'},{lv:40,m:'m_earthquake'},{lv:50,m:'m_coreenforcer'}],
+            "251": [{lv:1,m:'m_confusion'},{lv:10,m:'m_magicalleaf'},{lv:20,m:'m_recover'},{lv:30,m:'m_psychic'},{lv:40,m:'m_petaldance'},{lv:50,m:'m_moonblast'}]
         };
 
         const consumableItems={
@@ -1120,11 +1204,12 @@ window.MOE_DATA_STRING = `
             exp_x2: {name:"經驗2倍卡", icon:"📜", desc:"1小時內戰鬥經驗2倍", dynamicPriceMulti:100, reqLevel:1, type:'buff_exp', val:2, isWeekly:true},
             exp_x3: {name:"經驗3倍卡", icon:"📜", desc:"1小時內戰鬥經驗3倍", dynamicPriceMulti:200, reqLevel:1, type:'buff_exp', val:3, isWeekly:true},
             gold_x2: {name:"金幣2倍卡", icon:"🎫", desc:"1小時內戰鬥金幣2倍", dynamicPriceMulti:100, reqLevel:1, type:'buff_gold', val:2, isWeekly:true},
-            gold_x3: {name:"金幣3倍卡", icon:"🎫", desc:"1小時內戰鬥金幣3倍", dynamicPriceMulti:200, reqLevel:1, type:'buff_gold', val:3, isWeekly:true}
+            gold_x3: {name:"金幣3倍卡", icon:"🎫", desc:"1小時內戰鬥金幣3倍", dynamicPriceMulti:200, reqLevel:1, type:'buff_gold', val:3, isWeekly:true},
+            summon_scroll: {name:"神獸召喚卷", icon:"📜", desc:"召喚限定神獸，替換先鋒並學習專屬招式", basePrice:9999999, reqLevel:80, type:'summon_scroll', isWeekly:false}
         };
         
         let mapZones=[];
-        const pokeNames={10:"綠毛蟲",16:"波波",19:"小拉達",18:"大比鳥",43:"走路草",46:"派拉斯",52:"喵喵",45:"霸王花",41:"超音蝠",66:"腕力",74:"小拳石",95:"大岩蛇",92:"鬼斯",200:"夢妖",353:"怨影娃娃",94:"耿鬼",123:"飛天螳螂",127:"大甲",214:"赫拉克羅斯",143:"卡比獸",126:"鴨嘴火獸",218:"熔岩蟲",324:"煤炭龜",6:"噴火龍",124:"迷唇姐",215:"紐拉",361:"雪童子",144:"急凍鳥",130:"暴鯉龍",68:"怪力",142:"化石翼龍",149:"快龍",248:"班基拉斯",376:"巨金怪",373:"暴飛龍",249:"洛奇亞",250:"鳳王",445:"烈咬陸鯊",635:"三首惡龍",612:"雙斧戰龍",150:"超夢",384:"烈空坐", 183:"瑪力露", 222:"太陽珊瑚", 72:"瑪瑙水母", 226:"巨翅飛魚", 151:"夢幻", 25:"皮卡丘", 658:"甲賀忍蛙", 700:"仙子伊布", 778:"謎擬Q", 609:"水晶燈火靈", 359:"阿勃梭魯", 448:"路卡利歐", 624:"駒刀小兵", 65:"胡地", 282:"沙奈朵", 478:"雪妖女", 407:"羅絲雷朵", 477:"黑夜魔靈"};
+        const pokeNames={10:"綠毛蟲",16:"波波",19:"小拉達",18:"大比鳥",43:"走路草",46:"派拉斯",52:"喵喵",45:"霸王花",41:"超音蝠",66:"腕力",74:"小拳石",95:"大岩蛇",92:"鬼斯",200:"夢妖",353:"怨影娃娃",94:"耿鬼",123:"飛天螳螂",127:"大甲",214:"赫拉克羅斯",143:"卡比獸",126:"鴨嘴火獸",218:"熔岩蟲",324:"煤炭龜",6:"噴火龍",124:"迷唇姐",215:"紐拉",361:"雪童子",144:"急凍鳥",130:"暴鯉龍",68:"怪力",142:"化石翼龍",149:"快龍",248:"班基拉斯",376:"巨金怪",373:"暴飛龍",249:"洛奇亞",250:"鳳王",445:"烈咬陸鯊",635:"三首惡龍",612:"雙斧戰龍",150:"超夢",384:"烈空坐", 183:"瑪力露", 222:"太陽珊瑚", 72:"瑪瑙水母", 226:"巨翅飛魚", 151:"夢幻", 25:"皮卡丘", 658:"甲賀忍蛙", 700:"仙子伊布", 778:"謎擬Q", 609:"水晶燈火靈", 359:"阿勃梭魯", 448:"路卡利歐", 624:"駒刀小兵", 65:"胡地", 282:"沙奈朵", 478:"雪妖女", 407:"羅絲雷朵", 477:"黑夜魔靈", 493:"阿爾宙斯", 483:"帝牙盧卡", 382:"蓋歐卡", 718:"基格爾德", 251:"時拉比"};
         const chestNames=["破舊木寶箱","堅固鐵寶箱","閃亮銅寶箱","精緻銀寶箱","璀璨金寶箱","稀有白金寶箱","紫水晶寶箱","傳說翡翠寶箱","史詩鑽石寶箱","幻之星龍寶箱"];
         
         const avatarDatabase=[
@@ -1647,8 +1732,9 @@ window.MOE_DATA_STRING = `
             if (!window.player.buffs) window.player.buffs = { expMulti: 1, expExpire: 0, goldMulti: 1, goldExpire: 0 }; 
             if (!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} }; 
             
-            // 【新增】：初始化已領取的信件列表
+            // 【新增】：初始化已領取的信件列表與地下城次數
             if (!window.player.claimedMails) window.player.claimedMails = [];
+            if (!window.player.dungeonDaily) window.player.dungeonDaily = { date: "", attempts: 0 };
 
             // 【修改點】：校正經驗值上限
             const expectedMaxExp = window.calculateMaxExp(window.player.level);
@@ -1893,6 +1979,9 @@ window.MOE_DATA_STRING = `
                 window.player.consumables[id]--;
                 const healAmt = item.val; window.player.stats.hp = Math.min(window.player.stats.maxHp, window.player.stats.hp + healAmt); 
                 window.showToast(`回復了 ${healAmt > 10000 ? '全部' : healAmt} 點生命值！`, '#2ecc71'); 
+            } else if (item.type === 'summon_scroll') {
+                window.openSummonModal(id);
+                return;
             } else {
                 window.showToast(`非戰鬥中無法使用此道具！`, 'var(--boss)');
                 return;
@@ -3053,6 +3142,7 @@ window.MOE_DATA_STRING = `
                     <div style="font-weight:bold; color:var(--accent); font-size:1.1rem; margin-bottom:5px;">${mail.title}</div>
                     <div style="color:#ccc; font-size:0.9rem; margin-bottom:10px; line-height:1.4; white-space:pre-wrap;">${mail.message}</div>
                     <div style="color:#f1c40f; font-size:0.85rem; margin-bottom:10px; font-weight:bold;">附件: ${attachText.length > 0 ? attachText.join(', ') : '無'}</div>
+                    <div class="mail-expire-timer" style="margin-bottom:10px; font-size: 0.9rem;" data-expire="${mail.expiresAt || (parseInt(mail.id) + 86400000)}"></div>
                     <button class="btn" style="background:${isClaimed ? '#555' : 'var(--primary)'}; width:100%;" ${isClaimed ? 'disabled' : `onclick="window.claimMail('${mail.id}')"`}>
                         ${isClaimed ? '已領取' : '🎁 領取禮包'}
                     </button>
@@ -3060,6 +3150,30 @@ window.MOE_DATA_STRING = `
                 `;
             }).join('');
         };
+
+        // ================= 信箱 24 小時倒數計時器 =================
+        if(window.mailTimerInterval) clearInterval(window.mailTimerInterval);
+        window.mailTimerInterval = setInterval(() => {
+            const timers = document.querySelectorAll('.mail-expire-timer');
+            const now = Date.now();
+            timers.forEach(timer => {
+                const expireTime = parseInt(timer.getAttribute('data-expire'), 10);
+                if (!expireTime) return;
+                const diff = expireTime - now;
+                if (diff <= 0) {
+                    timer.innerText = "⏳ 狀態：已過期";
+                    timer.style.color = "#e74c3c";
+                    timer.style.fontWeight = "bold";
+                } else {
+                    const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                    const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                    timer.innerText = `⏳ 剩餘時間：${h}:${m}:${s}`;
+                    timer.style.color = "#f1c40f";
+                    timer.style.fontWeight = "bold";
+                }
+            });
+        }, 1000);
 
         window.claimMail = (mailId) => {
             if (window.player.claimedMails.includes(mailId)) return;
@@ -3261,6 +3375,513 @@ window.MOE_DATA_STRING = `
             }
         };
 
+        // ================= DUNGEON & SUMMON SYSTEM =================
+        window.inDungeonBattle = false;
+        window.dungeonState = { role: null, roomId: null, unsub: null };
+        window.currentDungeonData = null;
+
+        // 【補回】：地下城次數與倒數計時刷新機制
+        window.refreshDungeonDaily = () => {
+            const today = new Date().toISOString().slice(0, 10);
+            if (!window.player.dungeonDaily || window.player.dungeonDaily.date !== today) {
+                window.player.dungeonDaily = { date: today, attempts: 0 };
+                window.saveData();
+            }
+        };
+
+        window.updateDungeonTimer = () => {
+            const timerEl = document.getElementById('dungeon-refresh-timer-display');
+            if (!timerEl) return;
+            const now = new Date();
+            const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            const diff = tomorrow.getTime() - now.getTime();
+            const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+            const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+            const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+            timerEl.innerText = `每日重置倒數: ${h}:${m}:${s}`;
+        };
+        if(window.dungeonTimerInterval) clearInterval(window.dungeonTimerInterval);
+        window.dungeonTimerInterval = setInterval(window.updateDungeonTimer, 1000);
+
+        window.openDungeonMenu = () => {
+            if (!window.user) return window.showToast("必須連線才能挑戰地下城", "var(--boss)");
+            window.refreshDungeonDaily();
+            const remain = 10 - window.player.dungeonDaily.attempts;
+            const titleEl = document.getElementById('dungeon-title-text');
+            if (titleEl) titleEl.innerText = `🏰 雙人地下城 (${remain}/10)`;
+
+            window.AudioEngine.sfx.click();
+            document.getElementById('dungeon-modal').style.display = 'flex';
+            document.getElementById('dungeon-menu-box').style.display = 'block';
+            document.getElementById('dungeon-lobby-box').style.display = 'none';
+
+            const tierSelect = document.getElementById('dungeon-tier-select');
+            tierSelect.innerHTML = '';
+            const tiers = [
+                {t: 1, min: 1, desc: "Lv.1~20 淺層"},
+                {t: 2, min: 21, desc: "Lv.21~40 表層"},
+                {t: 3, min: 41, desc: "Lv.41~60 中層"},
+                {t: 4, min: 61, desc: "Lv.61~80 深層"},
+                {t: 5, min: 81, desc: "Lv.81~100 淵層 (極低機率掉神獸卷)"}
+            ];
+            tiers.forEach(tier => {
+                if (window.player.level >= tier.min || window.player.level >= 80) {
+                    const opt = document.createElement('option');
+                    opt.value = tier.t;
+                    opt.innerText = `第 ${tier.t} 層: ${tier.desc}`;
+                    tierSelect.appendChild(opt);
+                }
+            });
+            if(tierSelect.options.length === 0) {
+                const opt = document.createElement('option'); opt.value = 1; opt.innerText = `第 1 層: Lv.1~20 淺層`; tierSelect.appendChild(opt);
+            }
+        };
+
+        window.createDungeonRoom = async () => {
+            window.AudioEngine.sfx.click(); 
+            window.refreshDungeonDaily();
+            if (window.player.dungeonDaily.attempts >= 10) return window.showToast("今日挑戰次數已用盡！", "var(--boss)");
+
+            window.showToast("建立隊伍中...", "#f1c40f");
+            const roomId = Math.floor(1000 + Math.random() * 9000).toString();
+            const tier = parseInt(document.getElementById('dungeon-tier-select').value);
+            window.dungeonState = { role: 'host', roomId: roomId, unsub: null };
+            const pData = { uid: window.user.uid, name: window.player.name, avatar: window.player.avatar, hp: window.player.stats.maxHp, maxHp: window.player.stats.maxHp, ready: false };
+            try {
+                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', roomId), { host: pData, guest: null, state: 'lobby', tier: tier });
+                window.enterDungeonLobby(roomId);
+            } catch(e) { window.showToast("建立失敗", "var(--boss)"); }
+        };
+
+        window.joinDungeonRoom = async () => {
+            window.AudioEngine.sfx.click(); 
+            window.refreshDungeonDaily();
+            if (window.player.dungeonDaily.attempts >= 10) return window.showToast("今日挑戰次數已用盡！", "var(--boss)");
+
+            const roomId = document.getElementById('dungeon-join-code').value.trim();
+            if(roomId.length !== 4) return window.showToast("請輸入4碼隊伍號", "var(--boss)"); window.showToast("加入隊伍中...", "#f1c40f");
+            try {
+                const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', roomId); const snap = await window.getDoc(docRef);
+                if(snap.exists()) {
+                    const data = snap.data();
+                    if(data.guest) return window.showToast("隊伍已滿", "var(--boss)");
+                    window.dungeonState = { role: 'guest', roomId: roomId, unsub: null };
+                    const pData = { uid: window.user.uid, name: window.player.name, avatar: window.player.avatar, hp: window.player.stats.maxHp, maxHp: window.player.stats.maxHp, ready: false };
+                    await window.updateDoc(docRef, { guest: pData });
+                    window.enterDungeonLobby(roomId);
+                } else { window.showToast("隊伍不存在", "var(--boss)"); }
+            } catch(e) { window.showToast("加入失敗", "var(--boss)"); }
+        };
+
+        window.enterDungeonLobby = (roomId) => {
+            document.getElementById('dungeon-menu-box').style.display = 'none'; document.getElementById('dungeon-lobby-box').style.display = 'block'; document.getElementById('dungeon-room-id-display').innerText = roomId;
+            
+            const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', roomId);
+            window.dungeonState.unsub = window.onSnapshot(docRef, (snap) => {
+                const data = snap.data(); if(!data) { window.leaveDungeonRoom(true); return; }
+                window.currentDungeonData = data;
+                
+                if(data.state === 'lobby') {
+                    window.inDungeonBattle = false;
+                    document.getElementById('dungeon-p1-avatar').src = data.host.avatar; document.getElementById('dungeon-p1-name').innerText = data.host.name; document.getElementById('dungeon-p1-status').innerText = data.host.ready ? "✅ 已準備" : "未準備"; document.getElementById('dungeon-p1-status').style.color = data.host.ready ? "#2ecc71" : "#e74c3c";
+                    if(data.guest) {
+                        document.getElementById('dungeon-p2-avatar').src = data.guest.avatar; document.getElementById('dungeon-p2-name').innerText = data.guest.name; document.getElementById('dungeon-p2-status').innerText = data.guest.ready ? "✅ 已準備" : "未準備"; document.getElementById('dungeon-p2-status').style.color = data.guest.ready ? "#2ecc71" : "#e74c3c";
+                        document.getElementById('dungeon-lobby-msg').innerText = "雙方皆已進入隊伍！"; document.getElementById('dungeon-ready-btn').style.display = 'inline-block';
+                        if(window.dungeonState.role === 'host') {
+                            document.getElementById('dungeon-start-btn').style.display = 'inline-block';
+                            document.getElementById('dungeon-start-btn').style.background = (data.host.ready && data.guest.ready) ? 'var(--boss)' : '#555';
+                            document.getElementById('dungeon-start-btn').disabled = !(data.host.ready && data.guest.ready);
+                        }
+                    } else {
+                        document.getElementById('dungeon-p2-avatar').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='50%25' font-size='60' font-weight='bold' font-family='sans-serif' text-anchor='middle' dy='.3em' fill='%23aaa'%3E?%3C/text%3E%3C/svg%3E"; document.getElementById('dungeon-p2-name').innerText = "等待中"; document.getElementById('dungeon-p2-status').innerText = "--"; document.getElementById('dungeon-lobby-msg').innerText = "等待隊友加入中..."; document.getElementById('dungeon-ready-btn').style.display = 'none'; document.getElementById('dungeon-start-btn').style.display = 'none';
+                    }
+                } else if(data.state === 'battling') {
+                    if (!window.inDungeonBattle && data.boss) {
+                        window.initDungeonCombatMode();
+                    } else if (window.inDungeonBattle) {
+                        
+                        // 動畫與文字對話框的實時同步更新
+                        if (data.lastAction && data.lastAction.id !== window.lastDungeonActionId) {
+                            window.lastDungeonActionId = data.lastAction.id;
+                            window.playDungeonAction(data.lastAction, data);
+                        }
+                        
+                        window.updateHpBar('enemy', data.boss.hp, data.boss.maxHp);
+                        const allyData = window.dungeonState.role === 'host' ? data.guest : data.host;
+                        window.updateHpBar('ally', allyData.hp, allyData.maxHp);
+                        window.updateHpBar('player', data[window.dungeonState.role].hp, data[window.dungeonState.role].maxHp);
+                        
+                        if (data.boss.hp <= 0 && window.inDungeonBattle) {
+                            window.inDungeonBattle = false;
+                            setTimeout(() => window.endDungeonBattle(true, data.tier), 1000); // 延遲讓動畫播完
+                        } else if (data.host.hp <= 0 && data.guest.hp <= 0 && window.inDungeonBattle) {
+                            window.inDungeonBattle = false;
+                            setTimeout(() => window.endDungeonBattle(false, data.tier), 1000);
+                        } else if (window.inDungeonBattle && data.quiz && data.quiz.id !== window.lastDungeonQuizId) {
+                            window.lastDungeonQuizId = data.quiz.id;
+                            // 延遲更新題目，讓攻擊動畫有時間演完
+                            setTimeout(() => window.renderDungeonQuestion(data), 800);
+                        }
+                    }
+                }
+            });
+        };
+
+        window.toggleDungeonReady = async () => {
+            window.AudioEngine.sfx.click(); const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', window.dungeonState.roomId);
+            const isReady = window.dungeonState.role === 'host' ? !window.currentDungeonData.host.ready : !window.currentDungeonData.guest.ready;
+            await window.updateDoc(docRef, window.dungeonState.role === 'host' ? { 'host.ready': isReady } : { 'guest.ready': isReady });
+            document.getElementById('dungeon-ready-btn').innerText = isReady ? "取消準備" : "準備就緒";
+            document.getElementById('dungeon-ready-btn').style.background = isReady ? "#e67e22" : "#2ecc71";
+        };
+
+        window.startDungeonBattle = async () => {
+            window.AudioEngine.sfx.click();
+            const data = window.currentDungeonData;
+            if (!data.host.ready || !data.guest.ready) return;
+            
+            const bossLvl = data.tier * 20;
+            const baseHp = Math.floor(bossLvl * 15 + 30);
+            const bossHp = baseHp * 5 * 3; // 一般同等級BOSS血量(baseHp*5)的 3 倍
+            
+            const bossAtk = Math.floor((bossLvl * 3 + 10) * 1.5); 
+            const bossCrit = 15; 
+            
+            const bossIds = [150, 249, 250, 384, 483, 382, 718]; 
+            const bId = bossIds[Math.floor(Math.random() * bossIds.length)];
+
+            // 初始化第一題，確保雙方看到相同的選項排列
+            const firstQuiz = window.quizBank[Math.floor(Math.random() * window.quizBank.length)];
+            const firstOptions = [firstQuiz.answer, ...firstQuiz.wrongs].sort(() => Math.random() - 0.5);
+
+            await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', window.dungeonState.roomId), { 
+                state: 'battling', 'host.hp': data.host.maxHp, 'guest.hp': data.guest.maxHp,
+                boss: { name: pokeNames[bId] || "深淵魔物", hp: bossHp, maxHp: bossHp, atk: bossAtk, def: bossLvl*2, crit: bossCrit, sprite: window.getSprite(bId) },
+                turn: 'host', // 初始由房主先攻
+                quiz: { id: Date.now(), question: firstQuiz.question, answer: firstQuiz.answer, options: firstOptions }
+            });
+        };
+
+        window.leaveDungeonRoom = async (forced = false) => {
+            window.AudioEngine.sfx.click(); if(window.dungeonState.unsub) window.dungeonState.unsub();
+            if(!forced && window.dungeonState.roomId) {
+                try {
+                    if(window.dungeonState.role === 'host') await window.deleteDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', window.dungeonState.roomId));
+                    else await window.updateDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', window.dungeonState.roomId), { guest: null });
+                } catch(e) {}
+            }
+            window.dungeonState = { role: null, roomId: null, unsub: null }; window.currentDungeonData = null; window.inDungeonBattle = false;
+            document.getElementById('dungeon-modal').style.display = 'none'; document.getElementById('battle-screen').style.display = 'none';
+            document.getElementById('ally-hp-info').style.display = 'none';
+            const allySp = document.getElementById('ally-sprite'); if(allySp) allySp.style.display = 'none';
+            const allyBox = document.getElementById('ally-stat-box'); if(allyBox) allyBox.style.display = 'none';
+            window.AudioEngine.playBGM('lobby');
+            if(forced) window.showToast("隊伍已解散", "var(--boss)");
+        };
+
+        window.initDungeonCombatMode = async () => {
+            window.inDungeonBattle = true; document.getElementById('dungeon-modal').style.display = 'none';
+            const data = window.currentDungeonData; 
+            const me = window.dungeonState.role === 'host' ? data.host : data.guest; 
+            const ally = window.dungeonState.role === 'host' ? data.guest : data.host;
+            window.lastDungeonActionId = null;
+            window.lastDungeonQuizId = null;
+            
+            // 扣除挑戰次數
+            if (typeof window.refreshDungeonDaily === 'function') {
+                window.refreshDungeonDaily();
+            }
+            if (!window.player.dungeonDaily) {
+                window.player.dungeonDaily = { attempts: 0, lastDate: new Date().toDateString() };
+            }
+            if (window.player.dungeonDaily.attempts < 10) {
+                window.player.dungeonDaily.attempts++;
+                window.saveData();
+            }
+            
+            window.AudioEngine.playBGM('boss');
+            document.getElementById('battle-scene').style.background = 'linear-gradient(to bottom, #2c3e50 0%, #000000 50%, #4a0e0e 50%, #1a0505 100%)';
+            
+            const playerSprite = document.getElementById('player-sprite');
+            const enemySprite = document.getElementById('enemy-sprite');
+            const allySprite = document.getElementById('ally-sprite');
+            
+            enemySprite.classList.remove('anim-sink-enemy', 'anim-dodge-enemy', 'anim-dmg');
+            playerSprite.classList.remove('anim-sink-player', 'anim-dodge-player', 'anim-dmg');
+            if(allySprite) allySprite.classList.remove('anim-sink-player', 'anim-dodge-player', 'anim-dmg');
+            
+            playerSprite.src = me.avatar; 
+            enemySprite.src = data.boss.sprite;
+            if(allySprite) { allySprite.src = ally.avatar; allySprite.style.display = 'block'; }
+            
+            document.getElementById('battle-player-name').innerText = me.name; 
+            document.getElementById('enemy-name').innerText = data.boss.name;
+            const allyNameEl = document.getElementById('ally-battle-name');
+            if(allyNameEl) allyNameEl.innerText = ally.name;
+            
+            document.getElementById('battle-player-lvl').innerText = window.player.level; 
+            document.getElementById('enemy-lvl').innerText = data.tier * 20;
+            document.getElementById('enemy-boss-tag').style.display = 'inline-block';
+            enemySprite.classList.add('boss-glow');
+            
+            window.updateHpBar('player', me.hp, me.maxHp); 
+            window.updateHpBar('enemy', data.boss.hp, data.boss.maxHp);
+            window.updateHpBar('ally', ally.hp, ally.maxHp);
+            
+            document.getElementById('player-exp-container').style.display = 'none';
+            document.getElementById('ally-hp-info').style.display = 'none'; 
+            const allyBox = document.getElementById('ally-stat-box');
+            if(allyBox) allyBox.style.display = 'block';
+            
+            document.getElementById('battle-dialog').innerHTML = `
+                <div style="display:flex; width:100%; height:100%;">
+                    <div style="flex:1; border-right:2px dashed #ccc; padding:5px; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="color:#3498db; font-size:0.8rem; margin-bottom:4px;">我方狀態</div>
+                        <div id="dungeon-log-me" style="font-size:1.1rem; font-weight:bold;">準備就緒...</div>
+                    </div>
+                    <div style="flex:1; padding:5px; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="color:#e67e22; font-size:0.8rem; margin-bottom:4px;">隊友狀態</div>
+                        <div id="dungeon-log-ally" style="font-size:1.1rem; font-weight:bold;">準備就緒...</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('battle-screen').style.display = 'flex';
+            
+            window.AudioEngine.sfx.encounter();
+            const logMe = document.getElementById('dungeon-log-me');
+            if(logMe) logMe.innerHTML = `進入地下城第 ${data.tier} 層`;
+            const logAlly = document.getElementById('dungeon-log-ally');
+            if(logAlly) logAlly.innerHTML = `迎戰強敵 ${data.boss.name}`;
+            
+            await window.wait(1500);
+            window.lastDungeonQuizId = data.quiz.id;
+            window.renderDungeonQuestion(data);
+        };
+
+        // 獨立出渲染題目邏輯，處理同步與回合判斷
+        window.renderDungeonQuestion = (data) => {
+            if(!window.inDungeonBattle) return;
+            const isMyTurn = data.turn === window.dungeonState.role;
+            const myHp = data[window.dungeonState.role].hp;
+            
+            const optionsDiv = document.getElementById('battle-options'); 
+            
+            let turnHtml = '';
+            if (myHp <= 0) {
+                turnHtml = `<div style="color:#e74c3c; font-weight:bold;">💀 你已陣亡，請幫隊友加油！</div>`;
+            } else if (isMyTurn) {
+                turnHtml = `<div style="color:#2ecc71; font-weight:bold;">👉 現在是【你】的回合！</div>`;
+            } else {
+                turnHtml = `<div style="color:#e67e22; font-weight:bold;">⏳ 等待隊友作答中...</div>`;
+            }
+
+            optionsDiv.innerHTML = `<div style="grid-column: span 2; color:#fff; text-align:center; font-size:1rem; background:rgba(0,0,0,0.5); padding:8px; border-radius:8px; border:1px solid #f1c40f;">${turnHtml}請選擇正確讀音或國字：<br><span style="color:var(--accent); font-size:1.4rem; font-weight:900;">【 ${data.quiz.question} 】</span></div>`;
+            
+            data.quiz.options.forEach(opt => {
+                const btn = document.createElement('div'); 
+                btn.className = 'battle-btn'; 
+                btn.innerText = opt;
+                if (!isMyTurn || myHp <= 0) {
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                } else {
+                    btn.onclick = () => window.handleDungeonAnswer(opt);
+                }
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById('battle-actions').innerHTML = ''; 
+        };
+
+        window.handleDungeonAnswer = async (opt) => {
+            const data = window.currentDungeonData; // 取出最新的資料，防呆保護
+            if (!window.inDungeonBattle || data[window.dungeonState.role].hp <= 0) return;
+            if (data.turn !== window.dungeonState.role) return; // 不是自己的回合直接忽略
+
+            window.AudioEngine.sfx.click(); 
+            document.getElementById('battle-options').innerHTML = ''; // 鎖定答題區
+            
+            let isCorrect = (opt === data.quiz.answer);
+            const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'dungeon_rooms', window.dungeonState.roomId);
+            
+            let actionData = null;
+            let newBossHp = data.boss.hp;
+            let newMyHp = data[window.dungeonState.role].hp;
+
+            if (isCorrect) {
+                let atkStat = window.player.stats.atk;
+                let move = window.player.moves[Math.floor(Math.random()*window.player.moves.length)];
+                
+                let dmg = 0;
+                // 只有攻擊型招式才計算傷害，其餘為 0
+                if (move.type === 'damage' || move.type === 'drain') {
+                    let mPower = move.power || 50; 
+                    dmg = Math.max(1, Math.floor((atkStat * mPower / 30) - (data.boss.def / 2))) + Math.floor(Math.random()*10);
+                    dmg = dmg * 3; // 提升玩家在地下城的傷害避免戰鬥過長
+                    if(isNaN(dmg)) dmg = 10;
+                }
+                
+                newBossHp = Math.max(0, data.boss.hp - dmg);
+                actionData = { id: Date.now() + Math.random(), role: window.dungeonState.role, type: 'attack', moveName: move.name, moveType: move.type, dmg: dmg, newBossHp: newBossHp };
+            } else {
+                let isCrit = Math.random() < ((data.boss.crit || 0) / 100);
+                let baseDmg = Math.max(1, data.boss.atk - Math.floor(window.player.stats.def / 2));
+                let dmg = isCrit ? baseDmg * 2 : baseDmg;
+                if(isNaN(dmg)) dmg = 10;
+                
+                newMyHp = Math.max(0, data[window.dungeonState.role].hp - dmg);
+                actionData = { id: Date.now() + Math.random(), role: 'boss', type: 'boss_attack', target: window.dungeonState.role, dmg: dmg, newTargetHp: newMyHp, isCrit: isCrit };
+                
+                if (newMyHp <= 0) { 
+                    const logMe = document.getElementById('dungeon-log-me');
+                    if(logMe) logMe.innerHTML = `<span style="color:#e74c3c">重傷倒地！</span><br>等待救援...`;
+                }
+            }
+
+            // 決定下一個回合輪到誰
+            let nextTurn = data.turn === 'host' ? 'guest' : 'host';
+            const allyRole = nextTurn;
+            if (data[allyRole] && data[allyRole].hp <= 0) {
+                nextTurn = window.dungeonState.role; // 如果隊友死了，強迫繼續輪回自己的回合
+            }
+
+            // 產生下一題並決定選項排列順序
+            const nextQuizData = window.quizBank[Math.floor(Math.random() * window.quizBank.length)];
+            const nextOptions = [nextQuizData.answer, ...nextQuizData.wrongs].sort(() => Math.random() - 0.5);
+
+            // 更新至 Firebase，達成完全同步
+            const updatePayload = {
+                lastAction: actionData,
+                'boss.hp': newBossHp,
+                [`${window.dungeonState.role}.hp`]: newMyHp,
+                turn: nextTurn,
+                quiz: {
+                    id: Date.now(),
+                    question: nextQuizData.question,
+                    answer: nextQuizData.answer,
+                    options: nextOptions
+                }
+            };
+
+            await window.updateDoc(docRef, updatePayload);
+        };
+
+        // 統籌處理地下城的動畫與文字演出
+        window.playDungeonAction = (action, data) => {
+            const isMe = action.role === window.dungeonState.role;
+            const myPane = document.getElementById('dungeon-log-me');
+            const allyPane = document.getElementById('dungeon-log-ally');
+
+            if (action.type === 'attack') {
+                const spriteId = isMe ? 'player-sprite' : 'ally-sprite';
+                const pane = isMe ? myPane : allyPane;
+                
+                window.AudioEngine.sfx.attack();
+                window.playAnim(spriteId, isMe ? 'anim-atk-player' : 'anim-atk-ally');
+                
+                if (['status', 'debuff', 'buff', 'heal', 'heal_sleep'].includes(action.moveType)) {
+                    if(pane) pane.innerHTML = `<span style="color:#2ecc71">使用【${action.moveName}】</span><br><span style="color:#f1c40f; font-weight:bold;">BOSS免疫異常，攻擊無效</span>`;
+                } else {
+                    setTimeout(() => {
+                        window.AudioEngine.sfx.hit();
+                        window.playAnim('enemy-sprite', 'anim-dmg');
+                    }, 200);
+                    if(pane) pane.innerHTML = `<span style="color:#2ecc71">使用【${action.moveName}】</span><br>造成 ${action.dmg} 傷害！`;
+                }
+                
+            } else if (action.type === 'boss_attack') {
+                const targetIsMe = action.target === window.dungeonState.role;
+                const spriteId = targetIsMe ? 'player-sprite' : 'ally-sprite';
+                const pane = targetIsMe ? myPane : allyPane;
+
+                window.AudioEngine.sfx.attack();
+                window.playAnim('enemy-sprite', 'anim-atk-enemy');
+                setTimeout(() => {
+                    if (action.isCrit) {
+                        window.AudioEngine.sfx.superEffective();
+                        window.playAnim(spriteId, 'anim-crit-dmg');
+                        window.showFloatingText('💥 暴擊！', spriteId, '#e74c3c');
+                        setTimeout(() => {
+                            const el = document.getElementById(spriteId);
+                            if(el) el.classList.remove('anim-crit-dmg');
+                        }, 500);
+                    } else {
+                        window.AudioEngine.sfx.hit();
+                        window.playAnim(spriteId, 'anim-dmg');
+                    }
+                    
+                    if(targetIsMe) {
+                        window.player.stats.hp = action.newTargetHp;
+                        // 畫面的血量交給 onSnapshot 中的邏輯來同步，這裡僅保證本地暫存血量沒錯
+                    }
+                }, 200);
+
+                if(pane) pane.innerHTML = `<span style="color:#e74c3c">遭到首領攻擊！</span><br>${action.isCrit ? '<span style="color:#e74c3c;font-weight:bold;">💥暴擊！</span> ' : ''}失去 ${action.dmg} 生命！`;
+            }
+        };
+
+        window.endDungeonBattle = async (isWin, tier) => {
+            if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack(isWin ? 'win' : 'lose');
+            document.getElementById('battle-options').innerHTML = ''; 
+            
+            const allySp = document.getElementById('ally-sprite'); if(allySp) allySp.style.display = 'none';
+            const allyBox = document.getElementById('ally-stat-box'); if(allyBox) allyBox.style.display = 'none';
+            
+            if (isWin) {
+                window.playAnim('enemy-sprite', 'anim-sink-enemy');
+                await window.typeDialog(`🎉 成功討伐地下城首領！\n結算豐厚獎勵...`); await window.wait(1000);
+                
+                const goldGain = tier * 1000;
+                window.player.gold += goldGain; 
+                // 【修改】：移除地下城的經驗值獲取
+                
+                let chestTier = tier * 2; 
+                if(!window.player.chests) window.player.chests = {};
+                window.player.chests[chestTier] = (window.player.chests[chestTier] || 0) + 3; 
+                
+                // 【修改】：獎勵文字移除經驗值
+                let msg = `獲得 💰${goldGain} 金幣！\n獲得 🧰${chestNames[chestTier-1]} x3！\n`;
+                
+                const specialTypes = ['name_card', 'rare_candy', 'change_char', 'reset_card', 'tm', 'buff_exp', 'buff_gold'];
+                const possibleItems = Object.keys(consumableItems).filter(k => k !== 'summon_scroll' && consumableItems[k].reqLevel <= tier * 20 && specialTypes.includes(consumableItems[k].type));
+                if(possibleItems.length > 0) {
+                    const droppedItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
+                    window.player.consumables[droppedItem] = (window.player.consumables[droppedItem] || 0) + 1;
+                    msg += `掉落稀有道具：${consumableItems[droppedItem].icon}${consumableItems[droppedItem].name}！\n`;
+                }
+                
+                if (tier === 5 && Math.random() < 0.01) { 
+                    window.player.consumables['summon_scroll'] = (window.player.consumables['summon_scroll'] || 0) + 1;
+                    msg += `\n⚠️ 奇蹟發生！掉落了極其稀有的【📜神獸召喚卷】！`;
+                }
+                await window.typeDialog(msg);
+            } else {
+                window.playAnim('player-sprite', 'anim-sink-player');
+                await window.typeDialog(`💀 小隊全滅...地下城討伐失敗。\n(地下城不給予也不扣除經驗值)`);
+            }
+            
+            const actionsRow = document.getElementById('battle-actions'); actionsRow.innerHTML = '';
+            const leaveBtn = document.createElement('div'); leaveBtn.className = 'action-btn'; leaveBtn.style.padding = "10px"; leaveBtn.innerText = '🔙 離開地下城';
+            leaveBtn.onclick = () => { window.player.stats.hp = window.player.stats.maxHp; window.updateUI(); window.leaveDungeonRoom(); };
+            actionsRow.appendChild(leaveBtn); window.saveData();
+        };
+
+        window.openSummonModal = (itemId) => {
+            window.AudioEngine.sfx.click(); const modal = document.getElementById('summon-modal'); const grid = document.getElementById('summon-grid'); grid.innerHTML = '';
+            const legendaryIds = ["150", "249", "250", "251", "382", "384", "483", "493", "718"];
+            window.summonSelectedUrl = window.getSprite("493");
+
+            legendaryIds.forEach((id) => {
+                const url = window.getSprite(id); const img = document.createElement('img'); img.src = url; img.className = 'avatar-option' + (id === "493" ? ' selected' : '');
+                img.onclick = () => { grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected')); img.classList.add('selected'); window.summonSelectedUrl = url; window.AudioEngine.sfx.click(); };
+                grid.appendChild(img);
+            });
+
+            document.getElementById('summon-confirm-btn').onclick = () => { window.AudioEngine.sfx.click(); window.executeChangeChar(window.summonSelectedUrl, itemId); modal.style.display = 'none'; };
+            document.getElementById('summon-cancel-btn').onclick = () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; };
+            document.getElementById('item-detail-modal').style.display = 'none'; modal.style.display = 'flex';
+        };
     </script>
 </body>
-    </html>
+</html>
