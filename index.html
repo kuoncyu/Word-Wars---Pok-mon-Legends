@@ -341,7 +341,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260429</div><div>題庫版本：20260417</div><div>更新資訊：升級經驗調整、上線狀態顯示、商店物品上架、預覽招式</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260430</div><div>題庫版本：20260417</div><div>更新資訊：商品價錢與購買限制、每日登陸獎勵提升、加倍券使用限制調整</div>
             </div>
         </div>
     </div>
@@ -753,7 +753,10 @@ window.MOE_DATA_STRING = `
                 <button class="shop-tab-btn" onclick="window.switchShopTab('chests')">🧰 寶箱</button>
                 <button class="shop-tab-btn" onclick="window.switchShopTab('equipments')">⚔️ 黑市裝備</button>
             </div>
-            <div id="shop-sec-consumables" class="shop-section active"><div id="shop-items"></div></div>
+            <div id="shop-sec-consumables" class="shop-section active">
+                <div class="shop-timer">每週限購重置倒數：<span id="weekly-refresh-timer">--:--:--</span></div>
+                <div id="shop-items"></div>
+            </div>
             <div id="shop-sec-chests" class="shop-section"><div id="shop-chests-list"></div></div>
             <div id="shop-sec-equipments" class="shop-section">
                 <div class="shop-timer">下一次進貨時間：<span id="shop-refresh-timer">--:--:--</span></div>
@@ -1114,12 +1117,11 @@ window.MOE_DATA_STRING = `
             tm_thunder: {name:"招式機:閃電拳", icon:"⚡", desc:"學習招式：閃電拳", basePrice:10000, reqLevel:1, type:'tm', moveId:'m_thunderpunch_tm', isWeekly:true},
             tm_fire: {name:"招式機:火焰拳", icon:"🔥", desc:"學習招式：火焰拳", basePrice:10000, reqLevel:1, type:'tm', moveId:'m_firepunch_tm', isWeekly:true},
             tm_ice: {name:"招式機:冰凍拳", icon:"❄️", desc:"學習招式：冰凍拳", basePrice:10000, reqLevel:1, type:'tm', moveId:'m_icepunch_tm', isWeekly:true},
-            exp_x2: {name:"經驗2倍卡", icon:"📜", desc:"1小時內戰鬥經驗2倍", dynamicPriceMulti:50, reqLevel:1, type:'buff_exp', val:2},
-            exp_x3: {name:"經驗3倍卡", icon:"📜", desc:"1小時內戰鬥經驗3倍", dynamicPriceMulti:75, reqLevel:1, type:'buff_exp', val:3},
-            gold_x2: {name:"金幣2倍卡", icon:"🎫", desc:"1小時內戰鬥金幣2倍", dynamicPriceMulti:100, reqLevel:1, type:'buff_gold', val:2},
-            gold_x3: {name:"金幣3倍卡", icon:"🎫", desc:"1小時內戰鬥金幣3倍", dynamicPriceMulti:150, reqLevel:1, type:'buff_gold', val:3}
+            exp_x2: {name:"經驗2倍卡", icon:"📜", desc:"1小時內戰鬥經驗2倍", dynamicPriceMulti:100, reqLevel:1, type:'buff_exp', val:2, isWeekly:true},
+            exp_x3: {name:"經驗3倍卡", icon:"📜", desc:"1小時內戰鬥經驗3倍", dynamicPriceMulti:200, reqLevel:1, type:'buff_exp', val:3, isWeekly:true},
+            gold_x2: {name:"金幣2倍卡", icon:"🎫", desc:"1小時內戰鬥金幣2倍", dynamicPriceMulti:100, reqLevel:1, type:'buff_gold', val:2, isWeekly:true},
+            gold_x3: {name:"金幣3倍卡", icon:"🎫", desc:"1小時內戰鬥金幣3倍", dynamicPriceMulti:200, reqLevel:1, type:'buff_gold', val:3, isWeekly:true}
         };
-        const dailyRewards=[{day:1,gold:50,item:'hp1',count:1},{day:2,gold:100,item:'atk1',count:1},{day:3,gold:150,item:'hp1',count:3},{day:4,gold:200,item:'def1',count:1},{day:5,gold:300,item:'hp1',count:5},{day:6,gold:400,item:'atk1',count:2},{day:7,gold:500,item:'hp1',count:10,extra:'equip'}];
         
         let mapZones=[];
         const pokeNames={10:"綠毛蟲",16:"波波",19:"小拉達",18:"大比鳥",43:"走路草",46:"派拉斯",52:"喵喵",45:"霸王花",41:"超音蝠",66:"腕力",74:"小拳石",95:"大岩蛇",92:"鬼斯",200:"夢妖",353:"怨影娃娃",94:"耿鬼",123:"飛天螳螂",127:"大甲",214:"赫拉克羅斯",143:"卡比獸",126:"鴨嘴火獸",218:"熔岩蟲",324:"煤炭龜",6:"噴火龍",124:"迷唇姐",215:"紐拉",361:"雪童子",144:"急凍鳥",130:"暴鯉龍",68:"怪力",142:"化石翼龍",149:"快龍",248:"班基拉斯",376:"巨金怪",373:"暴飛龍",249:"洛奇亞",250:"鳳王",445:"烈咬陸鯊",635:"三首惡龍",612:"雙斧戰龍",150:"超夢",384:"烈空坐", 183:"瑪力露", 222:"太陽珊瑚", 72:"瑪瑙水母", 226:"巨翅飛魚", 151:"夢幻", 25:"皮卡丘", 658:"甲賀忍蛙", 700:"仙子伊布", 778:"謎擬Q", 609:"水晶燈火靈", 359:"阿勃梭魯", 448:"路卡利歐", 624:"駒刀小兵", 65:"胡地", 282:"沙奈朵", 478:"雪妖女", 407:"羅絲雷朵", 477:"黑夜魔靈"};
@@ -1615,7 +1617,19 @@ window.MOE_DATA_STRING = `
         window.generateRandomName = () => { window.AudioEngine.sfx.click(); document.getElementById('player-name-input').value = nameDataObj.prefixes[Math.floor(Math.random() * nameDataObj.prefixes.length)] + nameDataObj.suffixes[Math.floor(Math.random() * nameDataObj.suffixes.length)]; document.getElementById('player-name-input').focus(); };
         window.recalcStats = () => { let baseMaxHp = window.player.level * 15 + 85; let baseAtk = window.player.level * 3 + 7; let baseDef = window.player.level * 1 + 4; let baseCrit = 0; let baseDodge = 0; let baseLuck = 0; Object.values(window.player.equipment).forEach(eq => { if(eq) { baseMaxHp += (eq.hp||0); baseAtk += (eq.atk||0); baseDef += (eq.def||0); baseCrit += (eq.crit||0); baseDodge += (eq.dodge||0); baseLuck += (eq.luck||0); } }); window.player.stats.maxHp = baseMaxHp; window.player.stats.atk = baseAtk; window.player.stats.def = baseDef; window.player.stats.crit = baseCrit; window.player.stats.dodge = baseDodge; window.player.stats.luck = baseLuck; if(window.player.stats.hp > baseMaxHp) window.player.stats.hp = baseMaxHp; };
         
-        window.checkWeeklyReset = () => { const now = new Date(); const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()); const startOfWeek = d.getTime(); if(window.player.weeklyData.lastReset < startOfWeek) { window.player.weeklyData.lastReset = Date.now(); window.player.weeklyData.purchases = {}; } };
+        window.checkWeeklyReset = () => { 
+            const now = new Date(); 
+            const dayOfWeek = now.getDay();
+            const daysSinceMonday = (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
+            const lastMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceMonday);
+            lastMonday.setHours(0, 0, 0, 0);
+            const startOfWeek = lastMonday.getTime(); 
+            if(!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} };
+            if(window.player.weeklyData.lastReset < startOfWeek) { 
+                window.player.weeklyData.lastReset = Date.now(); 
+                window.player.weeklyData.purchases = {}; 
+            } 
+        };
         window.checkIntegrity = () => { 
             if (!window.player.avatarId) { const match = window.player.avatar.match(/\/(\d+)\.gif$/); window.player.avatarId = match ? match[1] : "448"; } 
             if (!window.player.bag || !Array.isArray(window.player.bag)) window.player.bag = []; 
@@ -1651,8 +1665,117 @@ window.MOE_DATA_STRING = `
             window.updateDailyChestBtn();
         };
         window.updateDailyChestBtn = () => { document.getElementById('daily-chest-btn').style.display = window.player.dailyChestClaimed ? 'none' : 'block'; };
-        window.openDailyLoginModal = () => { window.AudioEngine.sfx.click(); const container = document.getElementById('daily-grid-container'); container.innerHTML = ''; let currentDay = ((window.player.loginStreak - 1) % 7) + 1; dailyRewards.forEach((r, idx) => { const isClaimed = idx + 1 < currentDay || (idx + 1 === currentDay && window.player.dailyChestClaimed); const isActive = idx + 1 === currentDay && !window.player.dailyChestClaimed; const itemDef = consumableItems[r.item] || consumableItems['hp1']; let boxClass = 'daily-box'; if(isClaimed) boxClass += ' claimed'; if(isActive) boxClass += ' active'; container.innerHTML += `<div class="${boxClass}" style="${idx === 6 ? 'grid-column: span 2;' : ''}"><div class="daily-day">第 ${r.day} 天</div><div class="daily-icon">${itemDef.icon}</div><div class="daily-text">💰${r.gold}<br>${itemDef.name}x${r.count}</div></div>`; }); const claimBtn = document.getElementById('daily-claim-btn'); if(window.player.dailyChestClaimed) { claimBtn.innerText = '今日已領取'; claimBtn.style.background = '#555'; claimBtn.disabled = true; } else { claimBtn.innerText = '🎁 領取今日獎勵'; claimBtn.style.background = 'var(--primary)'; claimBtn.disabled = false; } document.getElementById('daily-login-modal').style.display = 'flex'; };
-        window.claimDailyReward = () => { window.AudioEngine.sfx.click(); if(window.player.dailyChestClaimed) { document.getElementById('daily-login-modal').style.display = 'none'; return; } window.player.dailyChestClaimed = true; let currentDay = ((window.player.loginStreak - 1) % 7) + 1; const reward = dailyRewards[currentDay - 1]; window.player.gold += reward.gold; if(consumableItems[reward.item]) window.player.consumables[reward.item] += reward.count; let extraMsg = ''; if(reward.extra === 'equip') { setTimeout(() => window.generateRandomItemFromChest(10), 1000); extraMsg = '\n✨ 額外獲得了史詩裝備！'; } window.showToast(`🎁 領取成功！\n獲得 💰${reward.gold} 與道具！${extraMsg}`, '#f1c40f'); window.updateDailyChestBtn(); window.updateUI(); window.saveData(); document.getElementById('daily-login-modal').style.display = 'none'; };
+        
+        window.openDailyLoginModal = () => {
+            window.AudioEngine.sfx.click();
+            const container = document.getElementById('daily-grid-container');
+            container.innerHTML = '';
+            let currentDay = ((window.player.loginStreak - 1) % 7) + 1;
+            const level = window.player.level;
+
+            // 輔助：根據玩家等級獲取對應的最高級藥品
+            const getBestItem = (type) => {
+                let best = null; let highest = -1;
+                for (let k in consumableItems) {
+                    if (consumableItems[k].type === type && consumableItems[k].reqLevel <= level && consumableItems[k].reqLevel > highest) {
+                        highest = consumableItems[k].reqLevel; best = k;
+                    }
+                }
+                if (!best) {
+                    for (let k in consumableItems) {
+                        if (consumableItems[k].type === type && (!best || consumableItems[k].reqLevel < consumableItems[best].reqLevel)) best = k;
+                    }
+                }
+                return best;
+            };
+
+            // 偽隨機：讓同一天的選擇固定，避免玩家透過重整來刷想要的那一個
+            const getPseudoBool = (seed) => ((window.player.loginStreak - currentDay + seed + level) % 2 === 0);
+
+            window.currentDailyRewards = [];
+            window.currentDailyRewards.push({ day: 1, type: 'item', item: getBestItem('hp'), count: 3, text: '補血藥品' });
+            window.currentDailyRewards.push({ day: 2, type: getPseudoBool(2) ? 'exp' : 'gold', amount: level * 10, text: getPseudoBool(2) ? '經驗值' : '金幣' });
+            window.currentDailyRewards.push({ day: 3, type: 'item', item: getBestItem(getPseudoBool(3) ? 'def' : 'dodge'), count: 2, text: getPseudoBool(3) ? '防禦藥品' : '閃避藥品' });
+            window.currentDailyRewards.push({ day: 4, type: 'item', item: getPseudoBool(4) ? 'exp_x2' : 'gold_x2', count: 1, text: getPseudoBool(4) ? '經驗2倍券' : '金幣2倍券' });
+            window.currentDailyRewards.push({ day: 5, type: 'item', item: getBestItem(getPseudoBool(5) ? 'atk' : 'crit'), count: 2, text: getPseudoBool(5) ? '攻擊藥品' : '暴擊藥品' });
+            window.currentDailyRewards.push({ day: 6, type: 'item', item: getPseudoBool(6) ? 'exp_x3' : 'gold_x3', count: 1, text: getPseudoBool(6) ? '經驗3倍券' : '金幣3倍券' });
+            const chestTier = Math.min(10, Math.max(1, Math.ceil(level / 10)));
+            window.currentDailyRewards.push({ day: 7, type: 'chest', tier: chestTier, count: 10, text: chestNames[chestTier-1] });
+
+            window.currentDailyRewards.forEach((r, idx) => {
+                const isClaimed = idx + 1 < currentDay || (idx + 1 === currentDay && window.player.dailyChestClaimed);
+                const isActive = idx + 1 === currentDay && !window.player.dailyChestClaimed;
+                let boxClass = 'daily-box';
+                if (isClaimed) boxClass += ' claimed';
+                if (isActive) boxClass += ' active';
+                
+                let iconStr = ''; let nameStr = '';
+                if (r.type === 'item') {
+                    const itemDef = consumableItems[r.item];
+                    iconStr = itemDef.icon;
+                    nameStr = `${itemDef.name} x${r.count}`;
+                } else if (r.type === 'exp') {
+                    iconStr = '✨'; nameStr = `經驗值 +${r.amount}`;
+                } else if (r.type === 'gold') {
+                    iconStr = '💰'; nameStr = `金幣 +${r.amount}`;
+                } else if (r.type === 'chest') {
+                    iconStr = '🧰'; nameStr = `${r.text} x${r.count}`;
+                }
+
+                container.innerHTML += `<div class="${boxClass}" style="${idx === 6 ? 'grid-column: span 2;' : ''}"><div class="daily-day">第 ${r.day} 天</div><div class="daily-icon" style="font-size:2rem; margin:5px 0;">${iconStr}</div><div class="daily-text" style="font-size:0.9rem; text-align:center;">${nameStr}</div></div>`;
+            });
+
+            const claimBtn = document.getElementById('daily-claim-btn');
+            if (window.player.dailyChestClaimed) {
+                claimBtn.innerText = '今日已領取';
+                claimBtn.style.background = '#555';
+                claimBtn.disabled = true;
+            } else {
+                claimBtn.innerText = '🎁 領取今日獎勵';
+                claimBtn.style.background = 'var(--primary)';
+                claimBtn.disabled = false;
+            }
+            document.getElementById('daily-login-modal').style.display = 'flex';
+        };
+
+        window.claimDailyReward = () => {
+            window.AudioEngine.sfx.click();
+            if (window.player.dailyChestClaimed) {
+                document.getElementById('daily-login-modal').style.display = 'none';
+                return;
+            }
+            
+            if (!window.currentDailyRewards) {
+                window.openDailyLoginModal();
+                return; 
+            }
+
+            window.player.dailyChestClaimed = true;
+            let currentDay = ((window.player.loginStreak - 1) % 7) + 1;
+            const reward = window.currentDailyRewards[currentDay - 1];
+            
+            let msg = '';
+            if (reward.type === 'item') {
+                window.player.consumables[reward.item] = (window.player.consumables[reward.item] || 0) + reward.count;
+                msg = `獲得 ${consumableItems[reward.item].name} x${reward.count}！`;
+            } else if (reward.type === 'exp') {
+                window.addExpOutsideCombat(reward.amount);
+                msg = `獲得 經驗值 +${reward.amount}！`;
+            } else if (reward.type === 'gold') {
+                window.player.gold += reward.amount;
+                msg = `獲得 金幣 +${reward.amount}！`;
+            } else if (reward.type === 'chest') {
+                if(!window.player.chests) window.player.chests = {};
+                window.player.chests[reward.tier] = (window.player.chests[reward.tier] || 0) + reward.count;
+                msg = `獲得 ${chestNames[reward.tier-1]} x${reward.count}！\n已放入背包中！`;
+            }
+            
+            window.showToast(`🎁 領取成功！\n${msg}`, '#f1c40f');
+            window.updateDailyChestBtn();
+            window.updateUI();
+            window.saveData();
+            document.getElementById('daily-login-modal').style.display = 'none';
+        };
 
         // ======= UI 介面操作 =======
         window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); };
@@ -1871,7 +1994,43 @@ window.MOE_DATA_STRING = `
         };
 
         window.refreshShopEquipments = () => { const now = Date.now(); const twelveHours = 12 * 60 * 60 * 1000; if (!window.player.shopEquips || !Array.isArray(window.player.shopEquips) || !window.player.shopLastRefresh || now - window.player.shopLastRefresh >= twelveHours) { window.player.shopEquips = []; for(let i=0; i<10; i++) window.player.shopEquips.push(window.generateRandomItemFromChest(0, true)); window.player.shopLastRefresh = now; window.saveData(); } };
-        window.updateShopTimer = () => { if(!window.player) return; const now = Date.now(); const diff = (window.player.shopLastRefresh + 12 * 60 * 60 * 1000) - now; if (diff <= 0) { window.refreshShopEquipments(); window.renderShop(); } else { const h = Math.floor(diff / 3600000).toString().padStart(2, '0'); const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0'); const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0'); const timerEl = document.getElementById('shop-refresh-timer'); if(timerEl) timerEl.innerText = `${h}:${m}:${s}`; } };
+        
+        window.updateShopTimer = () => { 
+            if(!window.player) return; 
+            const now = Date.now(); 
+            
+            const diff = (window.player.shopLastRefresh + 12 * 60 * 60 * 1000) - now; 
+            if (diff <= 0) { 
+                window.refreshShopEquipments(); window.renderShop(); 
+            } else { 
+                const h = Math.floor(diff / 3600000).toString().padStart(2, '0'); 
+                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0'); 
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0'); 
+                const timerEl = document.getElementById('shop-refresh-timer'); 
+                if(timerEl) timerEl.innerText = `${h}:${m}:${s}`; 
+            } 
+            
+            const d = new Date();
+            const dayOfWeek = d.getDay();
+            const daysUntilNextMonday = (dayOfWeek === 0 ? 1 : 8 - dayOfWeek);
+            const nextMonday = new Date(d.getFullYear(), d.getMonth(), d.getDate() + daysUntilNextMonday);
+            nextMonday.setHours(0, 0, 0, 0);
+            
+            const weeklyDiff = nextMonday.getTime() - now;
+            if (weeklyDiff > 0) {
+                const wD = Math.floor(weeklyDiff / (24 * 3600000));
+                const wH = Math.floor((weeklyDiff % (24 * 3600000)) / 3600000).toString().padStart(2, '0');
+                const wM = Math.floor((weeklyDiff % 3600000) / 60000).toString().padStart(2, '0');
+                const wS = Math.floor((weeklyDiff % 60000) / 1000).toString().padStart(2, '0');
+                const weeklyTimerEl = document.getElementById('weekly-refresh-timer');
+                if(weeklyTimerEl) {
+                    weeklyTimerEl.innerText = wD > 0 ? `${wD}天 ${wH}:${wM}:${wS}` : `${wH}:${wM}:${wS}`;
+                }
+            } else {
+                 window.checkWeeklyReset();
+                 window.renderShop();
+            }
+        };
 
         window.renderShop = () => {
             document.getElementById('shop-gold-display').innerText = window.player.gold || 0;
