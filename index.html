@@ -342,8 +342,9 @@ window.MOE_DATA_STRING = `
             <div class="setting-row">
                 <label>🔍 畫面縮放</label>
                 <div style="display: flex; align-items: center; gap: 5px;">
-                    <input type="number" id="ui-scale-input" class="input-box" style="padding: 5px; width: 65px; text-align: center; font-size: 1rem;" min="50" max="200" value="100" onchange="window.updateGameScale(this.value)">
+                    <input type="number" id="ui-scale-input" class="input-box" style="padding: 5px; width: 65px; text-align: center; font-size: 1rem;" min="80" max="120" value="100">
                     <span style="color: #ccc;">%</span>
+                    <button class="btn" style="background: #3498db; padding: 5px 10px; font-size: 0.9rem; width: auto;" onclick="window.applyGameScale()">套用</button>
                 </div>
             </div>
             <div class="setting-row"><label>🧰 戰鬥後自動開寶箱</label><input type="checkbox" id="auto-open-chest-toggle" style="width: 20px; height: 20px;" onchange="window.toggleAutoOpenChest(this.checked)"></div>
@@ -357,8 +358,6 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
                 <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260504</div><div>題庫版本：20260417</div><div>更新資訊：可調整縮放畫面、聊天室提醒、普通寶可夢召喚卡、黑市刷新、商品價錢及分頁調整、修復加倍券bug、雙人地下城頁面顯示修正</div>
-
-            </div>
             </div>
         </div>
     </div>
@@ -1453,18 +1452,29 @@ window.MOE_DATA_STRING = `
         
         window.toggleAutoOpenChest = (val) => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); if(!window.player.settings) window.player.settings = {}; window.player.settings.autoOpenChest = val; window.saveData(); };
         
+        window.applyGameScale = () => {
+            const val = document.getElementById('ui-scale-input').value;
+            window.updateGameScale(val, false);
+        };
+
         window.updateGameScale = (val, noSave = false) => {
             let num = parseInt(val);
-            if (isNaN(num) || num < 50) num = 50; // 最低縮小至 50%
-            if (num > 200) num = 200;             // 最高放大至 200%
+            if (isNaN(num) || num < 80) num = 80; // 限制最低 80%
+            if (num > 120) num = 120;             // 限制最高 120%
             
             document.getElementById('ui-scale-input').value = num;
-            document.body.style.zoom = (num / 100);
+            
+            const scale = num / 100;
+            // 透過 zoom 縮放，並反向放大 body 的寬高來抵銷留白，達成完美的畫面置中/填滿效果
+            document.body.style.zoom = scale;
+            document.body.style.width = `${100 / scale}vw`;
+            document.body.style.height = `${100 / scale}vh`;
             
             if (window.player && window.player.settings && !noSave) {
-                window.AudioEngine.sfx.click();
+                if (window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click();
                 window.player.settings.uiScale = num;
                 window.saveData();
+                window.showToast(`畫面已縮放至 ${num}%`, "#2ecc71");
             }
         };
 
