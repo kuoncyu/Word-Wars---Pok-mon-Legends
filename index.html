@@ -339,6 +339,13 @@ window.MOE_DATA_STRING = `
             <h2 style="color:var(--accent); margin-top:0; text-align:center;">⚙️ 遊戲設定</h2>
             <div class="setting-row"><label>🎵 音量</label><input type="range" id="bgm-vol" min="0" max="1" step="0.1" value="0.25" onchange="window.AudioEngine.setBgmVolume(this.value)"></div>
             <div class="setting-row"><label>🔊 音效</label><input type="range" id="sfx-vol" min="0" max="1" step="0.1" value="0.5" onchange="window.AudioEngine.setSfxVolume(this.value)"></div>
+            <div class="setting-row">
+                <label>🔍 畫面縮放</label>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <input type="number" id="ui-scale-input" class="input-box" style="padding: 5px; width: 65px; text-align: center; font-size: 1rem;" min="50" max="200" value="100" onchange="window.updateGameScale(this.value)">
+                    <span style="color: #ccc;">%</span>
+                </div>
+            </div>
             <div class="setting-row"><label>🧰 戰鬥後自動開寶箱</label><input type="checkbox" id="auto-open-chest-toggle" style="width: 20px; height: 20px;" onchange="window.toggleAutoOpenChest(this.checked)"></div>
             
             <button class="btn" style="background: #2ecc71; margin-bottom: 15px;" onclick="window.syncQuizFromFirebase(true)">⬇️ 下載更新題庫</button>
@@ -349,7 +356,9 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260504</div><div>題庫版本：20260417</div><div>更新資訊：聊天室提醒、普通寶可夢召喚卡、黑市刷新、商品價錢及分頁調整、修復加倍券bug、雙人地下城頁面顯示修正</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260504</div><div>題庫版本：20260417</div><div>更新資訊：可調整縮放畫面、聊天室提醒、普通寶可夢召喚卡、黑市刷新、商品價錢及分頁調整、修復加倍券bug、雙人地下城頁面顯示修正</div>
+
+            </div>
             </div>
         </div>
     </div>
@@ -1431,9 +1440,34 @@ window.MOE_DATA_STRING = `
         };
 
         // ======= 設定 & 管理員 =======
-        window.openSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); if(window.player && window.player.settings) document.getElementById('auto-open-chest-toggle').checked = window.player.settings.autoOpenChest; document.getElementById('settings-modal').style.display = 'flex'; };
+        window.openSettings = () => { 
+            if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); 
+            if(window.player && window.player.settings) {
+                document.getElementById('auto-open-chest-toggle').checked = window.player.settings.autoOpenChest; 
+                if(window.player.settings.uiScale) document.getElementById('ui-scale-input').value = window.player.settings.uiScale;
+            }
+            document.getElementById('settings-modal').style.display = 'flex'; 
+        };
+        
         window.closeSettings = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); document.getElementById('settings-modal').style.display = 'none'; };
+        
         window.toggleAutoOpenChest = (val) => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); if(!window.player.settings) window.player.settings = {}; window.player.settings.autoOpenChest = val; window.saveData(); };
+        
+        window.updateGameScale = (val, noSave = false) => {
+            let num = parseInt(val);
+            if (isNaN(num) || num < 50) num = 50; // 最低縮小至 50%
+            if (num > 200) num = 200;             // 最高放大至 200%
+            
+            document.getElementById('ui-scale-input').value = num;
+            document.body.style.zoom = (num / 100);
+            
+            if (window.player && window.player.settings && !noSave) {
+                window.AudioEngine.sfx.click();
+                window.player.settings.uiScale = num;
+                window.saveData();
+            }
+        };
+
         window.requestAppFullscreen = () => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); try { if (!document.fullscreenElement) { let p = document.documentElement.requestFullscreen(); if(p) p.catch(e=>console.warn("Fullscreen error", e)); } else { let p = document.exitFullscreen(); if(p) p.catch(e=>console.warn("Fullscreen error", e)); } } catch(e) { console.warn(e); } };
         window.getLocalQuizData = () => { const d = localStorage.getItem('wordHunterQuizData'); return (d && d.trim().length > 20) ? d : window.MOE_DATA_STRING; };
         window.saveLocalQuizData = (rawStr) => { localStorage.setItem('wordHunterQuizData', rawStr); const d = document.getElementById('db-last-update'); if(d) d.innerText = new Date().toLocaleString(); };
@@ -1820,6 +1854,10 @@ window.MOE_DATA_STRING = `
             // 【新增】：初始化已領取的信件列表與地下城次數
             if (!window.player.claimedMails) window.player.claimedMails = [];
             if (!window.player.dungeonDaily) window.player.dungeonDaily = { date: "", attempts: 0 };
+            
+            // 初始化縮放比例並套用
+            if (typeof window.player.settings.uiScale === 'undefined') window.player.settings.uiScale = 100;
+            window.updateGameScale(window.player.settings.uiScale, true);
 
             // 【修改點】：校正經驗值上限
             const expectedMaxExp = window.calculateMaxExp(window.player.level);
