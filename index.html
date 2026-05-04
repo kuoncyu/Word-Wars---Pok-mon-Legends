@@ -146,6 +146,15 @@ window.MOE_DATA_STRING = `
         .poke-display-item img { width: 50px; height: 50px; object-fit: contain; image-rendering: pixelated; margin-bottom: 5px; }
         .poke-display-item span { font-size: 0.8rem; color: #fff; text-align: center; white-space: nowrap; }
         .boss-display-item { border-color: var(--boss); background: rgba(231, 76, 60, 0.1); }
+        
+        /* 圖鑑專用樣式 */
+        .pokedex-item { width: 100%; aspect-ratio: 1; border-radius: 10px; border: 2px solid #444; background: #1a1a1a; padding: 5px; position: relative; }
+        .pokedex-item.unlocked { border-color: var(--accent); background: rgba(251, 197, 49, 0.1); cursor: pointer; transition: 0.2s; }
+        .pokedex-item.unlocked:active { transform: scale(0.95); }
+        .pokedex-item img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+        .pokedex-item.locked img { filter: brightness(0) opacity(0.5); }
+        .pokedex-item .pk-name { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); font-size: 0.7rem; text-align: center; color: #fff; padding: 2px 0; border-radius: 0 0 8px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
         .daily-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
         .daily-box { background: #222; border: 2px solid #444; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: 0.3s; }
         .daily-box.active { border-color: var(--luck); background: #1a252f; box-shadow: 0 0 15px rgba(46, 204, 113, 0.6); transform: scale(1.05); z-index: 2; }
@@ -357,7 +366,8 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260504</div><div>題庫版本：20260417</div><div>更新資訊：可調整縮放畫面、聊天室提醒、普通寶可夢召喚卡、黑市刷新、商品價錢及分頁調整、修復加倍券bug、雙人地下城頁面顯示修正</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260504a</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑蒐集、裝備排序、可調整縮放畫面、聊天室提醒、普通寶可夢召喚卡、黑市刷新、商品價錢及分頁調整、修復加倍券bug、雙人地下城頁面顯示修正</div>
+            </div>
             </div>
         </div>
     </div>
@@ -459,12 +469,36 @@ window.MOE_DATA_STRING = `
         </div>
     </div>
 
+    <!-- 自訂警告視窗 (用於出售確認) -->
+    <div id="custom-confirm-modal" class="modal-overlay" style="z-index: 9000;">
+        <div class="modal-box" style="padding: 20px; max-width: 350px; background: #2c3e50; border-color: #e74c3c;">
+            <h2 style="color:#e74c3c; margin-top:0;">⚠️ 警告</h2>
+            <p id="custom-confirm-msg" style="color:#ccc; font-size:1.1rem; margin-bottom:20px; line-height:1.5;"></p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" style="background:#555; flex:1;" onclick="document.getElementById('custom-confirm-modal').style.display='none'">取消</button>
+                <button class="btn" id="custom-confirm-yes-btn" style="background:#e74c3c; flex:1;">確認賣出</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 物品詳情 -->
     <div id="item-detail-modal" class="modal-overlay" style="z-index: 7800;">
         <div class="modal-box" style="padding: 25px;">
             <h2 id="id-name" style="margin-top:0;">物品名稱</h2>
             <p id="id-desc" style="color:#ccc; font-size:0.95rem; margin-bottom:15px;"></p>
             <div id="id-stats" style="margin-bottom:15px; font-size:1.1rem; color:var(--luck); font-weight:bold;"></div>
+            
+            <!-- 新增：出售數量選擇器 (預設隱藏) -->
+            <div id="id-sell-amount-container" style="display:none; margin-bottom:15px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid #555;">
+                <label style="color:#aaa; font-size:0.9rem; display:block; margin-bottom:5px;">出售數量：</label>
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <button class="btn" style="background:#444; padding:5px 15px; width:auto;" onclick="window.adjustSellAmount(-1)">-</button>
+                    <input type="number" id="id-sell-amount" class="input-box" value="1" min="1" style="flex:1; padding:5px; text-align:center;" onchange="window.onSellAmountChange()">
+                    <button class="btn" style="background:#444; padding:5px 15px; width:auto;" onclick="window.adjustSellAmount(1)">+</button>
+                    <button class="btn" style="background:#3498db; padding:5px 10px; width:auto;" onclick="window.adjustSellAmount('max')">最大</button>
+                </div>
+            </div>
+
             <div style="display:flex; gap:10px;">
                 <button id="id-btn-equip" class="btn" style="background:var(--primary); flex:2;">裝備/使用</button>
                 <button id="id-btn-sell" class="btn" style="background:#e67e22; flex:1;">出售</button>
@@ -757,10 +791,11 @@ window.MOE_DATA_STRING = `
     <!-- 主遊戲介面 -->
     <div id="game-container">
         <div class="nav-bar">
-            <div class="nav-btn active" onclick="window.switchTab('battle')">⚔️ 戰鬥</div>
-            <div class="nav-btn" onclick="window.switchTab('inventory')">🎒 背包</div>
-            <div class="nav-btn" onclick="window.switchTab('shop')">🏪 商店</div>
-            <div class="nav-btn" onclick="window.switchTab('leaderboard')">🏆 英雄榜</div>
+            <div class="nav-btn active" onclick="window.switchTab('battle')" style="font-size: 0.85rem;">⚔️ 戰鬥</div>
+            <div class="nav-btn" onclick="window.switchTab('inventory')" style="font-size: 0.85rem;">🎒 背包</div>
+            <div class="nav-btn" onclick="window.switchTab('shop')" style="font-size: 0.85rem;">🏪 商店</div>
+            <div class="nav-btn" onclick="window.switchTab('leaderboard')" style="font-size: 0.85rem;">🏆 英雄榜</div>
+            <div class="nav-btn" onclick="window.switchTab('pokedex')" style="font-size: 0.85rem;">📖 圖鑑</div>
         </div>
         <div id="tab-battle" class="tab-page active">
             <div class="stat-card">
@@ -812,7 +847,18 @@ window.MOE_DATA_STRING = `
                 <h3 style="margin-top: 0; color: #f1c40f; font-size: 1.1rem; border-bottom: 1px solid #f1c40f; padding-bottom: 5px;">✨ 特殊道具 (點擊詳細/使用)</h3>
                 <div id="special-items-list"></div>
             </div>
-            <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">⚔️ 攜帶裝備 (點擊裝備/出售)</h3>
+            
+            <!-- 修改：攜帶裝備標題與排序下拉選單 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 5px; margin-bottom: 10px;">
+                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">⚔️ 攜帶裝備 (點擊詳細)</h3>
+                <select id="inv-sort-select" class="input-box" style="padding: 5px; font-size: 0.85rem; width: auto; min-width: 100px; margin: 0; background: #111;" onchange="window.changeInvSort(this.value)">
+                    <option value="default">獲得順序</option>
+                    <option value="level">等級高低</option>
+                    <option value="quality">品質高低</option>
+                    <option value="type">裝備種類</option>
+                </select>
+            </div>
+            
             <div id="equipment-slots" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;"></div>
             <div id="inventory-list">背包空空如也</div>
         </div>
@@ -844,6 +890,14 @@ window.MOE_DATA_STRING = `
             <h2 style="margin-top:0; color:var(--accent);">🏆 獵人英雄榜</h2>
             <button class="btn" onclick="window.loadLeaderboard()" style="margin-bottom:15px; background:#444;">🔄 重新整理</button>
             <div id="leaderboard-list"><p style="color:#888;">載入中...</p></div>
+        </div>
+        <div id="tab-pokedex" class="tab-page">
+            <h2 style="margin-top:0; color:var(--accent);">📖 寶可夢圖鑑</h2>
+            <div class="stat-card" style="margin-bottom: 15px; padding: 10px; text-align: center;">
+                <p style="font-size: 1.2rem; margin:0; color: #fff; font-weight: bold;">收集進度: <span id="pokedex-progress" style="color:var(--luck)">0 / 0</span></p>
+                <p style="font-size: 0.85rem; color: #aaa; margin: 5px 0 0 0;">(獲得新的先鋒寶可夢即可解鎖進度，點擊可預覽招式)</p>
+            </div>
+            <div id="pokedex-grid" class="avatar-grid" style="grid-template-columns: repeat(4, 1fr); padding-bottom: 20px;"></div>
         </div>
     </div>
 
@@ -1272,14 +1326,20 @@ window.MOE_DATA_STRING = `
         };
         const SMALL_POKES = [10, 16, 19, 43, 46, 52, 41, 66, 74, 92, 200, 353, 361, 183, 222, 72, 25, 151, 778];
         window.SPECIAL_ITEM_TYPES = ['name_card', 'rare_candy', 'change_char', 'reset_card', 'tm', 'buff_exp', 'buff_gold', 'summon_scroll', 'summon_scroll_normal'];
+        window.ALL_COLLECTIBLE_POKEMON = ["448", "624", "65", "68", "282", "478", "407", "477", "151", "25", "6", "658", "700", "778", "609", "359", "196", "197", "445", "149", "181", "94", "121", "471", "470", "150", "249", "250", "251", "382", "384", "483", "493", "718"];
 
         // ======= 玩家狀態 & PvP 狀態 =======
         window.isAnimating = false; window.selectedAvatarUrl = avatarDatabase[0];
-       window.player = { bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null }, name: "無名獵人", account: "", password: "", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 100, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true }, pvpWins: 0, pvpLosses: 0, pvpHistory: [] };
+       window.player = { unlockedAvatars: [], bag: [], equipment: { slot1: null, slot2: null, slot3: null, slot4: null }, name: "無名獵人", account: "", password: "", avatar: avatarDatabase[0], avatarId: "448", level: 1, exp: 0, maxExp: 100, gold: 0, lastLoginDate: "", loginStreak: 0, dailyChestClaimed: false, stats: { hp: 100, maxHp: 100, atk: 10, def: 5, luck: 0, crit: 0, dodge: 0 }, consumables: { hp1: 3 }, chests: {}, shopEquips: [], shopLastRefresh: 0, moves: [], settings: { autoOpenChest: true }, pvpWins: 0, pvpLosses: 0, pvpHistory: [] };
         window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } }; window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 }; 
         window.itemUsedThisTurn = false; window.quizHistory = []; window.pendingMoveToLearn = null; window.currentEnemy = {}; window.currentQuiz = null; window.currentOptions = []; window.currentCombatZoneLevel = 1; window.currentChestTier = 1; window.inspectingZoneIdx = 0;
         
         window.isPvP = false; window.pvpState = { role: null, roomId: null, unsub: null, turnProcessed: 0 }; window.currentPvPData = null; window.inPvPBattle = false;
+
+        // ======= 新增：排序狀態與數量選擇變數 =======
+        window.inventorySortMode = 'default';
+        window.currentSellItemBasePrice = 0;
+        window.currentSellItemMaxCount = 1;
 
         // ======= 初始化與拖曳工具 =======
         window.makeDraggableAndClickable = (id, clickFn) => {
@@ -1861,7 +1921,9 @@ window.MOE_DATA_STRING = `
             if (!window.player.buffs) window.player.buffs = { expMulti: 1, expExpire: 0, goldMulti: 1, goldExpire: 0 }; 
             if (!window.player.weeklyData) window.player.weeklyData = { lastReset: 0, purchases: {} }; 
             
-            // 【新增】：初始化已領取的信件列表與地下城次數
+            // 【新增】：初始化已領取的信件列表與地下城次數與圖鑑解鎖
+            if (!window.player.unlockedAvatars) window.player.unlockedAvatars = [];
+            if (!window.player.unlockedAvatars.includes(window.player.avatarId)) window.player.unlockedAvatars.push(window.player.avatarId);
             if (!window.player.claimedMails) window.player.claimedMails = [];
             if (!window.player.dungeonDaily) window.player.dungeonDaily = { date: "", attempts: 0 };
             
@@ -1997,7 +2059,7 @@ window.MOE_DATA_STRING = `
         };
 
         // ======= UI 介面操作 =======
-        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); };
+        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); if(t === 'pokedex') window.renderPokedex(); };
         window.switchShopTab = (sec) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.shop-tab-btn').forEach(b => b.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active')); document.getElementById(`shop-sec-${sec}`).classList.add('active'); };
 
         window.renderConsumables = () => {
@@ -2214,6 +2276,11 @@ window.MOE_DATA_STRING = `
             const match = newAvatarUrl.match(/\/(\d+)\.gif$/); 
             window.player.avatarId = match ? match[1] : "448";
             
+            // 圖鑑解鎖進度更新
+            if (!window.player.unlockedAvatars.includes(window.player.avatarId)) {
+                window.player.unlockedAvatars.push(window.player.avatarId);
+            }
+            
             let pool = window.POKEMON_LEARNSETS[window.player.avatarId] || window.POKEMON_LEARNSETS["448"];
             // 過濾出不大於當前等級的所有招式
             let availableMoves = pool.filter(m => m.lv <= window.player.level);
@@ -2371,7 +2438,20 @@ window.MOE_DATA_STRING = `
             if(window.player.bag.length === 0) { invList.innerHTML = '<p style="color:#666; text-align:center;">背包空空如也</p>'; } 
             else {
                 const equippedTypes = Object.values(window.player.equipment).filter(e => e !== null).map(e => e.slot);
-                invList.innerHTML = window.player.bag.map((item, idx) => ({item, idx})).reverse().map(obj => {
+                
+                // 新增：背包裝備排序邏輯
+                let bagItems = window.player.bag.map((item, idx) => ({item, idx}));
+                if (window.inventorySortMode === 'level') {
+                    bagItems.sort((a, b) => b.item.level - a.item.level);
+                } else if (window.inventorySortMode === 'quality') {
+                    bagItems.sort((a, b) => b.item.qualityIndex - a.item.qualityIndex);
+                } else if (window.inventorySortMode === 'type') {
+                    bagItems.sort((a, b) => a.item.slot.localeCompare(b.item.slot));
+                } else {
+                    bagItems.reverse(); // 預設：獲得順序 (新的在前面)
+                }
+
+                invList.innerHTML = bagItems.map(obj => {
                     const i = obj.item; const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[i.qualityIndex] || '#fff';
                     const isEquippedType = equippedTypes.includes(i.slot); const grayStyle = isEquippedType ? 'filter: grayscale(1); opacity: 0.5;' : ''; const equippedTag = isEquippedType ? '<span style="color:#e74c3c; font-size:0.8rem; margin-left:5px;">(已裝備同類型)</span>' : '';
                     return `<div class="inv-item" style="${grayStyle}" onclick="window.openItemDetail('bag', ${obj.idx})"><div class="inv-header" style="color:${color}"><span>${i.icon} ${i.name} <span class="inv-quality-tag" style="background:${color}">${['破舊的','普通的','良好的','精緻的','高級的','皇家的'][i.qualityIndex]}</span>${equippedTag}</span><span style="color:#888; font-size:0.9rem;">Lv.${i.level}</span></div><div class="inv-stats">${i.atk ? `<span>🗡️ 攻擊 +${i.atk}</span>` : ''}${i.hp ? `<span>❤️ 生命 +${i.hp}</span>` : ''}${i.def ? `<span>🛡️ 防禦 +${i.def}</span>` : ''}${i.crit ? `<span>⚡ 爆擊 +${i.crit}%</span>` : ''}${i.dodge ? `<span>🌫️ 閃避 +${i.dodge}%</span>` : ''}${i.luck ? `<span>🍀 幸運 +${i.luck}%</span>` : ''}</div></div>`;
@@ -2382,19 +2462,119 @@ window.MOE_DATA_STRING = `
             window.updateBuffTimers();
         };
 
+        // 新增：處理排序選單變更
+        window.changeInvSort = (val) => {
+            window.inventorySortMode = val;
+            window.updateUI();
+            window.AudioEngine.sfx.click();
+        };
+
+        // 新增：渲染寶可夢圖鑑
+        window.renderPokedex = () => {
+            const grid = document.getElementById('pokedex-grid');
+            let unlockedCount = 0;
+            let html = '';
+            
+            window.ALL_COLLECTIBLE_POKEMON.forEach(id => {
+                const isUnlocked = window.player.unlockedAvatars.includes(id);
+                if (isUnlocked) unlockedCount++;
+                
+                const spriteUrl = window.getSprite(id);
+                const name = pokeNames[id] || "未知";
+                
+                if (isUnlocked) {
+                    html += `<div class="pokedex-item unlocked" onclick="window.openPokedexModal('${spriteUrl}', '${id}')">
+                        <img src="${spriteUrl}">
+                        <div class="pk-name">${name}</div>
+                    </div>`;
+                } else {
+                    html += `<div class="pokedex-item locked" onclick="window.showToast('尚未獲得此寶可夢', 'var(--boss)')">
+                        <img src="${spriteUrl}">
+                        <div class="pk-name">???</div>
+                    </div>`;
+                }
+            });
+            
+            grid.innerHTML = html;
+            document.getElementById('pokedex-progress').innerText = `${unlockedCount} / ${window.ALL_COLLECTIBLE_POKEMON.length}`;
+        };
+
+        // 新增：自訂警告視窗函數
+        window.showCustomConfirm = (msg, onConfirm) => {
+            document.getElementById('custom-confirm-msg').innerText = msg;
+            document.getElementById('custom-confirm-yes-btn').onclick = () => {
+                document.getElementById('custom-confirm-modal').style.display = 'none';
+                if(onConfirm) onConfirm();
+            };
+            document.getElementById('custom-confirm-modal').style.display = 'flex';
+        };
+
+        // 新增：數量選擇輔助函數
+        window.adjustSellAmount = (delta) => {
+            window.AudioEngine.sfx.click();
+            const input = document.getElementById('id-sell-amount');
+            let val = parseInt(input.value) || 1;
+            if (delta === 'max') val = window.currentSellItemMaxCount;
+            else val += delta;
+            
+            if (val < 1) val = 1;
+            if (val > window.currentSellItemMaxCount) val = window.currentSellItemMaxCount;
+            input.value = val;
+            window.onSellAmountChange();
+        };
+
+        window.onSellAmountChange = () => {
+            const input = document.getElementById('id-sell-amount');
+            let val = parseInt(input.value) || 1;
+            if (val < 1) val = 1;
+            if (val > window.currentSellItemMaxCount) val = window.currentSellItemMaxCount;
+            input.value = val;
+            
+            const btnSell = document.getElementById('id-btn-sell');
+            const totalSellPrice = val * window.currentSellItemBasePrice;
+            btnSell.innerText = `出售 (💰${totalSellPrice})`;
+        };
+
         window.openItemDetail = (source, indexOrKey) => {
             window.AudioEngine.sfx.click(); const modal = document.getElementById('item-detail-modal');
             let item = null; let btnEq = document.getElementById('id-btn-equip'); let btnSell = document.getElementById('id-btn-sell');
+            const sellAmtContainer = document.getElementById('id-sell-amount-container');
+            const sellInput = document.getElementById('id-sell-amount');
+
             if(source === 'consumable') {
+                sellAmtContainer.style.display = 'block';
                 item = consumableItems[indexOrKey]; document.getElementById('id-name').innerText = item.name; document.getElementById('id-desc').innerText = item.desc; document.getElementById('id-stats').innerHTML = `擁有數量: ${window.player.consumables[indexOrKey]}`;
                 btnEq.innerText = "使用"; btnEq.style.background = "var(--primary)"; btnEq.disabled = false; btnEq.style.display = "block"; btnEq.onclick = () => { window.useItemFromBag(indexOrKey); };
                 
-                // 動態計算售價 (藥劑或特殊道具的價值一半)
+                // 動態計算售價 (藥劑或特殊道具的價值一半)並初始化數量選擇器
                 let baseVal = item.basePrice || item.price || (item.dynamicPriceMulti * window.player.level) || 0;
-                let sellPrice = Math.floor(baseVal * 0.5); 
+                window.currentSellItemBasePrice = Math.floor(baseVal * 0.5); 
+                window.currentSellItemMaxCount = window.player.consumables[indexOrKey];
+                sellInput.value = 1;
+                window.onSellAmountChange();
                 
-                btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block"; btnSell.onclick = () => { window.AudioEngine.sfx.equip(); window.player.gold += sellPrice; window.player.consumables[indexOrKey]--; window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
+                btnSell.style.display = "block"; 
+                btnSell.onclick = () => { 
+                    const amt = parseInt(sellInput.value) || 1;
+                    const totalSellPrice = amt * window.currentSellItemBasePrice;
+                    const isSpecial = window.SPECIAL_ITEM_TYPES.includes(item.type);
+                    
+                    const performSell = () => {
+                        window.AudioEngine.sfx.equip(); 
+                        window.player.gold += totalSellPrice; 
+                        window.player.consumables[indexOrKey] -= amt; 
+                        window.updateUI(); window.saveData(); modal.style.display='none'; 
+                        window.showToast(`出售了 ${amt} 個，獲得 ${totalSellPrice} 金幣!`, "#f1c40f");
+                    };
+
+                    if (isSpecial) {
+                        window.showCustomConfirm(`確定要賣出【稀有道具】${item.name} x${amt} 嗎？\n(此操作無法復原)`, performSell);
+                    } else {
+                        performSell();
+                    }
+                };
             } else if(source === 'bag') {
+                sellAmtContainer.style.display = 'none';
                 item = window.player.bag[indexOrKey]; document.getElementById('id-name').innerText = item.name;
                 const partNames = {head:'頭帶', body:'衣服', legs:'腰帶', feet:'圍巾', gloves:'護腕', weapon:'武器', offhand:'防具', accessory:'飾品'};
                 document.getElementById('id-desc').innerText = `種類: ${partNames[item.slot] || '通用'} | 品質: ${['破舊','普通','良好','精緻','高級','皇家'][item.qualityIndex]} | 等級: ${item.level}`;
@@ -2411,8 +2591,20 @@ window.MOE_DATA_STRING = `
                 let sellPrice = Math.floor(baseVal * 0.5); 
                 
                 btnSell.innerText = `出售 (💰${sellPrice})`; btnSell.style.display = "block";
-                btnSell.onclick = () => { window.AudioEngine.sfx.equip(); window.player.gold += sellPrice; window.player.bag.splice(indexOrKey, 1); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); };
+                btnSell.onclick = () => { 
+                    const performSell = () => {
+                        window.AudioEngine.sfx.equip(); window.player.gold += sellPrice; window.player.bag.splice(indexOrKey, 1); window.updateUI(); window.saveData(); modal.style.display='none'; window.showToast(`出售獲得 ${sellPrice} 金幣!`, "#f1c40f"); 
+                    };
+
+                    if (item.qualityIndex >= 4) { // 高級(紫)為4，皇家(金)為5
+                        const qName = ['破舊的','普通的','良好的','精緻的','高級的','皇家的'][item.qualityIndex];
+                        window.showCustomConfirm(`確定要賣出【${qName}】裝備：${item.name} 嗎？\n(此操作無法復原)`, performSell);
+                    } else {
+                        performSell();
+                    }
+                };
             } else if (source === 'equip') {
+                sellAmtContainer.style.display = 'none';
                 item = window.player.equipment[indexOrKey]; document.getElementById('id-name').innerText = item.name; document.getElementById('id-desc').innerText = `已裝備`;
                 let sHtml = ''; if(item.atk) sHtml += `攻擊力 +${item.atk}<br>`; if(item.def) sHtml += `防禦力 +${item.def}<br>`; if(item.hp) sHtml += `最大生命 +${item.hp}<br>`; if(item.crit) sHtml += `爆擊率 +${item.crit}%<br>`; if(item.dodge) sHtml += `閃避率 +${item.dodge}%<br>`; if(item.luck) sHtml += `掉寶率 +${item.luck}%<br>`; document.getElementById('id-stats').innerHTML = sHtml;
                 btnEq.innerText = "卸下"; btnEq.style.background = "var(--primary)"; btnEq.disabled = false; btnEq.style.display = "block"; btnSell.style.display = "none";
