@@ -74,17 +74,17 @@ window.MOE_DATA_STRING = `
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&display=swap');
-        :root { --bg-dark: #0f0f10; --panel-bg: rgba(25, 25, 30, 0.98); --primary: #c23616; --accent: #fbc531; --luck: #00d2d3; --enhance: #e056fd; --boss: #e74c3c; --text: #f5f6fa; --font-main: 'Noto Serif TC', serif; }
+        :root { --safe-t: 0px; --safe-b: 0px; --safe-l: 0px; --safe-r: 0px; --bg-dark: #0f0f10; --panel-bg: rgba(25, 25, 30, 0.98); --primary: #c23616; --accent: #fbc531; --luck: #00d2d3; --enhance: #e056fd; --boss: #e74c3c; --text: #f5f6fa; --font-main: 'Noto Serif TC', serif; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { font-family: var(--font-main); background-color: var(--bg-dark); color: var(--text); margin: 0; padding: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #0f0f10; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: opacity 0.5s ease; }
+        body { font-family: var(--font-main); background-color: var(--bg-dark); color: var(--text); margin: 0; padding: var(--safe-t) var(--safe-r) var(--safe-b) var(--safe-l); width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        #splash-screen { position: fixed; top: var(--safe-t); left: var(--safe-l); width: calc(100vw - var(--safe-l) - var(--safe-r)); height: calc(100vh - var(--safe-t) - var(--safe-b)); background-color: #0f0f10; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: opacity 0.5s ease; }
         @keyframes splashPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
         .btn { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight:bold; transition: 0.2s; display: inline-block; text-align: center; text-decoration:none; }
         .btn:active { transform: scale(0.95); filter: brightness(0.8); }
         .btn:disabled { background: #555 !important; cursor: not-allowed; opacity: 0.5; border-color: #333 !important; color:#aaa; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay { position: fixed; top: var(--safe-t); left: var(--safe-l); width: calc(100vw - var(--safe-l) - var(--safe-r)); height: calc(100vh - var(--safe-t) - var(--safe-b)); background: rgba(0,0,0,0.85); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-box { background: #222; border: 2px solid var(--accent); border-radius: 15px; width: 100%; max-width: 450px; text-align: center; display: flex; flex-direction: column; padding: 0; overflow-y: auto; max-height: 90vh; padding-bottom: 20px;}
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-dark); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        #login-screen { position: fixed; top: var(--safe-t); left: var(--safe-l); width: calc(100vw - var(--safe-l) - var(--safe-r)); height: calc(100vh - var(--safe-t) - var(--safe-b)); background-color: var(--bg-dark); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         .title-text { color: var(--accent); font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; text-shadow: 0 0 15px var(--primary); text-align: center; line-height: 1.2; }
         .input-group { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px; background: rgba(0,0,0,0.5); padding: 25px 20px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
@@ -161,8 +161,22 @@ window.MOE_DATA_STRING = `
         .daily-box.claimed { border-color: #555; opacity: 0.5; filter: grayscale(0.8); }
         .daily-day { font-size: 0.85rem; color: #aaa; margin-bottom: 5px; font-weight: bold; background: rgba(0,0,0,0.5); width: 100%; border-radius: 4px; padding: 2px 0; text-align: center; }
 
+        /* 勳章專屬樣式 */
+        .equipped-badge { display:inline-block; background:rgba(255,255,255,0.1); border:2px solid var(--accent); border-radius:50%; width:35px; height:35px; line-height:30px; text-align:center; font-size:1.3rem; cursor:pointer; margin-left:5px; transition:0.2s; box-shadow:0 0 8px rgba(251,197,49,0.5);}
+        .equipped-badge:active { transform:scale(0.9); }
+        .empty-badge { display:inline-block; background:rgba(0,0,0,0.5); border:2px dashed #555; border-radius:50%; width:35px; height:35px; line-height:30px; text-align:center; font-size:1.2rem; color:#555; cursor:pointer; margin-left:5px; transition:0.2s;}
+        .empty-badge:hover { border-color:#888; color:#888;}
+        .badge-item { background:#1a1a1a; border:1px solid #444; border-radius:8px; padding:12px; display:flex; align-items:center; gap:12px; margin-bottom:10px; position:relative; overflow:hidden;}
+        .badge-item.unlocked { border-color:var(--luck); background:linear-gradient(90deg, #1a252f, #1a1a1a); }
+        .badge-icon-box { font-size:2.5rem; width:60px; text-align:center; filter:grayscale(1); opacity:0.5;}
+        .badge-item.unlocked .badge-icon-box { filter:grayscale(0); opacity:1; text-shadow: 0 0 10px rgba(255,255,255,0.5);}
+        .badge-info { flex:1; text-align:left; }
+        .badge-stars { color:var(--accent); font-size:0.85rem; letter-spacing:2px; margin-bottom:3px;}
+        .badge-progress { width:100%; height:6px; background:#333; border-radius:3px; margin-top:5px; overflow:hidden;}
+        .badge-progress-fill { height:100%; background:var(--primary); width:0%; transition:width 0.3s;}
+
         /* 戰鬥畫面 */
-        #battle-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #2c3e50; z-index: 2000; display: none; flex-direction: column; }
+        #battle-screen { position: fixed; top: var(--safe-t); left: var(--safe-l); width: calc(100vw - var(--safe-l) - var(--safe-r)); height: calc(100vh - var(--safe-t) - var(--safe-b)); background-color: #2c3e50; z-index: 2000; display: none; flex-direction: column; }
         .battle-scene { 
             flex: 1; position: relative; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); border-bottom: 4px solid #111; 
             background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 50%, #7CB342 50%, #558B2F 100%); 
@@ -284,18 +298,18 @@ window.MOE_DATA_STRING = `
         .player-sprite { position: absolute; bottom: 5vmin; left: 8vmin; max-width: 45vmin; height: clamp(120px, 30vmin, 250px); object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5)); transform: scaleX(-1); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
 
         /* 設定與聊天按鈕 */
-        #settings-btn { position: fixed; top: 10px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #settings-btn { position: fixed; top: calc(10px + var(--safe-t)); right: calc(10px + var(--safe-r)); width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
         #settings-btn:hover { background: rgba(0,0,0,0.6); border-color: var(--accent); opacity: 1; }
         
-        #chat-btn { position: fixed; top: 65px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #chat-btn { position: fixed; top: calc(65px + var(--safe-t)); right: calc(10px + var(--safe-r)); width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
         #chat-btn:hover { background: rgba(0,0,0,0.6); border-color: var(--luck); opacity: 1; }
 
         /* 新增：信箱按鈕 */
-        #mail-btn { position: fixed; top: 120px; right: 10px; width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
+        #mail-btn { position: fixed; top: calc(120px + var(--safe-t)); right: calc(10px + var(--safe-r)); width: 45px; height: 45px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 8500; transition: background 0.2s, opacity 0.2s, border-color 0.2s; backdrop-filter: blur(5px); color: #fff; opacity: 0.6; }
         #mail-btn:hover { background: rgba(0,0,0,0.6); border-color: #3498db; opacity: 1; }
 
         /* 聊天室面板 */
-        #chat-panel { display: none; position: fixed; top: 120px; right: 10px; width: 320px; height: 450px; max-width: 90vw; max-height: 60vh; background: rgba(20, 20, 25, 0.95); border: 2px solid var(--luck); border-radius: 10px; z-index: 8600; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        #chat-panel { display: none; position: fixed; top: calc(120px + var(--safe-t)); right: calc(10px + var(--safe-r)); width: 320px; height: 450px; max-width: 90vw; max-height: calc(100vh - 130px - var(--safe-t) - var(--safe-b)); background: rgba(20, 20, 25, 0.95); border: 2px solid var(--luck); border-radius: 10px; z-index: 8600; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         #chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
         .chat-input-area { display: flex; padding: 10px; background: #111; border-top: 1px solid #333; }
         .chat-input-area input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #222; color: #fff; outline: none; font-size:1rem;}
@@ -348,14 +362,19 @@ window.MOE_DATA_STRING = `
             <h2 style="color:var(--accent); margin-top:0; text-align:center;">⚙️ 遊戲設定</h2>
             <div class="setting-row"><label>🎵 音量</label><input type="range" id="bgm-vol" min="0" max="1" step="0.1" value="0.25" onchange="window.AudioEngine.setBgmVolume(this.value)"></div>
             <div class="setting-row"><label>🔊 音效</label><input type="range" id="sfx-vol" min="0" max="1" step="0.1" value="0.5" onchange="window.AudioEngine.setSfxVolume(this.value)"></div>
-            <div class="setting-row">
-                <label>🔍 畫面縮放</label>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <input type="number" id="ui-scale-input" class="input-box" style="padding: 5px; width: 65px; text-align: center; font-size: 1rem;" min="80" max="120" value="100">
-                    <span style="color: #ccc;">%</span>
-                    <button class="btn" style="background: #3498db; padding: 5px 10px; font-size: 0.9rem; width: auto;" onclick="window.applyGameScale()">套用</button>
+            
+            <!-- 修改為邊界調整設定 -->
+            <div class="setting-row" style="flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 20px;">
+                <label style="font-weight: bold; color: var(--accent);">📱 畫面邊界調整 (防瀏海/按鍵遮擋)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+                    <div style="display:flex; align-items:center; gap:5px;"><span style="color:#aaa; width:20px;">上</span><input type="number" id="safe-t" class="input-box" style="padding:5px; font-size:1rem; flex:1;" value="0" min="0" max="150"></div>
+                    <div style="display:flex; align-items:center; gap:5px;"><span style="color:#aaa; width:20px;">下</span><input type="number" id="safe-b" class="input-box" style="padding:5px; font-size:1rem; flex:1;" value="0" min="0" max="150"></div>
+                    <div style="display:flex; align-items:center; gap:5px;"><span style="color:#aaa; width:20px;">左</span><input type="number" id="safe-l" class="input-box" style="padding:5px; font-size:1rem; flex:1;" value="0" min="0" max="150"></div>
+                    <div style="display:flex; align-items:center; gap:5px;"><span style="color:#aaa; width:20px;">右</span><input type="number" id="safe-r" class="input-box" style="padding:5px; font-size:1rem; flex:1;" value="0" min="0" max="150"></div>
                 </div>
+                <button class="btn" style="background: #3498db; padding: 8px; font-size: 1rem;" onclick="window.applySafeArea()">套用邊界</button>
             </div>
+
             <div class="setting-row"><label>🧰 戰鬥後自動開寶箱</label><input type="checkbox" id="auto-open-chest-toggle" style="width: 20px; height: 20px;" onchange="window.toggleAutoOpenChest(this.checked)"></div>
             
             <button class="btn" style="background: #2ecc71; margin-bottom: 15px;" onclick="window.syncQuizFromFirebase(true)">⬇️ 下載更新題庫</button>
@@ -366,7 +385,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260504a</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑蒐集、裝備排序、販售系統改善、可更改密碼、可調整縮放畫面、聊天室提醒、普通寶可夢召喚卡、黑市刷新、商品價錢及分頁調整、修復加倍券bug、雙人地下城頁面顯示修正</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260505</div><div>題庫版本：20260417</div><div>更新資訊：縮放比例調整、管理員封禁系統</div>
             </div>
         </div>
     </div>
@@ -1582,12 +1601,16 @@ window.MOE_DATA_STRING = `
             window.AudioEngine.sfx.click(); window.showToast("正在儲存雲端進度...", "#f1c40f"); await window.saveData(); window.player = null; setTimeout(() => window.location.reload(), 1000); 
         };
 
-        // ======= 設定 & 管理員 =======
         window.openSettings = () => { 
             if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); 
             if(window.player && window.player.settings) {
                 document.getElementById('auto-open-chest-toggle').checked = window.player.settings.autoOpenChest; 
-                if(window.player.settings.uiScale) document.getElementById('ui-scale-input').value = window.player.settings.uiScale;
+                if(window.player.settings.safeArea) {
+                    document.getElementById('safe-t').value = window.player.settings.safeArea.t || 0;
+                    document.getElementById('safe-b').value = window.player.settings.safeArea.b || 0;
+                    document.getElementById('safe-l').value = window.player.settings.safeArea.l || 0;
+                    document.getElementById('safe-r').value = window.player.settings.safeArea.r || 0;
+                }
             }
             document.getElementById('settings-modal').style.display = 'flex'; 
         };
@@ -1596,29 +1619,30 @@ window.MOE_DATA_STRING = `
         
         window.toggleAutoOpenChest = (val) => { if(window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click(); if(!window.player.settings) window.player.settings = {}; window.player.settings.autoOpenChest = val; window.saveData(); };
         
-        window.applyGameScale = () => {
-            const val = document.getElementById('ui-scale-input').value;
-            window.updateGameScale(val, false);
+        window.applySafeArea = () => {
+            const t = parseInt(document.getElementById('safe-t').value) || 0;
+            const b = parseInt(document.getElementById('safe-b').value) || 0;
+            const l = parseInt(document.getElementById('safe-l').value) || 0;
+            const r = parseInt(document.getElementById('safe-r').value) || 0;
+            window.updateSafeArea(t, b, l, r, false);
         };
 
-        window.updateGameScale = (val, noSave = false) => {
-            let num = parseInt(val);
-            if (isNaN(num) || num < 80) num = 80; // 限制最低 80%
-            if (num > 120) num = 120;             // 限制最高 120%
-            
-            document.getElementById('ui-scale-input').value = num;
-            
-            const scale = num / 100;
-            // 透過 zoom 縮放，並反向放大 body 的寬高來抵銷留白，達成完美的畫面置中/填滿效果
-            document.body.style.zoom = scale;
-            document.body.style.width = `${100 / scale}vw`;
-            document.body.style.height = `${100 / scale}vh`;
-            
+        window.updateSafeArea = (t, b, l, r, noSave = false) => {
+            t = Math.max(0, Math.min(150, t));
+            b = Math.max(0, Math.min(150, b));
+            l = Math.max(0, Math.min(150, l));
+            r = Math.max(0, Math.min(150, r));
+
+            document.documentElement.style.setProperty('--safe-t', `${t}px`);
+            document.documentElement.style.setProperty('--safe-b', `${b}px`);
+            document.documentElement.style.setProperty('--safe-l', `${l}px`);
+            document.documentElement.style.setProperty('--safe-r', `${r}px`);
+
             if (window.player && window.player.settings && !noSave) {
                 if (window.AudioEngine && window.AudioEngine.sfx) window.AudioEngine.sfx.click();
-                window.player.settings.uiScale = num;
+                window.player.settings.safeArea = { t, b, l, r };
                 window.saveData();
-                window.showToast(`畫面已縮放至 ${num}%`, "#2ecc71");
+                window.showToast("畫面邊界已套用！", "#2ecc71");
             }
         };
 
@@ -2033,9 +2057,9 @@ window.MOE_DATA_STRING = `
             if (!window.player.claimedMails) window.player.claimedMails = [];
             if (!window.player.dungeonDaily) window.player.dungeonDaily = { date: "", attempts: 0 };
             
-            // 初始化縮放比例並套用
-            if (typeof window.player.settings.uiScale === 'undefined') window.player.settings.uiScale = 100;
-            window.updateGameScale(window.player.settings.uiScale, true);
+            // 初始化邊界防瀏海設計
+            if (!window.player.settings.safeArea) window.player.settings.safeArea = { t: 0, b: 0, l: 0, r: 0 };
+            window.updateSafeArea(window.player.settings.safeArea.t, window.player.settings.safeArea.b, window.player.settings.safeArea.l, window.player.settings.safeArea.r, true);
 
             // 【修改點】：校正經驗值上限
             const expectedMaxExp = window.calculateMaxExp(window.player.level);
