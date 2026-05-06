@@ -377,6 +377,13 @@ window.MOE_DATA_STRING = `
 
             <div class="setting-row"><label>🧰 戰鬥後自動開寶箱</label><input type="checkbox" id="auto-open-chest-toggle" style="width: 20px; height: 20px;" onchange="window.toggleAutoOpenChest(this.checked)"></div>
             
+            <!-- 新增：讓一般設定選單也能直接匯入/匯出題庫 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <button class="btn" style="background: #555; font-size:0.95rem;" onclick="window.exportQuizData()">📄 匯出題庫</button>
+                <button class="btn" style="background: #555; font-size:0.95rem;" onclick="document.getElementById('import-file-settings').click()">📂 匯入題庫</button>
+                <input type="file" id="import-file-settings" style="display:none" accept=".txt,.js" onchange="window.importQuizData(event)">
+            </div>
+
             <button class="btn" style="background: #2ecc71; margin-bottom: 15px;" onclick="window.syncQuizFromFirebase(true)">⬇️ 下載更新題庫</button>
             <button class="btn" style="margin-bottom: 15px; background: #e74c3c;" onclick="window.logoutGame()">🚪 儲存並退出遊戲</button>
             <button class="btn" style="margin-bottom: 15px; background: #3498db;" onclick="window.requestAppFullscreen()">🔲 切換全螢幕</button>
@@ -385,7 +392,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260506</div><div>題庫版本：20260417</div><div>更新資訊：縮放比例調整、管理員封禁系統、勳章系統</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：程式版本：20260506</div><div>題庫版本：20260506</div><div>更新資訊：縮放比例調整、管理員封禁系統、勳章系統</div>
             </div>
         </div>
     </div>
@@ -1822,13 +1829,21 @@ window.MOE_DATA_STRING = `
 
         window.uploadQuizToFirebase = async () => {
             window.AudioEngine.sfx.click(); if (!window.db || !window.user) return window.showToast("無網路連線", "var(--boss)");
-            if (!window.currentRawQuizData) return window.showToast("沒有題庫資料可上傳", "var(--boss)");
+            const dataToUpload = window.currentRawQuizData || window.getLocalQuizData() || window.MOE_DATA_STRING;
+            if (!dataToUpload) return window.showToast("沒有題庫資料可上傳", "var(--boss)");
             window.showToast("正在上傳至雲端...", "#f1c40f");
-            try { await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'quiz_db', 'main'), { content: window.currentRawQuizData, updatedAt: Date.now(), updatedBy: window.user.uid }); window.showToast("✅ 上傳雲端題庫成功！", "#2ecc71"); } 
+            try { await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'quiz_db', 'main'), { content: dataToUpload, updatedAt: Date.now(), updatedBy: window.user.uid }); window.showToast("✅ 上傳雲端題庫成功！", "#2ecc71"); } 
             catch (e) { window.showToast("上傳失敗，請檢查權限", "var(--boss)"); }
         };
 
-        window.exportQuizData = () => { window.AudioEngine.sfx.click(); const url = URL.createObjectURL(new Blob([window.currentRawQuizData], { type: 'text/plain;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 匯出成功", "#2ecc71"); };
+        window.exportQuizData = () => { 
+            window.AudioEngine.sfx.click(); 
+            const dataToExport = window.currentRawQuizData || window.getLocalQuizData() || window.MOE_DATA_STRING;
+            if (!dataToExport) { window.showToast("題庫資料為空", "var(--boss)"); return; }
+            const url = URL.createObjectURL(new Blob([dataToExport], { type: 'text/plain;charset=utf-8' })); 
+            const a = document.createElement('a'); a.href = url; a.download = `字靈獵人_題庫.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); window.showToast("✅ 匯出成功", "#2ecc71"); 
+        };
+        
         window.importQuizData = (event) => { window.AudioEngine.sfx.click(); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { window.saveLocalQuizData(e.target.result); window.parseQuizData(e.target.result); window.showToast("✅ 匯入成功！", "#2ecc71"); event.target.value = ''; }; reader.readAsText(file); };
 
         window.adminLogin = async () => { 
