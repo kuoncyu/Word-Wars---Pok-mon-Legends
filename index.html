@@ -1455,7 +1455,7 @@ window.MOE_DATA_STRING = `
             'die50': { icon: '🩹', title: '堅韌', desc: '累積死亡 50 次', stars: '⭐⭐', check: () => (window.player.records?.deaths || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.deaths || 0 },
             'dg_perfect': { icon: '🦋', title: '幻影', desc: '滿血擊敗任何地下城 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonPerfect || false, maxReq: 1, getReq: () => window.player.records?.dungeonPerfect ? 1 : 0 },
             'dg_solo': { icon: '🐺', title: '孤膽英雄', desc: '雙人地下城隊友陣亡後獨自擊敗 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonSolo || false, maxReq: 1, getReq: () => window.player.records?.dungeonSolo ? 1 : 0 },
-            'dmg100k': { icon: '💥', title: '毀滅者', desc: '單次攻擊超過 100,000 傷害', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 100000, maxReq: 100000, getReq: () => window.player.records?.maxDmg || 0 },
+            'dmg100k': { icon: '💥', title: '毀滅者', desc: '單次攻擊超過 4,000 傷害', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 4000, maxReq: 4000, getReq: () => window.player.records?.maxDmg || 0 },
 
             // 五、 連線對戰篇 (PvP Battles)
             'pvp1': { icon: '🥊', title: '鬥士', desc: 'PvP 獲勝 1 次', stars: '⭐', check: () => (window.player.pvpWins || 0) >= 1, maxReq: 1, getReq: () => window.player.pvpWins || 0 },
