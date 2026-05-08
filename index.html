@@ -392,7 +392,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260506</div><div>題庫版本：20260506</div><div>更新資訊：縮放比例調整、管理員封禁系統、勳章系統</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260508</div><div>題庫版本：20260507</div><div>更新資訊：使用技能改良(血滿不使用補血招式、敵方異常狀態不使用異常效果招式)</div>
             </div>
         </div>
     </div>
@@ -981,11 +981,18 @@ window.MOE_DATA_STRING = `
                 <p style="font-size: 1rem; color: #ccc; margin: 0;">達成條件即可解鎖勳章，解鎖後點擊圖示即可裝備！</p>
                 <p style="font-size: 0.85rem; color: #f1c40f; margin: 5px 0 0 0;">(裝備中的勳章會顯示在您的英雄榜上)</p>
             </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 5px; margin-bottom: 10px;">
+                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">🎯 任務列表</h3>
+                <select id="ach-sort-select" class="input-box" style="padding: 5px; font-size: 0.85rem; width: auto; min-width: 100px; margin: 0; background: #111;" onchange="window.changeAchSort(this.value)">
+                    <option value="category">任務類別</option>
+                    <option value="stars_desc">難度 (高到低)</option>
+                    <option value="stars_asc">難度 (低到高)</option>
+                </select>
+            </div>
             <div id="achievements-list"></div>
         </div>
     </div>
 
-    <!-- 戰鬥畫面 (PvE & PvP 共用，以狀態切換) -->
     <div id="battle-screen">
         <div class="battle-scene" id="battle-scene">
             <div id="fx-layer"></div>
@@ -1414,65 +1421,77 @@ window.MOE_DATA_STRING = `
         window.ALL_COLLECTIBLE_POKEMON = ["448", "624", "65", "68", "282", "478", "407", "477", "151", "25", "6", "658", "700", "778", "609", "359", "196", "197", "445", "149", "181", "94", "121", "471", "470", "150", "249", "250", "251", "382", "384", "483", "493", "718"];
 
         window.ACHIEVEMENTS_DB = {
-            // 一、 等級與成長篇 (Level & Growth)
-            'lv10': { icon: '🥉', title: '新手獵人', desc: '等級達到 Lv.10', stars: '⭐', check: () => window.player.level >= 10, maxReq: 10, getReq: () => window.player.level },
-            'lv30': { icon: '🥈', title: '熟練獵人', desc: '等級達到 Lv.30', stars: '⭐⭐', check: () => window.player.level >= 30, maxReq: 30, getReq: () => window.player.level },
-            'lv60': { icon: '🥇', title: '菁英獵人', desc: '等級達到 Lv.60', stars: '⭐⭐⭐', check: () => window.player.level >= 60, maxReq: 60, getReq: () => window.player.level },
-            'lv100': { icon: '💎', title: '傳說獵人', desc: '等級達到 Lv.100', stars: '⭐⭐⭐⭐', check: () => window.player.level >= 100, maxReq: 100, getReq: () => window.player.level },
-            'reset1': { icon: '🌀', title: '轉生者', desc: '使用「重置卡」1次', stars: '⭐⭐', check: () => (window.player.records?.resets || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.resets || 0 },
-            'reset10': { icon: '♾️', title: '無盡輪迴', desc: '使用「重置卡」10次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.resets || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.resets || 0 },
-            'change10': { icon: '🎭', title: '百變', desc: '更換先鋒寶可夢 10 次', stars: '⭐⭐', check: () => (window.player.records?.charChanges || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.charChanges || 0 },
-            
-            // 二、 答題與知識篇 (Quiz & Knowledge)
-            'q100': { icon: '📖', title: '書僮', desc: '累積答對 100 題', stars: '⭐', check: () => (window.player.records?.correct || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.correct || 0 },
-            'q5000': { icon: '🎓', title: '學士', desc: '累積答對 5,000 題', stars: '⭐⭐⭐', check: () => (window.player.records?.correct || 0) >= 5000, maxReq: 5000, getReq: () => window.player.records?.correct || 0 },
-            'q50000': { icon: '🦉', title: '賢者', desc: '累積答對 50,000 題', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.correct || 0) >= 50000, maxReq: 50000, getReq: () => window.player.records?.correct || 0 },
-            'q_err5': { icon: '🐷', title: '呆呆獸', desc: '連續答錯 5 題', stars: '⭐', check: () => (window.player.records?.wrongStreak || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.wrongStreak || 0 },
-            'q_cor30': { icon: '🎯', title: '專注', desc: '連續答對 30 題', stars: '⭐⭐', check: () => (window.player.records?.correctStreak || 0) >= 30, maxReq: 30, getReq: () => window.player.records?.correctStreak || 0 },
-            'q_cor100': { icon: '👁️', title: '真理之眼', desc: '連續答對 100 題', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.correctStreak || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.correctStreak || 0 },
-            'report5': { icon: '🔍', title: '校對者', desc: '提出疑義回報達 5 次', stars: '⭐⭐', check: () => (window.player.records?.reports || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.reports || 0 },
+            // 一、 等級與成長篇 (cat: 1)
+            'lv10': { cat: 1, starNum: 1, icon: '🥉', title: '新手獵人', desc: '等級達到 Lv.10', stars: '⭐', check: () => window.player.level >= 10, maxReq: 10, getReq: () => window.player.level },
+            'lv30': { cat: 1, starNum: 2, icon: '🥈', title: '熟練獵人', desc: '等級達到 Lv.30', stars: '⭐⭐', check: () => window.player.level >= 30, maxReq: 30, getReq: () => window.player.level },
+            'lv60': { cat: 1, starNum: 3, icon: '🥇', title: '菁英獵人', desc: '等級達到 Lv.60', stars: '⭐⭐⭐', check: () => window.player.level >= 60, maxReq: 60, getReq: () => window.player.level },
+            'lv80': { cat: 1, starNum: 4, icon: '🏆', title: '大師獵人', desc: '等級達到 Lv.80', stars: '⭐⭐⭐⭐', check: () => window.player.level >= 80, maxReq: 80, getReq: () => window.player.level },
+            'lv100': { cat: 1, starNum: 5, icon: '💎', title: '傳說獵人', desc: '等級達到 Lv.100', stars: '⭐⭐⭐⭐⭐', check: () => window.player.level >= 100, maxReq: 100, getReq: () => window.player.level },
+            'reset1': { cat: 1, starNum: 2, icon: '🌀', title: '轉生者', desc: '使用「重置卡」1次', stars: '⭐⭐', check: () => (window.player.records?.resets || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.resets || 0 },
+            'reset10': { cat: 1, starNum: 4, icon: '♾️', title: '無盡輪迴', desc: '使用「重置卡」10次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.resets || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.resets || 0 },
+            'change10': { cat: 1, starNum: 2, icon: '🎭', title: '百變', desc: '更換先鋒寶可夢 10 次', stars: '⭐⭐', check: () => (window.player.records?.charChanges || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.charChanges || 0 },
+            'change50': { cat: 1, starNum: 4, icon: '🦄', title: '千面人', desc: '更換先鋒寶可夢 50 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.charChanges || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.charChanges || 0 },
 
-            // 三、 財富與裝備篇 (Wealth & Gacha)
-            'g10k': { icon: '🪙', title: '銅幣', desc: '累積獲得 10,000 金幣', stars: '⭐', check: () => (window.player.records?.goldEarned || 0) >= 10000, maxReq: 10000, getReq: () => window.player.records?.goldEarned || 0 },
-            'g100m': { icon: '💰', title: '大富翁', desc: '累積獲得 1 億金幣', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.goldEarned || 0) >= 100000000, maxReq: 100000000, getReq: () => window.player.records?.goldEarned || 0 },
-            'spend5m': { icon: '💸', title: '敗家', desc: '商店累積消費 5,000,000 金幣', stars: '⭐⭐⭐', check: () => (window.player.records?.goldSpent || 0) >= 5000000, maxReq: 5000000, getReq: () => window.player.records?.goldSpent || 0 },
-            'c50': { icon: '🗝️', title: '銅鑰匙', desc: '開啟任意寶箱 50 個', stars: '⭐', check: () => (window.player.records?.chestsOpened || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.chestsOpened || 0 },
-            'c2000': { icon: '🔑', title: '金鑰匙', desc: '開啟任意寶箱 2,000 個', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.chestsOpened || 0) >= 2000, maxReq: 2000, getReq: () => window.player.records?.chestsOpened || 0 },
-            'royal1': { icon: '👑', title: '皇冠', desc: '開出「皇家品質」裝備 1 次', stars: '⭐⭐⭐', check: () => (window.player.records?.royalTotal || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.royalTotal || 0 },
-            'royal5': { icon: '🌟', title: '奇蹟之星', desc: '連續開出 5 件「皇家品質」', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.royalStreak || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.royalStreak || 0 },
-            'trash20': { icon: '🌚', title: '黑臉', desc: '連續開出 20 件「破舊品質」', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.trashStreak || 0) >= 20, maxReq: 20, getReq: () => window.player.records?.trashStreak || 0 },
-            'full_royal': { icon: '⚔️', title: '神裝', desc: '四個裝備欄位皆為「皇家品質」', stars: '⭐⭐⭐⭐', check: () => {
+            // 二、 答題與知識篇 (cat: 2)
+            'q100': { cat: 2, starNum: 1, icon: '📖', title: '書僮', desc: '累積答對 100 題', stars: '⭐', check: () => (window.player.records?.correct || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.correct || 0 },
+            'q1000': { cat: 2, starNum: 2, icon: '📚', title: '秀才', desc: '累積答對 1,000 題', stars: '⭐⭐', check: () => (window.player.records?.correct || 0) >= 1000, maxReq: 1000, getReq: () => window.player.records?.correct || 0 },
+            'q5000': { cat: 2, starNum: 3, icon: '🎓', title: '學士', desc: '累積答對 5,000 題', stars: '⭐⭐⭐', check: () => (window.player.records?.correct || 0) >= 5000, maxReq: 5000, getReq: () => window.player.records?.correct || 0 },
+            'q50000': { cat: 2, starNum: 5, icon: '🦉', title: '賢者', desc: '累積答對 50,000 題', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.correct || 0) >= 50000, maxReq: 50000, getReq: () => window.player.records?.correct || 0 },
+            'q_err5': { cat: 2, starNum: 1, icon: '🐷', title: '呆呆獸', desc: '連續答錯 5 題', stars: '⭐', check: () => (window.player.records?.wrongStreak || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.wrongStreak || 0 },
+            'q_cor30': { cat: 2, starNum: 2, icon: '🎯', title: '專注', desc: '連續答對 30 題', stars: '⭐⭐', check: () => (window.player.records?.correctStreak || 0) >= 30, maxReq: 30, getReq: () => window.player.records?.correctStreak || 0 },
+            'q_cor100': { cat: 2, starNum: 5, icon: '👁️', title: '真理之眼', desc: '連續答對 100 題', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.correctStreak || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.correctStreak || 0 },
+            'report5': { cat: 2, starNum: 2, icon: '🔍', title: '校對者', desc: '提出疑義回報達 5 次', stars: '⭐⭐', check: () => (window.player.records?.reports || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.reports || 0 },
+            'report20': { cat: 2, starNum: 4, icon: '🔬', title: '糾錯大師', desc: '提出疑義回報達 20 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.reports || 0) >= 20, maxReq: 20, getReq: () => window.player.records?.reports || 0 },
+
+            // 三、 財富與裝備篇 (cat: 3)
+            'g10k': { cat: 3, starNum: 1, icon: '🪙', title: '銅幣', desc: '累積獲得 10,000 金幣', stars: '⭐', check: () => (window.player.records?.goldEarned || 0) >= 10000, maxReq: 10000, getReq: () => window.player.records?.goldEarned || 0 },
+            'g10m': { cat: 3, starNum: 3, icon: '💴', title: '富翁', desc: '累積獲得 1,000 萬金幣', stars: '⭐⭐⭐', check: () => (window.player.records?.goldEarned || 0) >= 10000000, maxReq: 10000000, getReq: () => window.player.records?.goldEarned || 0 },
+            'g100m': { cat: 3, starNum: 4, icon: '💰', title: '大富翁', desc: '累積獲得 1 億金幣', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.goldEarned || 0) >= 100000000, maxReq: 100000000, getReq: () => window.player.records?.goldEarned || 0 },
+            'spend5m': { cat: 3, starNum: 3, icon: '💸', title: '敗家', desc: '商店累積消費 5,000,000 金幣', stars: '⭐⭐⭐', check: () => (window.player.records?.goldSpent || 0) >= 5000000, maxReq: 5000000, getReq: () => window.player.records?.goldSpent || 0 },
+            'spend50m': { cat: 3, starNum: 5, icon: '🤑', title: '揮金如土', desc: '商店累積消費 50,000,000 金幣', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.goldSpent || 0) >= 50000000, maxReq: 50000000, getReq: () => window.player.records?.goldSpent || 0 },
+            'c50': { cat: 3, starNum: 1, icon: '🗝️', title: '銅鑰匙', desc: '開啟任意寶箱 50 個', stars: '⭐', check: () => (window.player.records?.chestsOpened || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.chestsOpened || 0 },
+            'c2000': { cat: 3, starNum: 4, icon: '🔑', title: '金鑰匙', desc: '開啟任意寶箱 2,000 個', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.chestsOpened || 0) >= 2000, maxReq: 2000, getReq: () => window.player.records?.chestsOpened || 0 },
+            'royal1': { cat: 3, starNum: 3, icon: '👑', title: '皇冠', desc: '開出「皇家品質」裝備 1 次', stars: '⭐⭐⭐', check: () => (window.player.records?.royalTotal || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.royalTotal || 0 },
+            'royal5': { cat: 3, starNum: 5, icon: '🌟', title: '奇蹟之星', desc: '連續開出 5 件「皇家品質」', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.royalStreak || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.royalStreak || 0 },
+            'trash20': { cat: 3, starNum: 4, icon: '🌚', title: '黑臉', desc: '連續開出 20 件「破舊品質」', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.trashStreak || 0) >= 20, maxReq: 20, getReq: () => window.player.records?.trashStreak || 0 },
+            'full_royal': { cat: 3, starNum: 4, icon: '⚔️', title: '神裝', desc: '四個裝備欄位皆為「皇家品質」', stars: '⭐⭐⭐⭐', check: () => {
                 const eqs = Object.values(window.player.equipment);
                 return eqs.filter(e => e && e.qualityIndex === 5).length === 4;
             }, maxReq: 4, getReq: () => Object.values(window.player.equipment).filter(e => e && e.qualityIndex === 5).length },
 
-            // 四、 戰鬥與地下城篇 (PvE & Dungeon)
-            'z1_50': { icon: '🌱', title: '微風', desc: '擊敗新手草原敵人 50 次', stars: '⭐', check: () => (window.player.records?.zone1Kills || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.zone1Kills || 0 },
-            'z10_100': { icon: '🌌', title: '深淵', desc: '擊敗終焉之洞敵人 100 次', stars: '⭐⭐⭐', check: () => (window.player.records?.zone10Kills || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.zone10Kills || 0 },
-            'dg1': { icon: '🕯️', title: '探險者', desc: '參與地下城討伐 1 次', stars: '⭐', check: () => (window.player.records?.dungeonPlays || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.dungeonPlays || 0 },
-            'dg_win50': { icon: '🗡️', title: '討伐', desc: '成功討伐地下城 BOSS 50 次', stars: '⭐⭐⭐', check: () => (window.player.records?.dungeonWins || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.dungeonWins || 0 },
-            'dg_t5_20': { icon: '🏰', title: '破淵', desc: '成功討伐地下城第 5 層 20 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.dungeonT5Wins || 0) >= 20, maxReq: 20, getReq: () => window.player.records?.dungeonT5Wins || 0 },
-            'die50': { icon: '🩹', title: '堅韌', desc: '累積死亡 50 次', stars: '⭐⭐', check: () => (window.player.records?.deaths || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.deaths || 0 },
-            'dg_perfect': { icon: '🦋', title: '幻影', desc: '滿血擊敗任何地下城 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonPerfect || false, maxReq: 1, getReq: () => window.player.records?.dungeonPerfect ? 1 : 0 },
-            'dg_solo': { icon: '🐺', title: '孤膽英雄', desc: '雙人地下城隊友陣亡後獨自擊敗 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonSolo || false, maxReq: 1, getReq: () => window.player.records?.dungeonSolo ? 1 : 0 },
-            'dmg100k': { icon: '💥', title: '毀滅者', desc: '單次攻擊超過 4,000 傷害', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 4000, maxReq: 4000, getReq: () => window.player.records?.maxDmg || 0 },
+            // 四、 戰鬥與地下城篇 (cat: 4)
+            'z1_50': { cat: 4, starNum: 1, icon: '🌱', title: '微風', desc: '擊敗新手草原敵人 50 次', stars: '⭐', check: () => (window.player.records?.zone1Kills || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.zone1Kills || 0 },
+            'z5_50': { cat: 4, starNum: 2, icon: '🌲', title: '密林', desc: '擊敗常磐密林敵人 50 次', stars: '⭐⭐', check: () => (window.player.records?.zone5Kills || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.zone5Kills || 0 },
+            'z10_100': { cat: 4, starNum: 4, icon: '🌌', title: '深淵', desc: '擊敗終焉之洞敵人 100 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.zone10Kills || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.zone10Kills || 0 },
+            'dg1': { cat: 4, starNum: 1, icon: '🕯️', title: '探險者', desc: '參與地下城討伐 1 次', stars: '⭐', check: () => (window.player.records?.dungeonPlays || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.dungeonPlays || 0 },
+            'dg_win50': { cat: 4, starNum: 3, icon: '🗡️', title: '討伐先鋒', desc: '成功討伐地下城 BOSS 50 次', stars: '⭐⭐⭐', check: () => (window.player.records?.dungeonWins || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.dungeonWins || 0 },
+            'dg_win200': { cat: 4, starNum: 5, icon: '🛡️', title: '城塞勇者', desc: '成功討伐地下城 BOSS 200 次', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.dungeonWins || 0) >= 200, maxReq: 200, getReq: () => window.player.records?.dungeonWins || 0 },
+            'dg_t5_20': { cat: 4, starNum: 4, icon: '🏰', title: '破淵', desc: '成功討伐地下城第 5 層 20 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.dungeonT5Wins || 0) >= 20, maxReq: 20, getReq: () => window.player.records?.dungeonT5Wins || 0 },
+            'die50': { cat: 4, starNum: 2, icon: '🩹', title: '堅韌', desc: '累積死亡 50 次', stars: '⭐⭐', check: () => (window.player.records?.deaths || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.deaths || 0 },
+            'dg_perfect': { cat: 4, starNum: 4, icon: '🦋', title: '幻影', desc: '滿血擊敗任何地下城 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonPerfect || false, maxReq: 1, getReq: () => window.player.records?.dungeonPerfect ? 1 : 0 },
+            'dg_solo': { cat: 4, starNum: 4, icon: '🐺', title: '孤膽英雄', desc: '雙人地下城隊友陣亡後獨自擊敗 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonSolo || false, maxReq: 1, getReq: () => window.player.records?.dungeonSolo ? 1 : 0 },
+            'dmg100k': { cat: 4, starNum: 5, icon: '💥', title: '毀滅者', desc: '單次攻擊超過 5,000 傷害', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 5000, maxReq: 5000, getReq: () => window.player.records?.maxDmg || 0 },
 
-            // 五、 連線對戰篇 (PvP Battles)
-            'pvp1': { icon: '🥊', title: '鬥士', desc: 'PvP 獲勝 1 次', stars: '⭐', check: () => (window.player.pvpWins || 0) >= 1, maxReq: 1, getReq: () => window.player.pvpWins || 0 },
-            'pvp100': { icon: '👹', title: '戰鬼', desc: 'PvP 累積獲勝 100 次', stars: '⭐⭐⭐', check: () => (window.player.pvpWins || 0) >= 100, maxReq: 100, getReq: () => window.player.pvpWins || 0 },
-            'pvp1000': { icon: '🔱', title: '戰神', desc: 'PvP 累積獲勝 1,000 次', stars: '⭐⭐⭐⭐', check: () => (window.player.pvpWins || 0) >= 1000, maxReq: 1000, getReq: () => window.player.pvpWins || 0 },
-            'pvp_L50': { icon: '🤕', title: '沙包', desc: 'PvP 累積落敗 50 次', stars: '⭐⭐', check: () => (window.player.pvpLosses || 0) >= 50, maxReq: 50, getReq: () => window.player.pvpLosses || 0 },
-            'pvp_ws10': { icon: '🔥', title: '連勝', desc: 'PvP 連勝 10 次', stars: '⭐⭐⭐', check: () => (window.player.records?.pvpWinStreakMax || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.pvpWinStreakMax || 0 },
-            'pvp_ws100': { icon: '🏆', title: '傳說戰神', desc: 'PvP 連勝 100 次', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.pvpWinStreakMax || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.pvpWinStreakMax || 0 },
-            'pvp_comeback': { icon: '⚡', title: '奇蹟反殺', desc: 'PvP 血量低於 10% 時反殺', stars: '⭐⭐⭐⭐', check: () => window.player.records?.pvpComeback || false, maxReq: 1, getReq: () => window.player.records?.pvpComeback ? 1 : 0 },
+            // 五、 連線對戰篇 (cat: 5)
+            'pvp1': { cat: 5, starNum: 1, icon: '🥊', title: '鬥士', desc: 'PvP 獲勝 1 次', stars: '⭐', check: () => (window.player.pvpWins || 0) >= 1, maxReq: 1, getReq: () => window.player.pvpWins || 0 },
+            'pvp10': { cat: 5, starNum: 2, icon: '🤺', title: '百戰', desc: 'PvP 獲勝 10 次', stars: '⭐⭐', check: () => (window.player.pvpWins || 0) >= 10, maxReq: 10, getReq: () => window.player.pvpWins || 0 },
+            'pvp100': { cat: 5, starNum: 3, icon: '👹', title: '戰鬼', desc: 'PvP 累積獲勝 100 次', stars: '⭐⭐⭐', check: () => (window.player.pvpWins || 0) >= 100, maxReq: 100, getReq: () => window.player.pvpWins || 0 },
+            'pvp1000': { cat: 5, starNum: 5, icon: '🔱', title: '戰神', desc: 'PvP 累積獲勝 1,000 次', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.pvpWins || 0) >= 1000, maxReq: 1000, getReq: () => window.player.pvpWins || 0 },
+            'pvp_L50': { cat: 5, starNum: 2, icon: '🤕', title: '沙包', desc: 'PvP 累積落敗 50 次', stars: '⭐⭐', check: () => (window.player.pvpLosses || 0) >= 50, maxReq: 50, getReq: () => window.player.pvpLosses || 0 },
+            'pvp_L200': { cat: 5, starNum: 4, icon: '☠️', title: '萬劫不復', desc: 'PvP 累積落敗 200 次', stars: '⭐⭐⭐⭐', check: () => (window.player.pvpLosses || 0) >= 200, maxReq: 200, getReq: () => window.player.pvpLosses || 0 },
+            'pvp_ws10': { cat: 5, starNum: 3, icon: '🔥', title: '連勝', desc: 'PvP 連勝 10 次', stars: '⭐⭐⭐', check: () => (window.player.records?.pvpWinStreakMax || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.pvpWinStreakMax || 0 },
+            'pvp_ws100': { cat: 5, starNum: 5, icon: '🏆', title: '傳說戰神', desc: 'PvP 連勝 100 次', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.pvpWinStreakMax || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.pvpWinStreakMax || 0 },
+            'pvp_comeback': { cat: 5, starNum: 4, icon: '⚡', title: '奇蹟反殺', desc: 'PvP 血量低於 10% 時反殺', stars: '⭐⭐⭐⭐', check: () => window.player.records?.pvpComeback || false, maxReq: 1, getReq: () => window.player.records?.pvpComeback ? 1 : 0 },
 
-            // 六、 綜合與極限挑戰篇 (Misc & Extreme)
-            'god1': { icon: '📜', title: '神之印記', desc: '使用「神獸召喚卷」1次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.godSummons || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.godSummons || 0 },
-            'poke20': { icon: '🎴', title: '圖鑑', desc: '解鎖 20 種寶可夢', stars: '⭐⭐⭐', check: () => window.player.unlockedAvatars.length >= 20, maxReq: 20, getReq: () => window.player.unlockedAvatars.length },
-            'login30': { icon: '🔋', title: '爆肝', desc: '連續登入 30 天', stars: '⭐⭐⭐', check: () => window.player.loginStreak >= 30, maxReq: 30, getReq: () => window.player.loginStreak },
-            'login365': { icon: '⏳', title: '永恆', desc: '連續登入 365 天', stars: '⭐⭐⭐⭐⭐', check: () => window.player.loginStreak >= 365, maxReq: 365, getReq: () => window.player.loginStreak },
-            'chest_streak5': { icon: '🍀', title: '幸運草', desc: '戰鬥連續掉落 5 個寶箱', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.chestDropStreakMax || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.chestDropStreakMax || 0 },
-            'hp1000': { icon: '🏥', title: '紅十字', desc: '累積使用 1,000 瓶補血藥劑', stars: '⭐⭐', check: () => (window.player.records?.hpPotsUsed || 0) >= 1000, maxReq: 1000, getReq: () => window.player.records?.hpPotsUsed || 0 }
+            // 六、 綜合與極限挑戰篇 (cat: 6)
+            'god1': { cat: 6, starNum: 4, icon: '📜', title: '神之印記', desc: '使用「神獸召喚卷」1次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.godSummons || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.godSummons || 0 },
+            'poke20': { cat: 6, starNum: 3, icon: '🎴', title: '圖鑑', desc: '解鎖 20 種寶可夢', stars: '⭐⭐⭐', check: () => window.player.unlockedAvatars.length >= 20, maxReq: 20, getReq: () => window.player.unlockedAvatars.length },
+            'poke34': { cat: 6, starNum: 5, icon: '🌠', title: '全能收集', desc: '解鎖所有 34 種寶可夢', stars: '⭐⭐⭐⭐⭐', check: () => window.player.unlockedAvatars.length >= 34, maxReq: 34, getReq: () => window.player.unlockedAvatars.length },
+            'login30': { cat: 6, starNum: 3, icon: '🔋', title: '爆肝', desc: '連續登入 30 天', stars: '⭐⭐⭐', check: () => window.player.loginStreak >= 30, maxReq: 30, getReq: () => window.player.loginStreak },
+            'login365': { cat: 6, starNum: 5, icon: '⏳', title: '永恆', desc: '連續登入 365 天', stars: '⭐⭐⭐⭐⭐', check: () => window.player.loginStreak >= 365, maxReq: 365, getReq: () => window.player.loginStreak },
+            'chest_streak5': { cat: 6, starNum: 5, icon: '🍀', title: '幸運草', desc: '戰鬥連續掉落 5 個寶箱', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.chestDropStreakMax || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.chestDropStreakMax || 0 },
+            'hp1000': { cat: 6, starNum: 2, icon: '🏥', title: '紅十字', desc: '累積使用 1,000 瓶補血藥劑', stars: '⭐⭐', check: () => (window.player.records?.hpPotsUsed || 0) >= 1000, maxReq: 1000, getReq: () => window.player.records?.hpPotsUsed || 0 },
+            'hp5000': { cat: 6, starNum: 4, icon: '🚑', title: '急救中心', desc: '累積使用 5,000 瓶補血藥劑', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.hpPotsUsed || 0) >= 5000, maxReq: 5000, getReq: () => window.player.records?.hpPotsUsed || 0 }
         };
 
         window.checkAchievements = () => {
@@ -1517,33 +1536,76 @@ window.MOE_DATA_STRING = `
             window.saveData();
         };
 
+        window.achievementsSortMode = 'category';
+
+        window.changeAchSort = (val) => {
+            window.achievementsSortMode = val;
+            window.renderAchievements();
+            window.AudioEngine.sfx.click();
+        };
+
         window.renderAchievements = () => {
             const list = document.getElementById('achievements-list');
-            let html = '';
-            Object.keys(window.ACHIEVEMENTS_DB).forEach(key => {
+            
+            let achArray = Object.keys(window.ACHIEVEMENTS_DB).map(key => {
                 const a = window.ACHIEVEMENTS_DB[key];
-                const isUnlocked = window.player.unlockedBadges.includes(key);
-                const isEquipped = window.player.equippedBadges && window.player.equippedBadges.includes(key);
+                return {
+                    id: key,
+                    data: a,
+                    isUnlocked: window.player.unlockedBadges.includes(key),
+                    isEquipped: window.player.equippedBadges && window.player.equippedBadges.includes(key),
+                    curReq: Math.min(a.getReq(), a.maxReq)
+                };
+            });
+
+            // 排序：優先判定是否解鎖 (已解鎖在上)，次要條件為使用者選擇的排序方式
+            achArray.sort((a, b) => {
+                if (a.isUnlocked !== b.isUnlocked) {
+                    return a.isUnlocked ? -1 : 1;
+                }
                 
-                let curReq = Math.min(a.getReq(), a.maxReq);
-                let progressPct = (curReq / a.maxReq) * 100;
-                let starDisplay = isUnlocked ? a.stars : a.stars.replace(/⭐/g, '☆');
+                if (window.achievementsSortMode === 'category') {
+                    if (a.data.cat !== b.data.cat) return a.data.cat - b.data.cat;
+                    return a.data.starNum - b.data.starNum;
+                } else if (window.achievementsSortMode === 'stars_desc') {
+                    if (a.data.starNum !== b.data.starNum) return b.data.starNum - a.data.starNum;
+                    return a.data.cat - b.data.cat;
+                } else if (window.achievementsSortMode === 'stars_asc') {
+                    if (a.data.starNum !== b.data.starNum) return a.data.starNum - b.data.starNum;
+                    return a.data.cat - b.data.cat;
+                }
+                return 0;
+            });
+
+            let html = '';
+            let currentCat = -1;
+            const catNames = {1:'【 等級與成長篇 】', 2:'【 答題與知識篇 】', 3:'【 財富與裝備篇 】', 4:'【 戰鬥與地下城篇 】', 5:'【 連線對戰篇 】', 6:'【 綜合與極限挑戰篇 】'};
+
+            achArray.forEach(item => {
+                // 若以類別排序，可加上分類標題分隔
+                if (window.achievementsSortMode === 'category' && item.data.cat !== currentCat) {
+                    currentCat = item.data.cat;
+                    html += `<div style="text-align:left; color:var(--accent); font-weight:bold; font-size:1.05rem; margin:15px 0 5px 0; border-bottom:1px solid #444; padding-bottom:3px;">${catNames[currentCat]}</div>`;
+                }
+
+                let progressPct = (item.curReq / item.data.maxReq) * 100;
+                let starDisplay = item.isUnlocked ? item.data.stars : item.data.stars.replace(/⭐/g, '☆');
                 
                 html += `
-                <div class="badge-item ${isUnlocked ? 'unlocked' : ''}">
-                    <div class="badge-icon-box" ${isUnlocked ? `onclick="window.equipBadge('${key}')" style="cursor:pointer;" title="點擊裝備/卸下"` : ''}>
-                        ${a.icon}
+                <div class="badge-item ${item.isUnlocked ? 'unlocked' : ''}">
+                    <div class="badge-icon-box" ${item.isUnlocked ? `onclick="window.equipBadge('${item.id}')" style="cursor:pointer;" title="點擊裝備/卸下"` : ''}>
+                        ${item.data.icon}
                     </div>
                     <div class="badge-info">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span style="color:#fff; font-weight:bold; font-size:1.1rem;">
-                                ${a.title} 
-                                ${isEquipped ? '<span style="color:#2ecc71; font-size:0.8rem; border:1px solid #2ecc71; border-radius:4px; padding:2px 4px; margin-left:5px;">裝備中</span>' : ''}
+                                ${item.data.title} 
+                                ${item.isEquipped ? '<span style="color:#2ecc71; font-size:0.8rem; border:1px solid #2ecc71; border-radius:4px; padding:2px 4px; margin-left:5px;">裝備中</span>' : ''}
                             </span>
-                            <span style="color:#aaa; font-size:0.8rem;">${curReq} / ${a.maxReq}</span>
+                            <span style="color:#aaa; font-size:0.8rem;">${item.curReq} / ${item.data.maxReq}</span>
                         </div>
                         <div class="badge-stars">${starDisplay}</div>
-                        <div style="color:#ccc; font-size:0.9rem; margin-top:3px;">${a.desc}</div>
+                        <div style="color:#ccc; font-size:0.9rem; margin-top:3px;">${item.data.desc}</div>
                         <div class="badge-progress">
                             <div class="badge-progress-fill" style="width:${progressPct}%;"></div>
                         </div>
@@ -3176,6 +3238,17 @@ window.MOE_DATA_STRING = `
             let isCorrect = (opt === window.currentQuiz.answer); let msg = `你選擇了「${opt}」\n`; msg += isCorrect ? `✅ 答對了！` : `❌ 答錯了！正確是：${window.currentQuiz.answer}`;
             
             // 寫入答題歷史
+            if(isCorrect) { 
+                window.player.records.correct++; 
+                window.player.records.correctStreak++; 
+                window.player.records.wrongStreak = 0; 
+            } else { 
+                window.player.records.wrong++; 
+                window.player.records.wrongStreak++; 
+                window.player.records.correctStreak = 0; 
+            }
+            window.checkAchievements(); // 答題後立即檢查
+
             if(window.currentQuiz) {
                 window.quizHistory.unshift(window.currentQuiz);
                 if(window.quizHistory.length > 5) window.quizHistory.pop();
@@ -3207,7 +3280,15 @@ window.MOE_DATA_STRING = `
             }
 
             if (isCorrect && playerCanAct) {
-                const move = window.player.moves[Math.floor(Math.random() * window.player.moves.length)]; await window.typeDialog(`${window.player.name} 使用了\n【${move.name}】！`); await window.wait(600);
+                // 邏輯優化：滿血不補血、對手有狀態不放狀態招
+                let validMoves = window.player.moves.filter(m => {
+                    if (window.player.stats.hp >= window.player.stats.maxHp && (m.type === 'heal' || m.type === 'heal_sleep')) return false;
+                    if (window.battleState.enemy.status !== null && m.type === 'status') return false;
+                    return true;
+                });
+                if (validMoves.length === 0) validMoves = window.player.moves; // 防呆：如果全被過濾掉就恢復原狀
+                const move = validMoves[Math.floor(Math.random() * validMoves.length)]; 
+                await window.typeDialog(`${window.player.name} 使用了\n【${move.name}】！`); await window.wait(600);
                 let isSupportMove = (move.type === 'buff' || move.type === 'heal' || move.type === 'heal_sleep');
                 let eDodge = window.currentEnemy.isBoss ? window.currentEnemy.dodgeRate : 0;
                 if (window.battleState.enemy.status === 'paralyze') eDodge = 0; // 麻痺無法閃避
@@ -3235,7 +3316,15 @@ window.MOE_DATA_STRING = `
                     }
                 }
                 if(enemyCanAct) {
-                    const eMove = window.currentEnemy.moves[Math.floor(Math.random() * window.currentEnemy.moves.length)]; await window.typeDialog(`${window.currentEnemy.name} 使用了\n【${eMove.name}】！`); await window.wait(600);
+                    // 邏輯優化：敵方滿血不補血、玩家有狀態不放狀態招
+                    let validEMoves = window.currentEnemy.moves.filter(m => {
+                        if (window.currentEnemy.hp >= window.currentEnemy.maxHp && (m.type === 'heal' || m.type === 'heal_sleep')) return false;
+                        if (window.battleState.player.status !== null && m.type === 'status') return false;
+                        return true;
+                    });
+                    if (validEMoves.length === 0) validEMoves = window.currentEnemy.moves;
+                    const eMove = validEMoves[Math.floor(Math.random() * validEMoves.length)]; 
+                    await window.typeDialog(`${window.currentEnemy.name} 使用了\n【${eMove.name}】！`); await window.wait(600);
                     let isESupportMove = (eMove.type === 'buff' || eMove.type === 'heal' || eMove.type === 'heal_sleep');
                     let totalDodge = Math.min(60, window.player.stats.dodge + window.battleBuffs.dodge);
                     if (window.battleState.player.status === 'paralyze') totalDodge = 0; // 麻痺無法閃避
@@ -3281,6 +3370,9 @@ window.MOE_DATA_STRING = `
                 let baseDmg = Math.max(1, Math.floor((atkStat * move.power / 30) - (defStat / 2))) + Math.floor(Math.random() * 5); let dmg = isCrit ? baseDmg * 2 : baseDmg;
                 defender.hp = Math.max(0, defender.hp - dmg); window.updateHpBar(dId, defender.hp, defender.maxHp || defender.hp);
                 
+                if (dmg > window.player.records.maxDmg) window.player.records.maxDmg = dmg; // 追蹤最大傷害
+                window.checkAchievements(); // 打出傷害後立即檢查
+
                 if(isCrit) { await window.typeDialog(`💥 擊中要害！\n造成了 ${dmg} 點巨大傷害！`); } else await window.typeDialog(`造成了 ${dmg} 點傷害！`); await window.wait(600);
                 if (move.type === 'drain' && defender.hp >= 0) { let heal = Math.max(1, Math.floor(dmg / 2)); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`吸收了 ${heal} 點 HP！`); await window.wait(600); }
             } else if (move.type === 'status') {
@@ -3346,7 +3438,13 @@ window.MOE_DATA_STRING = `
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = '';
             await window.typeDialog(`${window.currentEnemy.name} 倒下了！\n戰鬥勝利！`); await window.wait(500);
             
-            // 小怪經驗約等於 等級 * 10，Boss 經驗為 5 倍
+            // 追蹤擊殺紀錄
+            if (!window.player.records) window.player.records = {};
+            if(window.inspectingZoneIdx === 0) window.player.records.zone1Kills = (window.player.records.zone1Kills || 0) + 1;
+            if(window.inspectingZoneIdx === 4) window.player.records.zone5Kills = (window.player.records.zone5Kills || 0) + 1;
+            if(window.inspectingZoneIdx === 9) window.player.records.zone10Kills = (window.player.records.zone10Kills || 0) + 1;
+            window.checkAchievements();
+
             let baseExpGain = (window.currentEnemy.level * 10) + Math.floor(Math.random() * 5);
             let expGain = window.currentEnemy.isBoss ? baseExpGain * 5 : baseExpGain;
             
@@ -3462,6 +3560,11 @@ window.MOE_DATA_STRING = `
         window.loseCombat = async () => {
             if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('lose');
             window.playAnim('player-sprite', 'anim-sink-player'); await window.wait(600);
+            
+            if (!window.player.records) window.player.records = {};
+            window.player.records.deaths = (window.player.records.deaths || 0) + 1; // 追蹤死亡次數
+            window.checkAchievements();
+            
             let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
             let msg = `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}`;
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg);
@@ -3471,7 +3574,13 @@ window.MOE_DATA_STRING = `
         };
 
         window.fleeCombat = async (isDefeat=false) => {
-            if(isDefeat) { if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('lose'); }
+            if(isDefeat) { 
+                if (!window.player.records) window.player.records = {};
+                window.player.records.deaths = (window.player.records.deaths || 0) + 1; // 追蹤死亡次數
+                window.checkAchievements();
+                
+                if(window.AudioEngine.bgmAudio) window.AudioEngine.bgmAudio.pause(); window.AudioEngine.playSFXTrack('lose'); 
+            }
             let p = window.currentEnemy.isBoss ? window.player.level * 10 : window.player.level * 3; window.player.exp = Math.max(0, window.player.exp - p);
             let msg = isDefeat ? `你眼前一黑...\n被擊敗了。${p>0?`\n損失了 ${p} 點經驗...`:''}` : `成功逃跑了！${p>0?`\n損失了 ${p} 點經驗...`:''}`;
             document.getElementById('battle-options').innerHTML = ''; document.getElementById('battle-actions').innerHTML = ''; await window.typeDialog(msg);
@@ -3686,13 +3795,30 @@ window.MOE_DATA_STRING = `
             window.AudioEngine.sfx.click(); document.getElementById('battle-options').innerHTML = '';
             let isCorrect = (opt === window.currentQuiz.answer);
             
-            // 寫入答題歷史
+            // 答題追蹤
+            if(isCorrect) { 
+                window.player.records.correct++; 
+                window.player.records.correctStreak++; 
+                window.player.records.wrongStreak = 0; 
+            } else { 
+                window.player.records.wrong++; 
+                window.player.records.wrongStreak++; 
+                window.player.records.correctStreak = 0; 
+            }
+            window.checkAchievements(); // 答題後立即檢查
+
             if(window.currentQuiz) {
                 window.quizHistory.unshift(window.currentQuiz);
                 if(window.quizHistory.length > 5) window.quizHistory.pop();
             }
 
-            let moveIdx = Math.floor(Math.random() * window.player.moves.length);
+            // PvP 邏輯優化：只使用攻擊與吸血招式，避免廢招
+            let validPvPMoves = window.player.moves.filter(m => m.type === 'damage' || m.type === 'drain');
+            if (validPvPMoves.length === 0) validPvPMoves = window.player.moves;
+            let randomPvPMove = validPvPMoves[Math.floor(Math.random() * validPvPMoves.length)];
+            let moveIdx = window.player.moves.indexOf(randomPvPMove);
+            if (moveIdx === -1) moveIdx = 0;
+            
             const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'pvp_rooms', window.pvpState.roomId);
             await window.updateDoc(docRef, { action: { role: window.pvpState.role, correct: isCorrect, turn: window.currentPvPData.turn, moveIdx: moveIdx } });
         };
@@ -3785,8 +3911,17 @@ window.MOE_DATA_STRING = `
             window.player.pvpLosses = window.player.pvpLosses || 0;
             if (!Array.isArray(window.player.pvpHistory)) window.player.pvpHistory = [];
             
-            if(isWin) window.player.pvpWins++;
-            else window.player.pvpLosses++;
+            // 追蹤連勝與反殺
+            if(isWin) {
+                window.player.pvpWins++;
+                window.player.records.pvpWinStreak++;
+                if(window.player.records.pvpWinStreak > window.player.records.pvpWinStreakMax) window.player.records.pvpWinStreakMax = window.player.records.pvpWinStreak;
+                if((window.player.stats.hp / window.player.stats.maxHp) <= 0.1) window.player.records.pvpComeback = true;
+            } else {
+                window.player.pvpLosses++;
+                window.player.records.pvpWinStreak = 0;
+            }
+            window.checkAchievements(); // PvP 結算後立即檢查
             
             const oppName = document.getElementById('enemy-name').innerText;
             const nowTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -4339,6 +4474,10 @@ window.MOE_DATA_STRING = `
             const data = window.currentDungeonData;
             if (!data.host.ready || !data.guest.ready) return;
             
+            if (!window.player.records) window.player.records = {};
+            window.player.records.dungeonPlays = (window.player.records.dungeonPlays || 0) + 1; // 追蹤場次
+            window.checkAchievements(); // 進入地下城立即檢查
+            
             const bossLvl = data.tier * 20;
             const baseHp = Math.floor(bossLvl * 15 + 30);
             let bossHp = baseHp * 5 * 3; // 一般同等級BOSS血量(baseHp*5)的 3 倍
@@ -4520,7 +4659,10 @@ window.MOE_DATA_STRING = `
 
             if (isCorrect) {
                 let atkStat = window.player.stats.atk;
-                let move = window.player.moves[Math.floor(Math.random()*window.player.moves.length)];
+                // 地下城邏輯優化：只使用攻擊招式，避免出現「BOSS免疫」的廢招
+                let validDgMoves = window.player.moves.filter(m => m.type === 'damage' || m.type === 'drain');
+                if (validDgMoves.length === 0) validDgMoves = window.player.moves;
+                let move = validDgMoves[Math.floor(Math.random() * validDgMoves.length)];
                 
                 let isDodge = data.boss.dodgeRate && Math.random() < data.boss.dodgeRate;
                 
@@ -4658,19 +4800,29 @@ window.MOE_DATA_STRING = `
             const allySp = document.getElementById('ally-sprite'); if(allySp) allySp.style.display = 'none';
             const allyBox = document.getElementById('ally-stat-box'); if(allyBox) allyBox.style.display = 'none';
             
+            if (!window.player.records) window.player.records = {};
+
             if (isWin) {
+                window.player.records.dungeonWins = (window.player.records.dungeonWins || 0) + 1;
+                if(tier === 5) window.player.records.dungeonT5Wins = (window.player.records.dungeonT5Wins || 0) + 1;
+                if(window.player.stats.hp === window.player.stats.maxHp) window.player.records.dungeonPerfect = true;
+                
+                const data = window.currentDungeonData;
+                const ally = window.dungeonState.role === 'host' ? data.guest : data.host;
+                if(ally && ally.hp <= 0) window.player.records.dungeonSolo = true;
+                window.checkAchievements();
+
                 window.playAnim('enemy-sprite', 'anim-sink-enemy');
                 await window.typeDialog(`🎉 成功討伐地下城首領！\n結算豐厚獎勵...`); await window.wait(1000);
                 
                 const goldGain = tier * 1000;
                 window.player.gold += goldGain; 
-                // 【修改】：移除地下城的經驗值獲取
+                window.player.records.goldEarned += goldGain;
                 
                 let chestTier = tier * 2; 
                 if(!window.player.chests) window.player.chests = {};
                 window.player.chests[chestTier] = (window.player.chests[chestTier] || 0) + 3; 
                 
-                // 【修改】：獎勵文字移除經驗值
                 let msg = `獲得 💰${goldGain} 金幣！\n獲得 🧰${chestNames[chestTier-1]} x3！\n`;
                 
                 const possibleItems = Object.keys(consumableItems).filter(k => k !== 'summon_scroll' && consumableItems[k].reqLevel <= tier * 20 && window.SPECIAL_ITEM_TYPES.includes(consumableItems[k].type));
@@ -4686,6 +4838,9 @@ window.MOE_DATA_STRING = `
                 }
                 await window.typeDialog(msg);
             } else {
+                window.player.records.deaths = (window.player.records.deaths || 0) + 1;
+                window.checkAchievements();
+                
                 window.playAnim('player-sprite', 'anim-sink-player');
                 await window.typeDialog(`💀 小隊全滅...地下城討伐失敗。\n(地下城不給予也不扣除經驗值)`);
             }
