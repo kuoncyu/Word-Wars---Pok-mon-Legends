@@ -10,8 +10,30 @@
 // 👇 請將您 moe_data.js 裡面的【所有題目內容】完整複製，並貼到下方兩個反引號 `` 之間替換 👇
 window.MOE_DATA_STRING = `
 2|「骰」子|ㄊㄡˊ|ㄕㄞˇ,ㄍㄨˇ,ㄉㄡ
+2|「蛤」蜊|ㄍㄜˊ|ㄍㄜˇ,ㄏㄚ,ㄌㄧˋ
+2|「創」傷|ㄔㄨㄤ|ㄔㄨㄤˋ,ㄔㄨㄤˇ,ㄘㄨㄤˋ
+2|「液」體|ㄧㄝˋ|ㄧˋ,ㄧㄝˊ,ㄧ
+2|「法」國|ㄈㄚˇ|ㄈㄚˋ,ㄈㄚ,ㄈㄜˇ
+2|主「角」|ㄐㄩㄝˊ|ㄐㄧㄠ2,ㄐㄩㄝ,ㄎㄚ
+2|牛「仔」褲|ㄗˇ|ㄗㄞˇ,ㄗㄞ,ㄗ
+2|滑「稽」|ㄐㄧ|ㄐㄧˊ,ㄑㄧˊ,ㄍㄨˇ
+2|粗「獷」|ㄍㄨㄤˇ|ㄎㄨㄤˋ,ㄍㄨㄤˋ,ㄎㄨㄤˇ
+2|「便」宜行事|ㄅㄧㄢˋ|ㄆㄧㄢˊ,ㄅㄧㄢ,ㄆㄧㄢ
+2|「稱」職|ㄔㄥˋ|ㄔㄥ,ㄔㄣˋ,ㄔㄣ
+2|泥「淖」|ㄋㄠˋ|ㄓㄨㄛˊ,ㄉㄧㄠˋ,ㄓㄠˋ
+2|針「砭」|ㄅㄧㄢ|ㄅㄧㄢˇ,ㄈㄚˊ,ㄅㄧㄢˋ
 1|ㄅㄧㄥˋ ㄖㄨˋ ㄍㄠ ㄏㄨㄤ|病入膏肓|病入膏荒,病入高肓,病入高荒
-
+1|ㄈㄣ ㄓˋ ㄊㄚˋ ㄌㄞˊ|紛至沓來|紛至踏來,紛至塌來,紛至遝來
+1|ㄍㄨˋ ㄅㄨˋ ㄗˋ ㄈㄥ|故步自封|固步自封,顧步自封,固步自風
+1|ㄏㄠˋ ㄍㄠ ㄨ4 ㄩㄢ3|好高騖遠|好高務遠,好高物遠,好高誤遠
+1|ㄢˋ ㄉㄨ4 ㄔㄣ2 ㄘㄤ|暗度陳倉|暗渡陳倉,暗度陳滄,暗渡陳滄
+1|ㄇㄧㄥˊ ㄩ4 ㄙㄠ3 ㄉㄧ4|名譽掃地|明譽掃地,名譽掃第,名譽掃弟
+2|洗「濯」|ㄓㄨㄛ2|ㄓㄨㄛ,ㄉㄧˊ,ㄓㄨㄛ4
+2|擢「髮」難數|ㄈㄚ3|ㄈㄚ3,ㄈㄚ4,ㄈㄚ
+2|「擢」髮難數|ㄓㄨㄛ2|ㄓㄨㄛ,ㄉㄧˊ,ㄓㄨㄛ4
+2|鐐「銬」|ㄎㄠ4|ㄎㄠ3,ㄌㄧㄠ2,ㄌㄧㄠ3
+1|ㄈㄤˊ ㄞ4|妨礙|防礙,妨害,防害
+1|ㄈㄤˊ ㄏㄞ4|妨害|防害,妨礙,防礙
 `;
 // 👆 貼上範圍到此為止 👆
     </script>
@@ -397,7 +419,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260512</div><div>題庫版本：20260417</div><div>更新資訊：寶可夢造型系統、新增商品造型卡碎片、試煉塔挑戰</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260513</div><div>題庫版本：20260417</div><div>更新資訊：寶可夢造型系統、新增商品造型卡碎片、試煉塔挑戰</div>
             </div>
         </div>
     </div>
@@ -6105,11 +6127,11 @@ window.MOE_DATA_STRING = `
         };
 
         // 計算當前倒數時間（依 BOSS 血量百分比）
+        // 綠血(>50%) → 12秒，黃血(20~50%) → 8秒，紅血(≤20%) → 4秒
         window.getBossTimeLimit = (bossHpPct) => {
-            if (bossHpPct > 0.70) return 12;
-            if (bossHpPct > 0.40) return 9;
-            if (bossHpPct > 0.10) return 6;
-            return 3;
+            if (bossHpPct > 0.50) return 12; // 綠血
+            if (bossHpPct > 0.20) return 8;  // 黃血
+            return 4;                          // 紅血
         };
 
         // 渲染樓層選擇下拉（大廳中隊長專用），依照隊伍最高星星數判斷可選性
@@ -6231,6 +6253,11 @@ window.MOE_DATA_STRING = `
             const enemySprite = document.getElementById('enemy-sprite');
             playerSprite.classList.remove('anim-sink-player','anim-dodge-player','anim-dmg');
             enemySprite.classList.remove('anim-sink-enemy','anim-dodge-enemy','anim-dmg');
+            // 重置陣亡灰色狀態，避免上一局陣亡狀態殘留
+            playerSprite.style.filter = '';
+            enemySprite.style.filter = '';
+            delete playerSprite.dataset.dead;
+            delete enemySprite.dataset.dead;
 
             playerSprite.src = me.avatar;
             // ── 使用原有狀態框，套用縮小樣式 ──
@@ -6675,7 +6702,11 @@ window.MOE_DATA_STRING = `
             const battleScene = document.getElementById('battle-scene');
             battleScene.classList.remove('tower-mode');
             document.getElementById('enemy-sprite').style.display = '';
+            document.getElementById('enemy-sprite').style.filter = '';
             document.getElementById('player-sprite').style.display = '';
+            document.getElementById('player-sprite').style.filter = '';
+            delete document.getElementById('player-sprite').dataset.dead;
+            delete document.getElementById('enemy-sprite').dataset.dead;
             document.getElementById('enemy-boss-tag').style.display = 'none';
             document.getElementById('enemy-hp-text').style.display = 'none';
             document.querySelector('.enemy-stat-box').style.display = '';
@@ -7010,7 +7041,11 @@ window.MOE_DATA_STRING = `
             const battleScene = document.getElementById('battle-scene');
             battleScene.classList.remove('tower-mode');
             document.getElementById('enemy-sprite').style.display = '';
+            document.getElementById('enemy-sprite').style.filter = '';
             document.getElementById('player-sprite').style.display = '';
+            document.getElementById('player-sprite').style.filter = '';
+            delete document.getElementById('player-sprite').dataset.dead;
+            delete document.getElementById('enemy-sprite').dataset.dead;
             document.getElementById('enemy-boss-tag').style.display = 'none';
             document.getElementById('enemy-hp-text').style.display = 'none';
             document.querySelector('.enemy-stat-box').style.display = '';
