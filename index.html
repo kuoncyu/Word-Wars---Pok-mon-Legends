@@ -172,6 +172,78 @@ window.MOE_DATA_STRING = `
         .badge-progress { width:100%; height:6px; background:#333; border-radius:3px; margin-top:5px; overflow:hidden;}
         .badge-progress-fill { height:100%; background:var(--primary); width:0%; transition:width 0.3s;}
 
+        /* ===== 未解鎖造型剪影 ===== */
+        .locked-skins-panel { background:linear-gradient(135deg,rgba(20,10,35,0.95),rgba(10,5,20,0.98)); border:1px solid rgba(155,89,182,0.35); border-radius:14px; padding:14px 14px 16px; }
+        .locked-skins-panel h4 { margin:0 0 10px; color:#9b59b6; font-size:0.95rem; display:flex; align-items:center; gap:6px; }
+        .locked-skins-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+        .silhouette-item { display:flex; flex-direction:column; align-items:center; cursor:pointer; padding:6px 4px; border-radius:10px; border:1px solid transparent; transition:border-color 0.2s, background 0.2s; position:relative; }
+        .silhouette-item:hover { border-color:rgba(155,89,182,0.4); background:rgba(155,89,182,0.08); }
+        .silhouette-item img { width:100%; aspect-ratio:1; object-fit:contain; image-rendering:pixelated; filter:brightness(0) opacity(0.55); }
+        .silhouette-item .sil-label { font-size:0.6rem; color:rgba(255,255,255,0.25); margin-top:3px; text-align:center; }
+        .silhouette-item .sil-mystery { position:absolute; top:4px; right:4px; font-size:0.65rem; color:rgba(155,89,182,0.7); }
+        @keyframes silhouettePulse { 0%,100%{filter:brightness(0) opacity(0.45);} 50%{filter:brightness(0) opacity(0.75);} }
+        .silhouette-item.highlight img { animation: silhouettePulse 2s ease-in-out infinite; }
+        /* ===== 連抽動畫 modal ===== */
+        #multi-draw-modal { position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.95); z-index:9800; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+        #multi-draw-anim-box { display:flex; align-items:center; justify-content:center; width:100%; min-height:140px; }
+        .multi-draw-chest-img { font-size:5rem; animation: chestShake 0.4s infinite alternate; }
+        @keyframes chestShake { from{transform:rotate(-8deg) scale(1);} to{transform:rotate(8deg) scale(1.08);} }
+        @keyframes chestOpen { 0%{transform:scale(0.8) rotate(0deg);opacity:0;} 40%{transform:scale(1.3) rotate(10deg);opacity:1;} 70%{transform:scale(0.95) rotate(-5deg);} 100%{transform:scale(1) rotate(0deg);opacity:1;} }
+        #multi-draw-results { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%; max-height:60vh; overflow-y:auto; padding:10px 0; }
+        .draw-result-card { background:linear-gradient(145deg,#1c1c22,#111); border-radius:12px; padding:10px 8px; display:flex; flex-direction:column; align-items:center; width:90px; border:2px solid #444; position:relative; animation: cardReveal 0.4s ease both; }
+        @keyframes cardReveal { from{transform:translateY(30px) scale(0.7);opacity:0;} to{transform:translateY(0) scale(1);opacity:1;} }
+        .draw-result-card.royal { border-color:#f1c40f; box-shadow:0 0 18px 4px rgba(241,196,15,0.55); animation: cardReveal 0.4s ease both, royalGlow 1.5s ease-in-out infinite alternate; }
+        @keyframes royalGlow { from{box-shadow:0 0 12px 3px rgba(241,196,15,0.5);} to{box-shadow:0 0 28px 8px rgba(241,196,15,0.85), 0 0 50px 12px rgba(255,200,0,0.3);} }
+        .draw-result-card .card-icon { font-size:1.8rem; margin-bottom:4px; }
+        .draw-result-card .card-name { font-size:0.68rem; color:#ddd; text-align:center; line-height:1.2; word-break:break-all; }
+        .draw-result-card .card-quality { font-size:0.6rem; padding:1px 5px; border-radius:3px; color:#000; font-weight:bold; margin-top:3px; }
+        .royal-stars { position:absolute; top:-8px; right:-8px; font-size:1rem; animation: spin 2s linear infinite; }
+        @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+        /* ===== 批量售出 modal ===== */
+        #bulk-sell-modal { position:fixed; top:var(--safe-t); left:var(--safe-l); width:calc(100vw - var(--safe-l) - var(--safe-r)); height:calc(100vh - var(--safe-t) - var(--safe-b)); background:rgba(0,0,0,0.88); z-index:8900; display:none; align-items:center; justify-content:center; padding:15px; }
+        .bulk-sell-box { background:#1a1c20; border:2px solid #e67e22; border-radius:16px; width:100%; max-width:420px; padding:20px; max-height:85vh; overflow-y:auto; }
+        .quality-check-row { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; margin-bottom:8px; cursor:pointer; border:1px solid #333; transition:0.2s; }
+        .quality-check-row:hover { background:rgba(255,255,255,0.05); }
+        .quality-check-row input[type=checkbox] { width:18px; height:18px; accent-color:#e67e22; cursor:pointer; }
+        /* ===== 圖鑑搜尋列 ===== */
+        .pokedex-search-bar { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+        .pokedex-search-bar input { flex:1; min-width:120px; background:#111; color:#fff; border:1px solid #444; border-radius:8px; padding:8px 10px; font-size:0.9rem; outline:none; }
+        .pokedex-search-bar input:focus { border-color:var(--accent); }
+        .pokedex-search-bar select { background:#111; color:#fff; border:1px solid #444; border-radius:8px; padding:8px 8px; font-size:0.85rem; outline:none; cursor:pointer; }
+        /* ===== 圖鑑編號標籤 ===== */
+        .pk-number { position:absolute; top:2px; left:3px; font-size:0.55rem; color:rgba(255,255,255,0.5); font-weight:bold; background:rgba(0,0,0,0.4); border-radius:3px; padding:1px 3px; }
+        /* ===== 商店美化 ===== */
+        .shop-category-header { font-size:1rem; font-weight:bold; color:var(--accent); margin:15px 0 8px; padding:6px 10px; background:rgba(251,197,49,0.08); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; }
+        .shop-item-card { background:linear-gradient(145deg,#1c1e24,#131518); border:1px solid #2a2d35; border-radius:12px; padding:12px 14px; margin-bottom:10px; display:flex; align-items:center; gap:12px; transition:border-color 0.2s; position:relative; overflow:hidden; }
+        .shop-item-card::before { content:''; position:absolute; right:-15px; top:-15px; width:60px; height:60px; background:radial-gradient(circle, rgba(251,197,49,0.06) 30%, transparent 70%); border-radius:50%; pointer-events:none; }
+        .shop-item-card:hover { border-color:#444; }
+        .shop-item-icon { font-size:2rem; min-width:36px; text-align:center; }
+        .shop-item-info { flex:1; min-width:0; }
+        .shop-item-name { font-weight:bold; font-size:1rem; color:#fff; }
+        .shop-item-desc { font-size:0.82rem; color:#888; margin-top:2px; }
+        .shop-item-own { font-size:0.78rem; color:#aaa; margin-top:1px; }
+        .shop-buy-btn { background:#f39c12; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:bold; cursor:pointer; white-space:nowrap; font-size:0.9rem; transition:0.15s; }
+        .shop-buy-btn:active { transform:scale(0.95); filter:brightness(0.85); }
+        .shop-buy-btn:disabled { background:#444; color:#777; cursor:not-allowed; }
+        /* ===== 背包美化 ===== */
+        .inv-item-v2 { background:linear-gradient(145deg,#1c1e24,#131518); border-radius:12px; padding:12px 14px; margin-bottom:10px; border:1.5px solid #2a2d35; cursor:pointer; transition:border-color 0.15s, transform 0.1s; position:relative; overflow:hidden; display:flex; align-items:flex-start; gap:12px; }
+        .inv-item-v2:active { transform:scale(0.98); }
+        .inv-item-v2.royal-item { border-color:rgba(241,196,15,0.4); box-shadow:0 0 10px rgba(241,196,15,0.12); }
+        .inv-item-v2.epic-item { border-color:rgba(155,89,182,0.4); }
+        .inv-item-v2.rare-item { border-color:rgba(52,152,219,0.3); }
+        .inv-item-icon { font-size:2rem; min-width:38px; text-align:center; padding-top:2px; }
+        .inv-item-body { flex:1; min-width:0; }
+        .inv-item-title { font-weight:bold; font-size:1rem; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+        .inv-item-stats { display:flex; flex-wrap:wrap; gap:6px 12px; font-size:0.82rem; color:#aaa; margin-top:6px; }
+        .inv-stat-chip { background:rgba(255,255,255,0.06); padding:2px 7px; border-radius:5px; }
+        /* ===== 寶箱區美化 ===== */
+        .chest-item-row { display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,#1a1c21,#111); border:1px solid #3a3000; border-radius:10px; padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:border-color 0.2s; }
+        .chest-item-row:hover { border-color:#f39c12; }
+        .chest-item-count { background:#222; border:1px solid #555; border-radius:6px; padding:2px 8px; font-size:0.85rem; color:#f39c12; font-weight:bold; }
+        .chest-draw-btns { display:flex; gap:6px; margin-left:auto; flex-shrink:0; }
+        .chest-draw-btn { background:#e67e22; color:#fff; border:none; border-radius:7px; padding:6px 10px; font-size:0.8rem; font-weight:bold; cursor:pointer; transition:0.15s; white-space:nowrap; }
+        .chest-draw-btn:active { transform:scale(0.95); }
+        .chest-draw-btn.multi { background:#9b59b6; }
         /* 試煉塔樓層樣式 */
         .tower-floor-item { background:rgba(255,255,255,0.05); border:2px solid #444; border-radius:12px; padding:12px 15px; margin-bottom:10px; display:flex; align-items:center; gap:12px; transition:0.2s; }
         .tower-floor-item.accessible { border-color:#9b59b6; background:linear-gradient(90deg, rgba(108,52,131,0.3), rgba(0,0,0,0.2)); cursor:pointer; }
@@ -1091,34 +1163,49 @@ window.MOE_DATA_STRING = `
             </div>
             <!-- 新增戰鬥分頁內的紀錄按鈕 -->
             <button class="btn" style="padding: 15px; font-size: 1.2rem; background:#8e44ad; width: 100%; margin-top: 10px;" onclick="window.showQuizHistoryModal()">📜 察看最近答題紀錄</button>
+
+            <!-- 未解鎖造型剪影展示 -->
+            <div id="locked-skins-showcase" style="margin-top:18px;"></div>
         </div>
         <div id="tab-inventory" class="tab-page">
-            <h2 style="margin-top:0; color:var(--accent);">🎒 您的背包庫存</h2>
-            <div style="background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">🧰 寶箱 (點擊開啟)</h3>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+                <h2 style="margin:0; color:var(--accent);">🎒 背包庫存</h2>
+            </div>
+            <!-- 寶箱區 -->
+            <div style="background:rgba(0,0,0,0.45); border:1px solid #3a3000; border-radius:12px; padding:12px 14px; margin-bottom:16px;">
+                <h3 style="margin:0 0 10px; color:#f39c12; font-size:1rem; display:flex; align-items:center; gap:6px;">🧰 寶箱</h3>
                 <div id="chests-list"></div>
             </div>
-            <div style="background: rgba(0,0,0,0.5); border: 1px solid #444; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #fff; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 5px;">🥤 消耗品 (點擊詳細/出售)</h3>
+            <!-- 消耗品區 -->
+            <div style="background:rgba(0,0,0,0.45); border:1px solid #2a4a2a; border-radius:12px; padding:12px 14px; margin-bottom:16px;">
+                <h3 style="margin:0 0 10px; color:#2ecc71; font-size:1rem;">🥤 消耗品</h3>
                 <div id="consumables-list"></div>
             </div>
-            <div style="background: rgba(0,0,0,0.5); border: 1px solid #f1c40f; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-                <h3 style="margin-top: 0; color: #f1c40f; font-size: 1.1rem; border-bottom: 1px solid #f1c40f; padding-bottom: 5px;">✨ 特殊道具 (點擊詳細/使用)</h3>
+            <!-- 特殊道具區 -->
+            <div style="background:rgba(0,0,0,0.45); border:1px solid #3a3000; border-radius:12px; padding:12px 14px; margin-bottom:16px;">
+                <h3 style="margin:0 0 10px; color:#f1c40f; font-size:1rem;">✨ 特殊道具</h3>
                 <div id="special-items-list"></div>
             </div>
             
-            <!-- 修改：攜帶裝備標題與排序下拉選單 -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 5px; margin-bottom: 10px;">
-                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">⚔️ 攜帶裝備 (點擊詳細)</h3>
-                <select id="inv-sort-select" class="input-box" style="padding: 5px; font-size: 0.85rem; width: auto; min-width: 100px; margin: 0; background: #111;" onchange="window.changeInvSort(this.value)">
-                    <option value="default">獲得順序</option>
-                    <option value="level">等級高低</option>
-                    <option value="quality">品質高低</option>
-                    <option value="type">裝備種類</option>
-                </select>
+            <!-- 裝備欄位 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                <h3 style="margin:0; color:#fff; font-size:1rem;">⚔️ 裝備欄位</h3>
             </div>
-            
-            <div id="equipment-slots" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;"></div>
+            <div id="equipment-slots" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;"></div>
+
+            <!-- 攜帶裝備標題 + 排序 + 批量售出 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:8px; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                <h3 style="margin:0; color:#fff; font-size:1rem;">🎒 背包裝備</h3>
+                <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                    <select id="inv-sort-select" class="input-box" style="padding:5px 8px; font-size:0.82rem; width:auto; min-width:90px; margin:0; background:#111;" onchange="window.changeInvSort(this.value)">
+                        <option value="default">獲得順序</option>
+                        <option value="level">等級高低</option>
+                        <option value="quality">品質高低</option>
+                        <option value="type">裝備種類</option>
+                    </select>
+                    <button class="btn" style="background:#e67e22; padding:5px 12px; font-size:0.82rem; width:auto;" onclick="window.openBulkSell()">🏷️ 批量售出</button>
+                </div>
+            </div>
             <div id="inventory-list">背包空空如也</div>
         </div>
         <div id="tab-shop" class="tab-page">
@@ -1152,11 +1239,37 @@ window.MOE_DATA_STRING = `
         </div>
         <div id="tab-pokedex" class="tab-page">
             <h2 style="margin-top:0; color:var(--accent);">📖 寶可夢圖鑑</h2>
-            <div class="stat-card" style="margin-bottom: 15px; padding: 10px; text-align: center;">
-                <p style="font-size: 1.2rem; margin:0; color: #fff; font-weight: bold;">收集進度: <span id="pokedex-progress" style="color:var(--luck)">0 / 0</span></p>
-                <p style="font-size: 0.85rem; color: #aaa; margin: 5px 0 0 0;">(獲得新的先鋒寶可夢即可解鎖進度，點擊可預覽招式)</p>
+            <div class="stat-card" style="margin-bottom:12px; padding:10px; text-align:center;">
+                <p style="font-size:1.2rem; margin:0; color:#fff; font-weight:bold;">收集進度: <span id="pokedex-progress" style="color:var(--luck)">0 / 0</span></p>
+                <p style="font-size:0.82rem; color:#aaa; margin:4px 0 0;">(獲得新的先鋒寶可夢即可解鎖進度，點擊可預覽招式)</p>
             </div>
-            <div id="pokedex-grid" class="avatar-grid" style="grid-template-columns: repeat(4, 1fr); padding-bottom: 20px;"></div>
+            <!-- 搜尋列 -->
+            <div class="pokedex-search-bar">
+                <input id="pokedex-search-input" type="text" placeholder="🔍 搜尋名稱 / 編號..." oninput="window.filterPokedex()">
+                <select id="pokedex-type-filter" onchange="window.filterPokedex()">
+                    <option value="">全部屬性</option>
+                    <option value="fire">🔥 火</option>
+                    <option value="water">💧 水</option>
+                    <option value="grass">🌿 草</option>
+                    <option value="electric">⚡ 電</option>
+                    <option value="ice">❄️ 冰</option>
+                    <option value="fighting">👊 格鬥</option>
+                    <option value="poison">☠️ 毒</option>
+                    <option value="psychic">🔮 超能力</option>
+                    <option value="ghost">👻 幽靈</option>
+                    <option value="dragon">🐉 龍</option>
+                    <option value="dark">🌑 惡</option>
+                    <option value="steel">⚙️ 鋼</option>
+                    <option value="flying">🌤 飛行</option>
+                    <option value="normal">⬜ 一般</option>
+                </select>
+                <select id="pokedex-unlock-filter" onchange="window.filterPokedex()">
+                    <option value="">全部</option>
+                    <option value="unlocked">✅ 已解鎖</option>
+                    <option value="locked">🔒 未解鎖</option>
+                </select>
+            </div>
+            <div id="pokedex-grid" class="avatar-grid" style="grid-template-columns:repeat(4,1fr); padding-bottom:20px;"></div>
         </div>
         <div id="tab-achievements" class="tab-page">
             <h2 style="margin-top:0; color:var(--accent);">🏅 成就與勳章</h2>
@@ -1173,6 +1286,37 @@ window.MOE_DATA_STRING = `
                 </select>
             </div>
             <div id="achievements-list"></div>
+        </div>
+    </div>
+
+    <!-- 連抽動畫 modal -->
+    <div id="multi-draw-modal">
+        <div style="text-align:center; width:100%; max-width:480px;">
+            <h2 id="multi-draw-title" style="color:var(--accent); margin:0 0 10px; font-size:1.3rem;">🎰 連抽中...</h2>
+            <div id="multi-draw-anim-box"><div class="multi-draw-chest-img">🧰</div></div>
+            <div id="multi-draw-results" style="display:none;"></div>
+            <button id="multi-draw-close-btn" class="btn" style="margin-top:16px; background:#555; display:none;" onclick="document.getElementById('multi-draw-modal').style.display='none'">關閉</button>
+        </div>
+    </div>
+
+    <!-- 批量售出 modal -->
+    <div id="bulk-sell-modal">
+        <div class="bulk-sell-box">
+            <h2 style="color:#e67e22; margin:0 0 15px; font-size:1.2rem;">🏷️ 批量售出裝備</h2>
+            <p style="color:#aaa; font-size:0.85rem; margin:0 0 12px;">勾選要出售的品質，確認後一鍵售出背包中所有符合品質的裝備。</p>
+            <div id="bulk-sell-quality-list">
+                <div class="quality-check-row" onclick="window.toggleBulkQuality(0)"><input type="checkbox" id="bq0"><span style="background:#95a5a6; width:10px; height:10px; border-radius:2px; display:inline-block;"></span><span style="color:#aaa;">破舊的</span><span id="bq0-count" style="margin-left:auto; color:#888; font-size:0.85rem;"></span></div>
+                <div class="quality-check-row" onclick="window.toggleBulkQuality(1)"><input type="checkbox" id="bq1"><span style="background:#fff; width:10px; height:10px; border-radius:2px; display:inline-block;"></span><span style="color:#fff;">普通的</span><span id="bq1-count" style="margin-left:auto; color:#888; font-size:0.85rem;"></span></div>
+                <div class="quality-check-row" onclick="window.toggleBulkQuality(2)"><input type="checkbox" id="bq2"><span style="background:#2ecc71; width:10px; height:10px; border-radius:2px; display:inline-block;"></span><span style="color:#2ecc71;">良好的</span><span id="bq2-count" style="margin-left:auto; color:#888; font-size:0.85rem;"></span></div>
+                <div class="quality-check-row" onclick="window.toggleBulkQuality(3)"><input type="checkbox" id="bq3"><span style="background:#3498db; width:10px; height:10px; border-radius:2px; display:inline-block;"></span><span style="color:#3498db;">精緻的</span><span id="bq3-count" style="margin-left:auto; color:#888; font-size:0.85rem;"></span></div>
+                <div class="quality-check-row" onclick="window.toggleBulkQuality(4)"><input type="checkbox" id="bq4"><span style="background:#9b59b6; width:10px; height:10px; border-radius:2px; display:inline-block;"></span><span style="color:#9b59b6;">高級的</span><span id="bq4-count" style="margin-left:auto; color:#888; font-size:0.85rem;"></span></div>
+                <div class="quality-check-row" onclick="window.toggleBulkQuality(5)"><input type="checkbox" id="bq5"><span style="background:#f1c40f; width:10px; height:10px; border-radius:2px; display:inline-block;"></span><span style="color:#f1c40f;">皇家的</span><span id="bq5-count" style="margin-left:auto; color:#888; font-size:0.85rem;"></span></div>
+            </div>
+            <div id="bulk-sell-preview" style="background:rgba(0,0,0,0.4); padding:10px; border-radius:8px; margin:12px 0; font-size:0.95rem; color:#ccc; text-align:center;"></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" style="background:#555; flex:1;" onclick="document.getElementById('bulk-sell-modal').style.display='none'">取消</button>
+                <button class="btn" id="bulk-sell-confirm-btn" style="background:#e67e22; flex:2;" onclick="window.executeBulkSell()">💰 確認售出</button>
+            </div>
         </div>
     </div>
 
@@ -3166,7 +3310,7 @@ window.MOE_DATA_STRING = `
         };
 
         // ======= UI 介面操作 =======
-        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); if(t === 'pokedex') window.renderPokedex(); if(t === 'achievements') window.renderAchievements(); };
+        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); if(t === 'pokedex') window.renderPokedex(); if(t === 'achievements') window.renderAchievements(); if(t === 'battle') window.renderLockedSkinsShowcase(); };
         window.switchShopTab = (sec) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.shop-tab-btn').forEach(b => b.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active')); document.getElementById(`shop-sec-${sec}`).classList.add('active'); };
 
         window.renderConsumables = () => {
@@ -3184,7 +3328,31 @@ window.MOE_DATA_STRING = `
             list.innerHTML = html || '<span style="color:#666; font-size:0.9rem;">尚無消耗品</span>';
             specialList.innerHTML = specialHtml || '<span style="color:#666; font-size:0.9rem;">尚無特殊道具</span>';
             
-            const chestList = document.getElementById('chests-list'); let chestHtml = ''; Object.keys(window.player.chests || {}).forEach(tierStr => { const tier = parseInt(tierStr); if (window.player.chests[tier] > 0) { const chestName = chestNames[tier - 1] || "神秘寶箱"; chestHtml += `<div style="display:inline-block; background:#222; border:1px solid #f39c12; border-radius:8px; padding:5px 10px; margin:5px; font-weight:bold; font-size:0.9rem; cursor:pointer;" onclick="window.openChestFromBag(${tier})">🧰 ${chestName} x${window.player.chests[tier]}</div>`; } }); chestList.innerHTML = chestHtml || '<span style="color:#666; font-size:0.9rem;">尚無寶箱</span>';
+            const chestList = document.getElementById('chests-list'); let chestHtml = ''; 
+            const chestTiersPresent = Object.keys(window.player.chests || {}).filter(t => window.player.chests[parseInt(t)] > 0);
+            if (chestTiersPresent.length === 0) {
+                chestHtml = '<span style="color:#666; font-size:0.9rem;">尚無寶箱</span>';
+            } else {
+                chestTiersPresent.forEach(tierStr => {
+                    const tier = parseInt(tierStr);
+                    const cnt = window.player.chests[tier];
+                    const chestName = chestNames[tier - 1] || "神秘寶箱";
+                    const can5 = cnt >= 5; const can10 = cnt >= 10;
+                    chestHtml += `<div class="chest-item-row" onclick="void 0">
+                        <span style="font-size:1.6rem;">🧰</span>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:bold;color:#fff;font-size:0.95rem;">${chestName}</div>
+                            <div class="chest-item-count">x${cnt}</div>
+                        </div>
+                        <div class="chest-draw-btns">
+                            <button class="chest-draw-btn" onclick="event.stopPropagation();window.openChestFromBag(${tier})">×1</button>
+                            <button class="chest-draw-btn multi" onclick="event.stopPropagation();window.multiDrawChest(${tier},5)" ${can5?'':'disabled style="opacity:0.4;cursor:not-allowed;"'}>×5</button>
+                            <button class="chest-draw-btn multi" onclick="event.stopPropagation();window.multiDrawChest(${tier},10)" ${can10?'':'disabled style="opacity:0.4;cursor:not-allowed;"'}>×10</button>
+                        </div>
+                    </div>`;
+                });
+            }
+            chestList.innerHTML = chestHtml;
         };
 
         window.openChestFromBag = (tier) => {
@@ -3644,7 +3812,7 @@ window.MOE_DATA_STRING = `
             let normalHtml = ''; let specialHtml = '';
             Object.keys(consumableItems).forEach(id => { 
                 const item = consumableItems[id]; 
-                if(item.hideInShop) return; // 新增：隱藏特定商品 (例如完整的造型解鎖券)
+                if(item.hideInShop) return;
                 const isLocked = window.player.level < item.reqLevel; let price = item.basePrice || item.price || (item.dynamicPriceMulti * window.player.level); 
                 
                 let isWeeklyBought = false;
@@ -3653,27 +3821,68 @@ window.MOE_DATA_STRING = `
                     if (item.weeklyLimit) {
                         let bought = window.player.weeklyData?.purchases[id] || 0;
                         isWeeklyBought = bought >= item.weeklyLimit;
-                        weeklyText = `<span style="color:#f39c12; font-size:0.8rem;">(週限購: ${bought}/${item.weeklyLimit})</span>`;
+                        weeklyText = `<span style="color:#f39c12;font-size:0.75rem;">(週限: ${bought}/${item.weeklyLimit})</span>`;
                     } else {
                         isWeeklyBought = window.player.weeklyData && window.player.weeklyData.purchases[id] === true;
-                        weeklyText = `<span style="color:#f39c12; font-size:0.8rem;">(週限購)</span>`;
+                        weeklyText = `<span style="color:#f39c12;font-size:0.75rem;">(週限購)</span>`;
                     }
                 }
                 
-                const lockStyle = isLocked ? 'opacity:0.5; filter:grayscale(1);' : ''; 
-                const itemHtml = `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${lockStyle}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">${item.icon} ${item.name} ${weeklyText} ${isLocked ? `<span style="color:#e74c3c; font-size:0.8rem; margin-left:5px;">(Lv.${item.reqLevel} 解鎖)</span>` : `<span style="font-size:0.8rem;color:#888;">(擁有: ${window.player.consumables[id] || 0})</span>`}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${item.desc}</div></div><div><button class="btn" style="background:${isWeeklyBought ? '#555' : '#f39c12'}; padding:8px 15px;" onclick="window.buyItem('${id}')" ${isLocked || isWeeklyBought ? 'disabled' : ''}>${isWeeklyBought ? '已售罄' : `💰${price}`}</button></div></div>`; 
-                if (window.SPECIAL_ITEM_TYPES.includes(item.type)) specialHtml += itemHtml; else normalHtml += itemHtml;
+                const lockStyle = isLocked ? 'opacity:0.45;filter:grayscale(1);' : '';
+                const itemCard = `<div class="shop-item-card" style="${lockStyle}">
+                    <div class="shop-item-icon">${item.icon}</div>
+                    <div class="shop-item-info">
+                        <div class="shop-item-name">${item.name} ${weeklyText} ${isLocked ? `<span style="color:#e74c3c;font-size:0.75rem;">(Lv.${item.reqLevel})</span>` : ''}</div>
+                        <div class="shop-item-desc">${item.desc}</div>
+                        ${!isLocked ? `<div class="shop-item-own">擁有: ${window.player.consumables[id] || 0}</div>` : ''}
+                    </div>
+                    <button class="shop-buy-btn" onclick="window.buyItem('${id}')" ${isLocked || isWeeklyBought ? 'disabled' : ''}>${isWeeklyBought ? '已售罄' : `💰${price}`}</button>
+                </div>`;
+                if (window.SPECIAL_ITEM_TYPES.includes(item.type)) specialHtml += itemCard; else normalHtml += itemCard;
             });
             document.getElementById('shop-items').innerHTML = normalHtml;
             document.getElementById('shop-special-items').innerHTML = specialHtml;
             
-            let chestHtml = ''; for(let i=1; i<=10; i++) { const reqLv = i === 1 ? 1 : (i-1)*10 + 1; const cost = Math.floor(reqLv * 25 + 150); const isLocked = window.player.level < reqLv; chestHtml += `<div class="inv-item" style="display:flex; justify-content:space-between; align-items:center; ${isLocked?'opacity:0.5; filter:grayscale(1);':''}"><div><div style="font-weight:bold; font-size:1.1rem; color:#fff;">🧰 ${chestNames[i-1]}</div><div style="font-size:0.85rem; color:#aaa; margin-top:3px;">${isLocked ? `<span style="color:#e74c3c;">(Lv.${reqLv} 解鎖)</span>` : '購買後會立刻存入背包庫存中'}</div></div><div><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopChest(${i}, ${cost})" ${isLocked ? 'disabled' : ''}>💰${cost}</button></div></div>`; } document.getElementById('shop-chests-list').innerHTML = chestHtml;
+            // 寶箱商店
+            let chestHtml = '<div class="shop-category-header">📦 標準寶箱</div>';
+            for(let i=1; i<=10; i++) { 
+                const reqLv = i === 1 ? 1 : (i-1)*10 + 1; const cost = Math.floor(reqLv * 25 + 150); const isLocked = window.player.level < reqLv; 
+                const tierColors = ['#95a5a6','#fff','#2ecc71','#3498db','#9b59b6','#f1c40f','#e74c3c','#e74c3c','#3498db','#f1c40f'];
+                const borderCol = tierColors[Math.min(i-1,9)];
+                chestHtml += `<div class="shop-item-card" style="${isLocked?'opacity:0.45;filter:grayscale(1);':''}border-left:3px solid ${borderCol};">
+                    <div class="shop-item-icon">🧰</div>
+                    <div class="shop-item-info">
+                        <div class="shop-item-name" style="color:${borderCol}">${chestNames[i-1]}</div>
+                        <div class="shop-item-desc">${isLocked ? `🔒 Lv.${reqLv} 解鎖` : '購買後存入背包'}</div>
+                    </div>
+                    <button class="shop-buy-btn" onclick="window.buyShopChest(${i}, ${cost})" ${isLocked?'disabled':''}>💰${cost}</button>
+                </div>`;
+            }
+            document.getElementById('shop-chests-list').innerHTML = chestHtml;
             
             const refreshCostSpan = document.getElementById('force-refresh-cost');
             if (refreshCostSpan) refreshCostSpan.innerText = window.player.level * 1000;
             
-            window.refreshShopEquipments(); const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const qualities = ['破舊的', '普通的', '良好的', '精緻的', '高級的', '皇家的'];
-            document.getElementById('shop-equipments-list').innerHTML = window.player.shopEquips.map((item, idx) => { if(item.sold) return `<div class="inv-item" style="opacity:0.5; text-align:center; padding:20px;">已售出</div>`; const color = qColors[item.qualityIndex]; return `<div class="inv-item"><div class="inv-header" style="color:${color}"><span>${item.icon} ${item.name} <span class="inv-quality-tag" style="background:${color}">${qualities[item.qualityIndex]}</span></span><span style="color:#888; font-size:0.9rem;">Lv.${item.level}</span></div><div class="inv-stats">${item.atk ? `<span>🗡️ 攻擊 +${item.atk}</span>` : ''}${item.hp ? `<span>❤️ 生命 +${item.hp}</span>` : ''}${item.def ? `<span>🛡️ 防禦 +${item.def}</span>` : ''}${item.crit ? `<span>⚡ 爆擊 +${item.crit}%</span>` : ''}${item.dodge ? `<span>🌫️ 閃避 +${item.dodge}%</span>` : ''}${item.luck ? `<span>🍀 幸運 +${item.luck}%</span>` : ''}</div><div style="text-align:right; border-top:1px dashed #444; padding-top:8px; margin-top:8px;"><button class="btn" style="background:#f39c12; padding:8px 15px;" onclick="window.buyShopEquip(${idx}, ${item.price})">💰${item.price} 購買</button></div></div>`; }).join('');
+            window.refreshShopEquipments(); 
+            const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; 
+            const qualities = ['破舊的', '普通的', '良好的', '精緻的', '高級的', '皇家的'];
+            let equipHtml = '<div class="shop-category-header">⚔️ 黑市裝備</div>';
+            equipHtml += window.player.shopEquips.map((item, idx) => { 
+                if(item.sold) return `<div class="shop-item-card" style="opacity:0.4;justify-content:center;">已售出</div>`; 
+                const color = qColors[item.qualityIndex]; 
+                const isRoyal = item.qualityIndex === 5;
+                const statChips = [item.atk?`🗡️+${item.atk}`:'',item.hp?`❤️+${item.hp}`:'',item.def?`🛡️+${item.def}`:'',item.crit?`⚡+${item.crit}%`:'',item.dodge?`🌫️+${item.dodge}%`:'',item.luck?`🍀+${item.luck}%`:''].filter(Boolean).map(s=>`<span class="inv-stat-chip">${s}</span>`).join('');
+                return `<div class="shop-item-card" style="border-left:3px solid ${color};${isRoyal?'box-shadow:0 0 10px rgba(241,196,15,0.2);':''}">
+                    <div class="shop-item-icon">${item.icon}</div>
+                    <div class="shop-item-info">
+                        <div class="shop-item-name" style="color:${color}">${item.name} <span style="font-size:0.7rem;background:${color};color:#000;padding:1px 5px;border-radius:3px;">${qualities[item.qualityIndex]}</span></div>
+                        <div style="font-size:0.78rem;color:#888;">Lv.${item.level}</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;font-size:0.75rem;color:#aaa;">${statChips}</div>
+                    </div>
+                    <button class="shop-buy-btn" onclick="window.buyShopEquip(${idx}, ${item.price})">💰${item.price}</button>
+                </div>`;
+            }).join('');
+            document.getElementById('shop-equipments-list').innerHTML = equipHtml;
             if(window.shopTimerInterval) clearInterval(window.shopTimerInterval); window.shopTimerInterval = setInterval(window.updateShopTimer, 1000); window.updateShopTimer();
         };
 
@@ -3802,13 +4011,25 @@ window.MOE_DATA_STRING = `
 
             let mHtml = ''; for(let i=0; i<4; i++) { if(window.player.moves[i]) mHtml += `<div class="move-slot" style="cursor:pointer;" onclick="window.showToast('${window.player.moves[i].name}: ${window.player.moves[i].desc}', '#3498db')">${window.player.moves[i].name}</div>`; else mHtml += `<div class="move-slot move-empty">-</div>`; } document.getElementById('ui-moves').innerHTML = mHtml;
             window.renderConsumables(); if(document.getElementById('tab-shop').classList.contains('active')) window.renderShop();
+            window.renderLockedSkinsShowcase();
             
             const eqSlots = document.getElementById('equipment-slots'); eqSlots.innerHTML = '';
-            const slotNames = { slot1: '裝備位置1', slot2: '裝備位置2', slot3: '裝備位置3', slot4: '裝備位置4' };
+            const slotNames = { slot1: '裝備1', slot2: '裝備2', slot3: '裝備3', slot4: '裝備4' };
+            const partIcons = {head:'🎗️',body:'🦺',legs:'🪨',feet:'🧣',gloves:'🥊',weapon:'🔮',offhand:'🪖',accessory:'🍎'};
             ['slot1', 'slot2', 'slot3', 'slot4'].forEach(key => {
                 const eq = window.player.equipment[key];
-                if(eq) { const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[eq.qualityIndex] || '#fff'; eqSlots.innerHTML += `<div style="background:#2c3e50; border:1px solid ${color}; border-radius:8px; padding:10px; cursor:pointer; position:relative;" onclick="window.openItemDetail('equip', '${key}')"><div style="font-size:0.8rem;color:#aaa;">${slotNames[key]}</div><div style="font-weight:bold;color:${color}">${eq.icon} ${eq.name}</div></div>`; } 
-                else { eqSlots.innerHTML += `<div style="background:#1a1a1a; border:1px dashed #555; border-radius:8px; padding:10px; text-align:center; color:#555;">${slotNames[key]}空缺</div>`; }
+                if(eq) { 
+                    const qColors = ['#95a5a6','#fff','#2ecc71','#3498db','#9b59b6','#f1c40f']; 
+                    const color = qColors[eq.qualityIndex] || '#fff'; 
+                    const isRoyal = eq.qualityIndex === 5;
+                    eqSlots.innerHTML += `<div style="background:linear-gradient(145deg,#1e2128,#131518);border:2px solid ${color};border-radius:10px;padding:10px 12px;cursor:pointer;${isRoyal?'box-shadow:0 0 10px rgba(241,196,15,0.2);':''}" onclick="window.openItemDetail('equip','${key}')">
+                        <div style="font-size:0.72rem;color:#888;margin-bottom:3px;">${slotNames[key]}</div>
+                        <div style="font-weight:bold;color:${color};font-size:0.95rem;">${eq.icon} ${eq.name}</div>
+                        <div style="font-size:0.72rem;color:#666;margin-top:2px;">Lv.${eq.level} · 點擊卸下</div>
+                    </div>`; 
+                } else { 
+                    eqSlots.innerHTML += `<div style="background:#111;border:1.5px dashed #2a2d35;border-radius:10px;padding:10px 12px;text-align:center;color:#444;font-size:0.85rem;">${slotNames[key]}<br><span style="font-size:1.2rem;">＋</span></div>`; 
+                }
             });
 
             const invList = document.getElementById('inventory-list');
@@ -3830,8 +4051,23 @@ window.MOE_DATA_STRING = `
 
                 invList.innerHTML = bagItems.map(obj => {
                     const i = obj.item; const qColors = ['#95a5a6', '#ffffff', '#2ecc71', '#3498db', '#9b59b6', '#f1c40f']; const color = qColors[i.qualityIndex] || '#fff';
-                    const isEquippedType = equippedTypes.includes(i.slot); const grayStyle = isEquippedType ? 'filter: grayscale(1); opacity: 0.5;' : ''; const equippedTag = isEquippedType ? '<span style="color:#e74c3c; font-size:0.8rem; margin-left:5px;">(已裝備同類型)</span>' : '';
-                    return `<div class="inv-item" style="${grayStyle}" onclick="window.openItemDetail('bag', ${obj.idx})"><div class="inv-header" style="color:${color}"><span>${i.icon} ${i.name} <span class="inv-quality-tag" style="background:${color}">${['破舊的','普通的','良好的','精緻的','高級的','皇家的'][i.qualityIndex]}</span>${equippedTag}</span><span style="color:#888; font-size:0.9rem;">Lv.${i.level}</span></div><div class="inv-stats">${i.atk ? `<span>🗡️ 攻擊 +${i.atk}</span>` : ''}${i.hp ? `<span>❤️ 生命 +${i.hp}</span>` : ''}${i.def ? `<span>🛡️ 防禦 +${i.def}</span>` : ''}${i.crit ? `<span>⚡ 爆擊 +${i.crit}%</span>` : ''}${i.dodge ? `<span>🌫️ 閃避 +${i.dodge}%</span>` : ''}${i.luck ? `<span>🍀 幸運 +${i.luck}%</span>` : ''}</div></div>`;
+                    const isEquippedType = equippedTypes.includes(i.slot); const grayStyle = isEquippedType ? 'opacity:0.5;filter:grayscale(0.8);' : '';
+                    const equippedTag = isEquippedType ? '<span style="color:#e74c3c;font-size:0.75rem;">(已裝備同類型)</span>' : '';
+                    const qualityNames = ['破舊','普通','良好','精緻','高級','皇家'];
+                    const royalClass = i.qualityIndex === 5 ? ' royal-item' : (i.qualityIndex === 4 ? ' epic-item' : (i.qualityIndex === 3 ? ' rare-item' : ''));
+                    const statChips = [i.atk?`🗡️+${i.atk}`:'',i.hp?`❤️+${i.hp}`:'',i.def?`🛡️+${i.def}`:'',i.crit?`⚡+${i.crit}%`:'',i.dodge?`🌫️+${i.dodge}%`:'',i.luck?`🍀+${i.luck}%`:''].filter(Boolean).map(s=>`<span class="inv-stat-chip">${s}</span>`).join('');
+                    return `<div class="inv-item-v2${royalClass}" style="${grayStyle}" onclick="window.openItemDetail('bag', ${obj.idx})">
+                        <div class="inv-item-icon">${i.icon}</div>
+                        <div class="inv-item-body">
+                            <div class="inv-item-title">
+                                <span style="color:${color}">${i.name}</span>
+                                <span style="background:${color};color:#000;font-size:0.65rem;padding:1px 5px;border-radius:3px;">${qualityNames[i.qualityIndex]}</span>
+                                <span style="color:#666;font-size:0.78rem;">Lv.${i.level}</span>
+                                ${equippedTag}
+                            </div>
+                            <div class="inv-item-stats">${statChips}</div>
+                        </div>
+                    </div>`;
                 }).join('');
             }
             
@@ -3847,67 +4083,80 @@ window.MOE_DATA_STRING = `
             window.AudioEngine.sfx.click();
         };
 
-        // 新增：渲染寶可夢圖鑑
+        // 寶可夢屬性資料庫 (用於圖鑑搜尋)
+        window.POKEMON_TYPES = {
+            "448":"fighting","624":"steel","65":"psychic","68":"fighting","282":"psychic","478":"ice","407":"grass","477":"ghost",
+            "151":"psychic","25":"electric","6":"fire","658":"water","700":"fairy","778":"ghost","609":"ghost","359":"dark",
+            "196":"psychic","197":"dark","445":"dragon","149":"dragon","181":"electric","94":"ghost","121":"water","471":"ice",
+            "470":"grass","150":"psychic","249":"flying","250":"fire","251":"psychic","382":"water","384":"dragon","483":"steel","493":"normal","718":"dragon",
+            "280":"psychic","281":"psychic","10061":"psychic","133":"normal","447":"fighting","10059":"fighting","4":"fire","5":"fire","10034":"fire","10035":"flying","10196":"fire",
+            "656":"water","657":"water","10117":"water","172":"electric","26":"electric","10199":"electric","10043":"psychic","10044":"psychic",
+            "92":"ghost","93":"ghost","10038":"ghost","10202":"ghost","63":"psychic","64":"psychic","10037":"psychic","625":"steel","983":"steel",
+            "66":"fighting","67":"fighting","10203":"fighting","10057":"dark","443":"dragon","444":"dragon","10058":"dragon",
+            "179":"electric","180":"electric","10045":"electric","10077":"water","10079":"dragon","10245":"steel","718":"dragon","10118":"dragon","10120":"dragon"
+        };
+        window.POKEMON_TYPE_LABELS = { fire:'fire',water:'water',grass:'grass',electric:'electric',ice:'ice',fighting:'fighting',poison:'poison',psychic:'psychic',ghost:'ghost',dragon:'dragon',dark:'dark',steel:'steel',flying:'flying',normal:'normal',fairy:'fairy' };
+
+        // 新增：渲染寶可夢圖鑑 (帶編號與搜尋)
+        window._pokedexAllEntries = null;
         window.renderPokedex = () => {
             const grid = document.getElementById('pokedex-grid');
-            let unlockedCount = 0;
-            let totalCount = 0;
-            let html = '';
+            let unlockedCount = 0; let totalCount = 0;
             
             const allEntries = [];
-            window.ALL_COLLECTIBLE_POKEMON.forEach(baseId => {
+            window.ALL_COLLECTIBLE_POKEMON.forEach((baseId, baseIdx) => {
                 if (window.SKIN_DB[baseId]) {
-                    window.SKIN_DB[baseId].forEach(skin => {
-                        allEntries.push({
-                            baseId: baseId,
-                            skinId: skin.id,
-                            url: skin.url,
-                            name: skin.name
-                        });
+                    window.SKIN_DB[baseId].forEach((skin, skinIdx) => {
+                        allEntries.push({ baseId, skinId: skin.id, url: skin.url, name: skin.name, num: baseIdx + 1 });
                     });
                 } else {
-                    allEntries.push({
-                        baseId: baseId,
-                        skinId: 'default',
-                        url: window.getSprite(baseId),
-                        name: pokeNames[baseId] || "未知"
-                    });
+                    allEntries.push({ baseId, skinId: 'default', url: window.getSprite(baseId), name: pokeNames[baseId] || "未知", num: baseIdx + 1 });
                 }
             });
-
+            window._pokedexAllEntries = allEntries;
             totalCount = allEntries.length;
 
             allEntries.forEach(entry => {
-                let isUnlocked = false;
-                if (entry.skinId === 'default') {
-                    isUnlocked = window.player.unlockedAvatars.includes(entry.baseId);
-                } else {
-                    isUnlocked = window.player.unlockedSkins && window.player.unlockedSkins.includes(entry.skinId);
-                }
-
+                let isUnlocked = entry.skinId === 'default' ? window.player.unlockedAvatars.includes(entry.baseId) : (window.player.unlockedSkins && window.player.unlockedSkins.includes(entry.skinId));
                 if (isUnlocked) unlockedCount++;
-                
-                if (isUnlocked) {
+                entry.isUnlocked = isUnlocked;
+            });
+            
+            document.getElementById('pokedex-progress').innerText = `${unlockedCount} / ${totalCount}`;
+            window.filterPokedex();
+        };
+
+        // 新增：圖鑑篩選邏輯
+        window.filterPokedex = () => {
+            if (!window._pokedexAllEntries) return;
+            const grid = document.getElementById('pokedex-grid');
+            const search = (document.getElementById('pokedex-search-input')?.value || '').toLowerCase().trim();
+            const typeFilter = document.getElementById('pokedex-type-filter')?.value || '';
+            const unlockFilter = document.getElementById('pokedex-unlock-filter')?.value || '';
+            
+            let html = '';
+            window._pokedexAllEntries.forEach(entry => {
+                const matchName = !search || entry.name.toLowerCase().includes(search) || String(entry.num).includes(search) || entry.baseId.includes(search);
+                const entryType = window.POKEMON_TYPES[entry.skinId === 'default' ? entry.baseId : entry.skinId] || window.POKEMON_TYPES[entry.baseId] || '';
+                const matchType = !typeFilter || entryType === typeFilter;
+                const matchUnlock = !unlockFilter || (unlockFilter === 'unlocked' && entry.isUnlocked) || (unlockFilter === 'locked' && !entry.isUnlocked);
+                if (!matchName || !matchType || !matchUnlock) return;
+
+                if (entry.isUnlocked) {
                     html += `<div class="pokedex-item unlocked" onclick="window.openPokedexModal('${entry.url}', '${entry.skinId === 'default' ? entry.baseId : entry.skinId}')">
+                        <div class="pk-number">#${String(entry.num).padStart(3,'0')}</div>
                         <img src="${entry.url}">
                         <div class="pk-name">${entry.name}</div>
                     </div>`;
                 } else {
                     html += `<div class="pokedex-item locked" onclick="window.showToast('尚未獲得此寶可夢或造型', 'var(--boss)')">
+                        <div class="pk-number" style="color:rgba(255,255,255,0.3);">#${String(entry.num).padStart(3,'0')}</div>
                         <img src="${entry.url}">
                         <div class="pk-name">???</div>
                     </div>`;
                 }
             });
-            
-            grid.innerHTML = html;
-            document.getElementById('pokedex-progress').innerText = `${unlockedCount} / ${totalCount}`;
-            
-            // 加入提示文字更新
-            const progressParent = document.getElementById('pokedex-progress').parentElement;
-            if (progressParent && progressParent.nextElementSibling) {
-                progressParent.nextElementSibling.innerText = "(獲得新的先鋒寶可夢或抽取造型即可增加進度，點擊可預覽招式)";
-            }
+            grid.innerHTML = html || '<div style="grid-column:span 4;text-align:center;color:#666;padding:20px;">沒有符合條件的寶可夢</div>';
         };
 
         // 新增：自訂警告視窗函數
@@ -7710,6 +7959,211 @@ window.MOE_DATA_STRING = `
             if (forced) window.showToast('隊伍已解散', 'var(--boss)');
         };
         // ================= 試煉塔多人系統 END =================
+
+        // ===== 批量售出系統 =====
+        window.openBulkSell = () => {
+            window.AudioEngine.sfx.click();
+            const qColors = ['#95a5a6','#fff','#2ecc71','#3498db','#9b59b6','#f1c40f'];
+            const qNames = ['破舊的','普通的','良好的','精緻的','高級的','皇家的'];
+            const counts = [0,0,0,0,0,0];
+            window.player.bag.forEach(item => { if(item.qualityIndex >= 0 && item.qualityIndex <= 5) counts[item.qualityIndex]++; });
+            for(let q=0;q<6;q++) {
+                const cb = document.getElementById(`bq${q}`);
+                if(cb) { cb.checked = false; }
+                const countEl = document.getElementById(`bq${q}-count`);
+                if(countEl) countEl.innerText = counts[q] > 0 ? `${counts[q]} 件` : '無';
+            }
+            window.updateBulkSellPreview();
+            document.getElementById('bulk-sell-modal').style.display = 'flex';
+        };
+
+        window.toggleBulkQuality = (q) => {
+            window.AudioEngine.sfx.click();
+            const cb = document.getElementById(`bq${q}`);
+            if(cb) cb.checked = !cb.checked;
+            window.updateBulkSellPreview();
+        };
+
+        window.updateBulkSellPreview = () => {
+            const checkedQs = [];
+            for(let q=0;q<6;q++) { if(document.getElementById(`bq${q}`)?.checked) checkedQs.push(q); }
+            const itemsToSell = window.player.bag.filter(item => checkedQs.includes(item.qualityIndex));
+            let totalGold = 0;
+            itemsToSell.forEach(item => {
+                let baseVal = item.price || Math.floor((item.level*15)+(item.qualityIndex*80)+50);
+                totalGold += Math.floor(baseVal * 0.5);
+            });
+            const preview = document.getElementById('bulk-sell-preview');
+            const btn = document.getElementById('bulk-sell-confirm-btn');
+            if(itemsToSell.length === 0) {
+                preview.innerHTML = '<span style="color:#666;">請勾選要出售的品質</span>';
+                btn.disabled = true; btn.style.opacity = '0.5';
+            } else {
+                preview.innerHTML = `將出售 <strong style="color:#e67e22">${itemsToSell.length} 件</strong> 裝備，獲得 <strong style="color:#f1c40f">💰${totalGold}</strong> 金幣`;
+                btn.disabled = false; btn.style.opacity = '1';
+            }
+        };
+
+        window.executeBulkSell = () => {
+            window.AudioEngine.sfx.click();
+            const checkedQs = [];
+            for(let q=0;q<6;q++) { if(document.getElementById(`bq${q}`)?.checked) checkedQs.push(q); }
+            if(checkedQs.length === 0) return;
+            const hasHighQ = checkedQs.some(q => q >= 4);
+            const doSell = () => {
+                let totalGold = 0; let count = 0;
+                window.player.bag = window.player.bag.filter(item => {
+                    if(!checkedQs.includes(item.qualityIndex)) return true;
+                    let baseVal = item.price || Math.floor((item.level*15)+(item.qualityIndex*80)+50);
+                    totalGold += Math.floor(baseVal * 0.5); count++;
+                    return false;
+                });
+                window.player.gold += totalGold;
+                if(!window.player.records) window.player.records = {};
+                window.player.records.goldEarned = (window.player.records.goldEarned || 0) + totalGold;
+                window.checkAchievements(); window.updateUI(); window.saveData();
+                document.getElementById('bulk-sell-modal').style.display = 'none';
+                window.showToast(`✅ 已售出 ${count} 件裝備，獲得 💰${totalGold}！`, '#f1c40f');
+            };
+            if(hasHighQ) {
+                window.showCustomConfirm(`確定要批量出售嗎？\n其中包含高級(紫)或皇家(金)品質裝備，\n此操作無法復原！`, doSell);
+            } else { doSell(); }
+        };
+
+        // ===== 連抽系統 =====
+        window.multiDrawChest = async (tier, count) => {
+            window.AudioEngine.sfx.click();
+            if(!window.player.chests || !window.player.chests[tier] || window.player.chests[tier] < count) {
+                window.showToast(`寶箱數量不足 (需要 ${count} 個)`, 'var(--boss)'); return;
+            }
+            const modal = document.getElementById('multi-draw-modal');
+            const animBox = document.getElementById('multi-draw-anim-box');
+            const resultsDiv = document.getElementById('multi-draw-results');
+            const closeBtn = document.getElementById('multi-draw-close-btn');
+            const title = document.getElementById('multi-draw-title');
+
+            title.innerText = `🎰 ${count} 連抽進行中...`;
+            animBox.innerHTML = `<div class="multi-draw-chest-img">🧰</div>`;
+            resultsDiv.style.display = 'none'; resultsDiv.innerHTML = '';
+            closeBtn.style.display = 'none';
+            modal.style.display = 'flex';
+
+            // 扣除寶箱
+            window.player.chests[tier] -= count;
+
+            // 動畫 2 秒
+            await new Promise(r => setTimeout(r, 400));
+            // 閃爍動畫
+            let flash = 0;
+            const flashInterval = setInterval(() => {
+                flash++;
+                const emojis = ['🧰','✨','🌟','💫','🎁'];
+                animBox.innerHTML = `<div style="font-size:5rem;animation:chestOpen 0.3s ease;">${emojis[flash % emojis.length]}</div>`;
+            }, 200);
+            await new Promise(r => setTimeout(r, 1800));
+            clearInterval(flashInterval);
+
+            // 生成結果
+            const results = [];
+            const qColors = ['#95a5a6','#fff','#2ecc71','#3498db','#9b59b6','#f1c40f'];
+            const qNames = ['破舊','普通','良好','精緻','高級','皇家'];
+            
+            for(let i=0; i<count; i++) {
+                if(Math.random() < 0.2) {
+                    const gold = Math.floor(Math.random()*100+50)*tier;
+                    window.player.gold += gold;
+                    if(!window.player.records) window.player.records = {};
+                    window.player.records.goldEarned = (window.player.records.goldEarned||0)+gold;
+                    results.push({ type:'gold', gold, icon:'💰', name:`${gold}金幣`, qualityIndex:-1 });
+                } else {
+                    const item = window.generateRandomItemFromChest(tier);
+                    window.player.bag.push(item);
+                    window.trackItemQuality(item.qualityIndex);
+                    window.player.records.chestsOpened = (window.player.records.chestsOpened||0)+1;
+                    results.push({ type:'item', ...item });
+                }
+            }
+            window.player.records.chestsOpened = (window.player.records.chestsOpened||0);
+
+            // 顯示結果
+            animBox.innerHTML = '';
+            resultsDiv.style.display = 'flex';
+            title.innerText = `🎉 ${count} 連抽結果！`;
+
+            results.forEach((res, idx) => {
+                const isRoyal = res.qualityIndex === 5;
+                const color = res.qualityIndex >= 0 ? qColors[res.qualityIndex] : '#f1c40f';
+                const delay = idx * 120;
+                const card = document.createElement('div');
+                card.className = `draw-result-card${isRoyal?' royal':''}`;
+                card.style.animationDelay = `${delay}ms`;
+                if(res.type === 'gold') {
+                    card.innerHTML = `<div class="card-icon">💰</div><div class="card-name">金幣</div><div class="card-quality" style="background:#f1c40f">${res.name}</div>`;
+                } else {
+                    card.innerHTML = `
+                        ${isRoyal ? '<div class="royal-stars">⭐</div>' : ''}
+                        <div class="card-icon">${res.icon}</div>
+                        <div class="card-name">${res.name.replace(/破舊的 |普通的 |良好的 |精緻的 |高級的 |皇家的 /,'')}</div>
+                        <div class="card-quality" style="background:${color};">${qNames[res.qualityIndex]}</div>
+                    `;
+                }
+                resultsDiv.appendChild(card);
+                if(isRoyal) window.AudioEngine.sfx.item();
+            });
+
+            closeBtn.style.display = 'block';
+            window.checkAchievements(); window.updateUI(); window.saveData();
+            window.AudioEngine.sfx.item();
+        };
+
+        // ===== 未解鎖造型剪影展示 =====
+        window.renderLockedSkinsShowcase = () => {
+            const container = document.getElementById('locked-skins-showcase');
+            if (!container || !window.player) return;
+
+            // 收集所有造型，區分是否已解鎖
+            const lockedSkins = [];
+            Object.keys(window.SKIN_DB || {}).forEach(baseId => {
+                (window.SKIN_DB[baseId] || []).forEach(skin => {
+                    if (skin.id === 'default') return; // 預設造型不算特殊造型
+                    const isOwned = window.player.unlockedSkins && window.player.unlockedSkins.includes(skin.id);
+                    if (!isOwned) {
+                        lockedSkins.push({ ...skin, baseId });
+                    }
+                });
+            });
+
+            if (lockedSkins.length === 0) {
+                container.innerHTML = `<div class="locked-skins-panel"><h4>✨ 造型圖鑑</h4><div style="color:#2ecc71;font-size:0.9rem;text-align:center;padding:10px 0;">🎉 恭喜！您已收集所有特殊造型！</div></div>`;
+                return;
+            }
+
+            // 打亂順序但保持每次相同（用玩家UID當種子，否則用固定shuffle）
+            const shuffled = [...lockedSkins];
+
+            const gridItems = shuffled.map((skin, i) => {
+                // 隨機讓 1~2 個剪影稍微有些不同的脈動感，增加神秘感
+                const hlClass = (i % 7 === 2 || i % 11 === 3) ? ' highlight' : '';
+                return `<div class="silhouette-item${hlClass}" onclick="window.showToast('???  使用【👗造型解鎖券】來解鎖隱藏造型！', '#9b59b6')" title="未解鎖的神秘造型">
+                    <img src="${skin.url}" alt="???">
+                    <div class="sil-mystery">?</div>
+                    <div class="sil-label">???</div>
+                </div>`;
+            }).join('');
+
+            const unlockedCount = Object.keys(window.SKIN_DB || {}).reduce((acc, baseId) => {
+                return acc + (window.SKIN_DB[baseId] || []).filter(s => s.id !== 'default' && window.player.unlockedSkins && window.player.unlockedSkins.includes(s.id)).length;
+            }, 0);
+            const totalSkinCount = Object.keys(window.SKIN_DB || {}).reduce((acc, baseId) => {
+                return acc + (window.SKIN_DB[baseId] || []).filter(s => s.id !== 'default').length;
+            }, 0);
+
+            container.innerHTML = `<div class="locked-skins-panel">
+                <h4>👗 特殊造型圖鑑 <span style="font-size:0.78rem;color:#888;font-weight:normal;">已解鎖 ${unlockedCount} / ${totalSkinCount}</span></h4>
+                <p style="color:#666;font-size:0.78rem;margin:0 0 10px;">以下為尚未解鎖的神秘造型，使用 <span style="color:#e056fd;">👗 造型解鎖券</span> 來抽取吧！</p>
+                <div class="locked-skins-grid">${gridItems}</div>
+            </div>`;
+        };
 
         window.openSummonModal = (itemId, summonType) => {
             window.AudioEngine.sfx.click(); const modal = document.getElementById('summon-modal'); const grid = document.getElementById('summon-grid'); grid.innerHTML = '';
