@@ -246,9 +246,9 @@ window.MOE_DATA_STRING = `
         @keyframes attack-right { 0%, 100% { transform: scaleX(-1) translateX(0); } 20% { transform: scaleX(-1) translateX(30px); } 50% { transform: scaleX(-1) translateX(-60px); } }
         @keyframes attack-left { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-30px); } 50% { transform: translateX(60px); } }
         @keyframes attack-ally { 0%, 100% { transform: scaleX(-1) translateX(0); } 20% { transform: scaleX(-1) translateX(20px); } 50% { transform: scaleX(-1) translateX(-40px); } }
-        .anim-atk-player { animation: attack-right 0.4s ease; }
-        .anim-atk-enemy { animation: attack-left 0.4s ease; }
-        .anim-atk-ally { animation: attack-ally 0.4s ease; }
+        .anim-atk-player { animation: attack-right 0.7s ease; }
+        .anim-atk-enemy { animation: attack-left 0.7s ease; }
+        .anim-atk-ally { animation: attack-ally 0.7s ease; }
         
         @keyframes flashy-dodge-right { 0%, 100% { transform: scaleX(-1) translateX(0) scale(1); opacity: 1; filter: blur(0); } 50% { transform: scaleX(-1) translateX(120px) scale(1.1) skewX(20deg); opacity: 0.4; filter: blur(4px) drop-shadow(0 0 20px #3498db); } }
         @keyframes flashy-dodge-left { 0%, 100% { transform: translateX(0) scale(1); opacity: 1; filter: blur(0); } 50% { transform: translateX(120px) scale(1.1) skewX(-20deg); opacity: 0.4; filter: blur(4px) drop-shadow(0 0 20px #3498db); } }
@@ -261,7 +261,7 @@ window.MOE_DATA_STRING = `
         .anim-sink-player { animation: sink-down-player 0.6s ease-in forwards !important; }
 
         @keyframes take-damage { 0% { filter: brightness(1); } 25% { filter: brightness(0) invert(1); transform: translateX(-10px); } 50% { filter: brightness(1); transform: translateX(10px); } 75% { filter: brightness(0) invert(1); transform: translateX(-10px); } 100% { filter: brightness(1); transform: translateX(0); } }
-        .anim-dmg { animation: take-damage 0.4s ease; }
+        .anim-dmg { animation: take-damage 0.6s ease; }
         
         @keyframes flashy-crit { 0% { filter: brightness(1); transform: scale(1); } 10% { filter: brightness(3) invert(1) sepia(1) hue-rotate(300deg); transform: scale(1.5) rotate(15deg); } 20% { filter: brightness(3) invert(1) sepia(1) hue-rotate(300deg); transform: scale(1.3) rotate(-15deg) translate(-20px, -20px); } 30% { transform: scale(1.4) rotate(10deg) translate(20px, 20px); } 100% { filter: brightness(1); transform: scale(1) rotate(0) translate(0,0); } }
         .anim-crit-dmg { animation: flashy-crit 0.5s ease-out; box-shadow: 0 0 50px #e74c3c; border-radius: 50%; }
@@ -294,7 +294,7 @@ window.MOE_DATA_STRING = `
         .tower-extra-stat-card.my-target { border-color: #9b59b6; box-shadow: 0 0 8px rgba(155,89,182,0.6); }
         .tower-extra-stat-card.is-me { border-color: #3498db; box-shadow: 0 0 8px rgba(52,152,219,0.5); }
 
-        /* 招式視覺特效 */
+        /* 招式視覺特效 - 基礎層（由 JS 粒子引擎覆蓋） */
         @keyframes fx-normal { 0%, 100% { background: transparent; } 50% { background: rgba(255,255,255,0.6); } }
         @keyframes fx-dark { 0%, 100% { background: transparent; } 50% { background: rgba(0,0,0,0.7); } }
         @keyframes fx-ground { 0%, 100% { transform: translateY(0); } 20%, 60% { transform: translateY(-20px); background: rgba(139,69,19,0.4); } 40%, 80% { transform: translateY(20px); background: rgba(139,69,19,0.4); } }
@@ -306,19 +306,38 @@ window.MOE_DATA_STRING = `
         @keyframes fx-flying { 0%, 100% { background: rgba(255, 255, 255, 0); transform: skewX(0); } 50% { background: rgba(200, 200, 200, 0.5); transform: skewX(-30deg); } }
         @keyframes fx-sleep { 0% { opacity:0; transform:translateY(0) scale(1); } 50% { opacity:1; transform:translateY(-20px) scale(1.5); } 100% { opacity:0; transform:translateY(-40px) scale(2); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        .fx-normal-run { animation: fx-normal 1.4s ease; }
+        .fx-dark-run { animation: fx-dark 1.4s ease; }
+        .fx-ground-run { animation: fx-ground 1.6s ease; }
+        .fx-ice-run { animation: fx-ice 1.6s ease; }
+        .fx-fire-run { animation: fx-fire 1.6s ease; }
+        .fx-water-run { animation: fx-water 1.6s ease; }
+        .fx-electric-run { animation: fx-electric 1.6s ease; }
+        .fx-grass-run { animation: fx-grass 1.6s ease; }
+        .fx-flying-run { animation: fx-flying 1.4s ease; }
+        .fx-poison-run { background: rgba(128, 0, 128, 0.5); animation: fx-normal 1.6s ease; }
+        .fx-sleep-run::after { content: 'Zzz'; position:absolute; top:40%; left:50%; color:#fff; text-shadow:0 0 5px #000; font-size:2.5rem; font-weight:bold; animation: fx-sleep 2.5s ease-out; }
+        .fx-confuse-run { background: repeating-radial-gradient(circle, rgba(255,255,0,0.3), rgba(255,0,0,0.3) 10%, transparent 20%); animation: spin 2s linear forwards; }
+        @keyframes fx-heal { 0% { background: rgba(46,204,113,0); } 40% { background: rgba(46,204,113,0.45); box-shadow: inset 0 0 40px rgba(46,204,113,0.7); } 100% { background: rgba(46,204,113,0); } }
+        .fx-heal-run { animation: fx-heal 1.7s ease; }
 
-        .fx-normal-run { animation: fx-normal 0.4s ease; }
-        .fx-dark-run { animation: fx-dark 0.4s ease; }
-        .fx-ground-run { animation: fx-ground 0.6s ease; }
-        .fx-ice-run { animation: fx-ice 0.6s ease; }
-        .fx-fire-run { animation: fx-fire 0.6s ease; }
-        .fx-water-run { animation: fx-water 0.6s ease; }
-        .fx-electric-run { animation: fx-electric 0.6s ease; }
-        .fx-grass-run { animation: fx-grass 0.6s ease; }
-        .fx-flying-run { animation: fx-flying 0.4s ease; }
-        .fx-poison-run { background: rgba(128, 0, 128, 0.5); animation: fx-normal 0.6s ease; }
-        .fx-sleep-run::after { content: 'Zzz'; position:absolute; top:40%; left:50%; color:#fff; text-shadow:0 0 5px #000; font-size:2.5rem; font-weight:bold; animation: fx-sleep 1.5s ease-out; }
-        .fx-confuse-run { background: repeating-radial-gradient(circle, rgba(255,255,0,0.3), rgba(255,0,0,0.3) 10%, transparent 20%); animation: spin 1s linear forwards; }
+        /* 龍系專屬動畫 */
+        @keyframes fx-dragon { 0% { background: rgba(100,0,200,0); transform: scale(1); } 30% { background: rgba(100,0,200,0.5); transform: scale(1.03); } 60% { background: rgba(200,0,100,0.4); transform: scale(1.05); } 100% { background: rgba(100,0,200,0); transform: scale(1); } }
+        .fx-dragon-run { animation: fx-dragon 1.6s ease; }
+
+        /* 格鬥系專屬動畫 */
+        @keyframes fx-fighting { 0%, 100% { background: transparent; } 15% { background: rgba(255,100,0,0.6); transform: skewX(-5deg); } 30% { background: transparent; } 50% { background: rgba(255,100,0,0.5); transform: skewX(5deg); } 70% { background: transparent; } 85% { background: rgba(255,150,0,0.4); } }
+        .fx-fighting-run { animation: fx-fighting 1.4s ease; }
+
+        /* 鋼系專屬動畫 */
+        @keyframes fx-steel { 0% { background: rgba(180,180,200,0); } 25% { background: rgba(180,180,220,0.6); filter: brightness(1.5); } 50% { background: rgba(220,220,255,0.4); } 75% { background: rgba(180,180,220,0.5); filter: brightness(1.3); } 100% { background: rgba(180,180,200,0); } }
+        .fx-steel-run { animation: fx-steel 1.5s ease; }
+
+        /* 念力系專屬動畫 */
+        @keyframes fx-psychic { 0%, 100% { background: transparent; } 20% { background: rgba(255,0,200,0.4); transform: scale(1.02) rotate(1deg); } 40% { background: rgba(200,0,255,0.5); transform: scale(1.04) rotate(-1deg); } 60% { background: rgba(255,0,200,0.3); transform: scale(1.02) rotate(1deg); } 80% { background: rgba(200,0,255,0.4); } }
+        .fx-psychic-run { animation: fx-psychic 1.6s ease; }
+        /* 粒子畫布 */
+        #fx-canvas { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9; }
 
         /* 圖片大小限制修復 */
         .enemy-sprite { position: absolute; bottom: 38%; right: 8vmin; max-width: 40vmin; height: clamp(100px, 25vmin, 200px); object-fit: contain; filter: drop-shadow(0 10px 5px rgba(0,0,0,0.3)); z-index: 5; image-rendering: pixelated; transition: transform 0.3s ease;}
@@ -419,7 +438,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260513</div><div>題庫版本：20260417</div><div>更新資訊：寶可夢造型系統、新增商品造型卡碎片、試煉塔挑戰</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260513</div><div>題庫版本：20260417</div><div>更新資訊：寶可夢造型系統、新增商品造型卡碎片、試煉塔挑戰、招式動畫細化、一般地圖等級修正</div>
             </div>
         </div>
     </div>
@@ -1156,7 +1175,9 @@ window.MOE_DATA_STRING = `
 
     <div id="battle-screen">
         <div class="battle-scene" id="battle-scene">
-            <div id="fx-layer"></div>
+            <div id="fx-layer">
+            <canvas id="fx-canvas"></canvas>
+        </div>
             <div class="battle-stat-box enemy-stat-box">
                 <div class="stat-name-row">
                     <div><span id="enemy-boss-tag" class="boss-tag" style="display:none;">霸主</span><span id="enemy-name">野生字靈</span><span id="enemy-status" class="status-tag"></span></div>
@@ -1199,6 +1220,440 @@ window.MOE_DATA_STRING = `
     <script>
         // ======= 通用函數與等待 Promise =======
         window.wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        // ===== 招式粒子動畫引擎 =====
+        window.FXEngine = (() => {
+            let canvas, ctx, particles = [], animFrame = null;
+
+            function init() {
+                canvas = document.getElementById('fx-canvas');
+                if (!canvas) return false;
+                const scene = document.getElementById('battle-scene');
+                if (scene) {
+                    canvas.width = scene.offsetWidth || window.innerWidth;
+                    canvas.height = scene.offsetHeight || 300;
+                }
+                ctx = canvas.getContext('2d');
+                return true;
+            }
+
+            function resize() {
+                if (!canvas) return;
+                const scene = document.getElementById('battle-scene');
+                if (scene) { canvas.width = scene.offsetWidth; canvas.height = scene.offsetHeight; }
+            }
+
+            function loop() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles = particles.filter(p => p.life > 0);
+                particles.forEach(p => { p.update(); p.draw(ctx); });
+                if (particles.length > 0) animFrame = requestAnimationFrame(loop);
+                else animFrame = null;
+            }
+
+            function start() {
+                if (!animFrame) animFrame = requestAnimationFrame(loop);
+            }
+
+            function clear() {
+                particles = [];
+                if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+            }
+
+            // 粒子類別工廠
+            function Particle(opts) {
+                Object.assign(this, { x:0,y:0,vx:0,vy:0,size:8,color:'#fff',alpha:1,life:1,maxLife:1,gravity:0,shrink:0,spin:0,angle:0,shape:'circle',text:'', ...opts });
+                this.maxLife = this.life;
+            }
+            Particle.prototype.update = function() {
+                this.x += this.vx; this.y += this.vy; this.vy += this.gravity;
+                this.vx *= 0.97; this.vy *= 0.97;
+                this.size = Math.max(0, this.size - this.shrink);
+                this.angle += this.spin;
+                this.life--;
+                this.alpha = Math.max(0, this.life / this.maxLife);
+            };
+            Particle.prototype.draw = function(c) {
+                c.save(); c.globalAlpha = this.alpha; c.fillStyle = this.color;
+                c.translate(this.x, this.y); c.rotate(this.angle);
+                if (this.shape === 'circle') { c.beginPath(); c.arc(0,0,this.size,0,Math.PI*2); c.fill(); }
+                else if (this.shape === 'star') { drawStar(c, 0, 0, 5, this.size, this.size*0.4); c.fill(); }
+                else if (this.shape === 'leaf') { c.beginPath(); c.ellipse(0,0,this.size*0.4,this.size,0,0,Math.PI*2); c.fill(); }
+                else if (this.shape === 'bolt') {
+                    c.strokeStyle = this.color; c.lineWidth = this.size*0.5;
+                    c.beginPath(); c.moveTo(0,-this.size); c.lineTo(-this.size*0.3, 0); c.lineTo(this.size*0.2, 0); c.lineTo(0, this.size); c.stroke();
+                }
+                else if (this.shape === 'drop') { c.beginPath(); c.moveTo(0,-this.size); c.quadraticCurveTo(this.size*0.8, 0, 0, this.size); c.quadraticCurveTo(-this.size*0.8, 0, 0,-this.size); c.fill(); }
+                else if (this.shape === 'snowflake') {
+                    c.strokeStyle = this.color; c.lineWidth = this.size * 0.2;
+                    for (let i=0; i<6; i++) { c.rotate(Math.PI/3); c.beginPath(); c.moveTo(0,0); c.lineTo(0, -this.size); c.stroke(); }
+                }
+                else if (this.shape === 'text' && this.text) { c.font = `bold ${this.size}px serif`; c.fillStyle = this.color; c.textAlign='center'; c.fillText(this.text, 0, 0); }
+                c.restore();
+            };
+            function drawStar(c, cx, cy, spikes, outerR, innerR) {
+                let rot = (Math.PI/2)*3; const step = Math.PI/spikes;
+                c.beginPath(); c.moveTo(cx, cy-outerR);
+                for (let i=0; i<spikes; i++) { c.lineTo(cx+Math.cos(rot)*outerR, cy+Math.sin(rot)*outerR); rot+=step; c.lineTo(cx+Math.cos(rot)*innerR, cy+Math.sin(rot)*innerR); rot+=step; }
+                c.closePath();
+            }
+
+            function emit(opts) { particles.push(new Particle(opts)); start(); }
+
+            function getTargetPos(targetId) {
+                const el = document.getElementById(targetId);
+                if (!el || !canvas) return { x: canvas ? canvas.width/2 : 200, y: canvas ? canvas.height/2 : 150 };
+                const rect = el.getBoundingClientRect();
+                const cr = canvas.getBoundingClientRect();
+                return { x: rect.left - cr.left + rect.width/2, y: rect.top - cr.top + rect.height/2 };
+            }
+
+            // ─── 招式特效庫 ───
+            const EFFECTS = {
+                // 火系：火焰衝柱+爆炸橙紅粒子
+                fire: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 火焰柱：從底部往上噴
+                    for (let i=0; i<80; i++) {
+                        const ang = -Math.PI/2 + (Math.random()-0.5)*1.5;
+                        const spd = 3+Math.random()*7;
+                        emit({ x:x+(Math.random()-0.5)*30, y: y+30, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd-3, size:10+Math.random()*12,
+                              color:`hsl(${10+Math.random()*40},100%,${45+Math.random()*25}%)`, life:35+Math.floor(Math.random()*20), shrink:0.3, gravity:-0.08, shape:'circle' });
+                    }
+                    // 火花飛散
+                    for (let i=0; i<30; i++) { const ang=Math.random()*Math.PI*2; const spd=5+Math.random()*7;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:3+Math.random()*4, color:`hsl(${30+Math.random()*20},100%,80%)`, life:18, shrink:0.4, gravity:0.1, shape:'circle' }); }
+                    // 延遲爆發：第二波
+                    setTimeout(()=>{
+                        for (let i=0; i<40; i++) { const ang=Math.random()*Math.PI*2; const spd=4+Math.random()*6;
+                            emit({ x:x+(Math.random()-0.5)*60, y:y+(Math.random()-0.5)*40, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd-2, size:8+Math.random()*10, color:`hsl(${15+Math.random()*30},100%,55%)`, life:25, shrink:0.35, gravity:-0.05, shape:'circle' }); }
+                    }, 400);
+                    // 煤灰粒子
+                    setTimeout(()=>{
+                        for (let i=0; i<25; i++) { const ang=Math.random()*Math.PI*2;
+                            emit({ x:x+(Math.random()-0.5)*80, y:y-20, vx:Math.cos(ang)*1.5, vy:Math.sin(ang)*1.5-1, size:5+Math.random()*6, color:'rgba(50,30,20,0.6)', life:30, shrink:0.15, gravity:0.03, shape:'circle' }); }
+                    }, 700);
+                },
+                // 水系：水柱衝擊+波紋+水珠
+                water: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 水柱衝擊
+                    for (let i=0; i<70; i++) {
+                        const ang=Math.random()*Math.PI*2; const spd=3+Math.random()*8;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd-1, size:6+Math.random()*9,
+                              color:`hsl(${195+Math.random()*25},85%,${45+Math.random()*25}%)`, life:30+Math.floor(Math.random()*15), shrink:0.22, gravity:0.12, shape:'drop' });
+                    }
+                    // 波紋擴散
+                    for (let r=0; r<4; r++) setTimeout(()=>{
+                        const count = 28+r*6; for (let i=0; i<count; i++) { const ang=i/count*Math.PI*2;
+                            emit({ x:x+Math.cos(ang)*(18+r*22), y:y+Math.sin(ang)*(18+r*22), vx:Math.cos(ang)*(1.5+r*0.3), vy:Math.sin(ang)*(1.5+r*0.3), size:5-r*0.5, color:`rgba(80,180,255,${0.8-r*0.15})`, life:18+r*4, shrink:0.2, shape:'circle' }); }
+                    }, r*120);
+                    // 水花飛濺
+                    setTimeout(()=>{
+                        for (let i=0; i<20; i++) { const ang=Math.random()*Math.PI;
+                            emit({ x:x+(Math.random()-0.5)*50, y:y+10, vx:Math.cos(ang)*4, vy:-5-Math.random()*5, size:4+Math.random()*5, color:'#b0e8ff', life:20, shrink:0.3, gravity:0.2, shape:'drop' }); }
+                    }, 300);
+                },
+                // 電系：電弧網+閃電衝擊
+                electric: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 閃電弧形粒子
+                    for (let i=0; i<55; i++) {
+                        const ang=Math.random()*Math.PI*2; const spd=4+Math.random()*10;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:4+Math.random()*5,
+                              color: i%3===0 ? '#fff' : i%3===1 ? '#f1c40f' : '#ffe066', life:12+Math.floor(Math.random()*12), shrink:0.55, shape:'bolt', angle:ang, spin:0.4 });
+                    }
+                    // 三波閃光爆發
+                    for (let i=0; i<4; i++) setTimeout(()=>{
+                        for (let j=0; j<20; j++) { const ang=Math.random()*Math.PI*2; const spd=6+Math.random()*6;
+                            emit({ x:x+(Math.random()-0.5)*70, y:y+(Math.random()-0.5)*70, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:7, color:'#fffde7', life:10, shrink:0.9, shape:'circle' }); }
+                    }, i*120);
+                    // 向外輻射射線
+                    for (let w=0; w<2; w++) setTimeout(()=>{
+                        for (let i=0; i<12; i++) { const ang=i/12*Math.PI*2;
+                            emit({ x, y, vx:Math.cos(ang)*16, vy:Math.sin(ang)*16, size:4, color:'#f1c40f', life:10, shrink:0.4, shape:'circle' }); }
+                    }, w*250);
+                    // 電流殘留
+                    setTimeout(()=>{
+                        for (let i=0; i<30; i++) { const ang=Math.random()*Math.PI*2;
+                            emit({ x:x+(Math.random()-0.5)*80, y:y+(Math.random()-0.5)*60, vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*2, size:2+Math.random()*3, color:'#f9e000', life:20, shrink:0.15, shape:'bolt', angle:ang, spin:0.2 }); }
+                    }, 500);
+                },
+                // 草系：葉片漩渦+花粉爆炸
+                grass: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 旋轉葉片漩渦
+                    for (let i=0; i<60; i++) {
+                        const ang=i/60*Math.PI*2*2; const r=5+Math.random()*30;
+                        const hue=85+Math.random()*45;
+                        emit({ x:x+Math.cos(ang)*r, y:y+Math.sin(ang)*r, vx:(-Math.sin(ang)*3+Math.random()-0.5)*2, vy:(Math.cos(ang)*3-2+Math.random()), 
+                              size:6+Math.random()*9, color:`hsl(${hue},80%,${40+Math.random()*20}%)`, life:35+Math.floor(Math.random()*18), shrink:0.18, gravity:0.04, shape:'leaf', angle:ang, spin:(Math.random()-0.5)*0.25 });
+                    }
+                    // 花粉爆炸
+                    setTimeout(()=>{
+                        for (let i=0; i<40; i++) { const ang=Math.random()*Math.PI*2; const spd=2+Math.random()*5;
+                            emit({ x:x+(Math.random()-0.5)*50, y:y+(Math.random()-0.5)*50, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd-1, size:3+Math.random()*5, color:`hsl(${55+Math.random()*30},90%,${60+Math.random()*20}%)`, life:25, shrink:0.2, gravity:-0.02, shape:'star', angle:Math.random()*Math.PI, spin:0.1 }); }
+                    }, 300);
+                    // 草叢抖動：從下往上升起的葉子
+                    setTimeout(()=>{
+                        for (let i=0; i<20; i++) { const hue=90+Math.random()*40;
+                            emit({ x:x+(Math.random()-0.5)*120, y:(canvas?canvas.height:300)+10, vx:(Math.random()-0.5)*2, vy:-3-Math.random()*4, size:7+Math.random()*8, color:`hsl(${hue},75%,40%)`, life:28, shrink:0.2, gravity:-0.03, shape:'leaf', angle:Math.random()*Math.PI*2, spin:(Math.random()-0.5)*0.15 }); }
+                    }, 600);
+                },
+                // 冰系：冰晶碎裂+凍結衝擊波
+                ice: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 主衝擊：雪花四散
+                    for (let i=0; i<55; i++) {
+                        const ang=Math.random()*Math.PI*2; const spd=2+Math.random()*6;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:7+Math.random()*12,
+                              color:`hsl(${188+Math.random()*25},85%,${68+Math.random()*20}%)`, life:32+Math.floor(Math.random()*18), shrink:0.16, shape:'snowflake', angle:Math.random()*Math.PI/3, spin:0.04 });
+                    }
+                    // 冰碎片：高速向外
+                    for (let i=0; i<35; i++) { const ang=Math.random()*Math.PI*2; const spd=5+Math.random()*8;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:4+Math.random()*6, color:'#d0f4ff', life:20, shrink:0.28, gravity:0.09, shape:'circle' }); }
+                    // 凍結光環擴散
+                    setTimeout(()=>{
+                        for (let r=0; r<3; r++) setTimeout(()=>{
+                            const count=24; for(let i=0;i<count;i++){const ang=i/count*Math.PI*2;
+                                emit({x:x+Math.cos(ang)*(20+r*25),y:y+Math.sin(ang)*(20+r*25),vx:Math.cos(ang)*2,vy:Math.sin(ang)*2,size:5,color:'rgba(150,230,255,0.8)',life:15+r*3,shrink:0.28,shape:'circle'});}
+                        }, r*100);
+                    }, 300);
+                    // 霜花殘留
+                    setTimeout(()=>{
+                        for (let i=0; i<20; i++) {
+                            emit({ x:x+(Math.random()-0.5)*100, y:y+(Math.random()-0.5)*80, vx:(Math.random()-0.5)*1, vy:-0.5-Math.random(), size:5+Math.random()*7, color:'rgba(200,240,255,0.5)', life:25, shrink:0.12, gravity:-0.01, shape:'snowflake', angle:Math.random()*Math.PI, spin:0.02 }); }
+                    }, 700);
+                },
+                // 飛行系：氣流+羽毛+龍捲風
+                flying: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 快速水平氣流
+                    for (let i=0; i<8; i++) {
+                        const baseY = y + (i-4)*20;
+                        for (let j=0; j<12; j++) emit({ x:-40+j*20, y:baseY+(Math.random()-0.5)*15, vx:16+Math.random()*6, vy:(Math.random()-0.5)*1.5, size:5+Math.random()*4, color:`rgba(200,230,255,${0.5+Math.random()*0.5})`, life:14+Math.floor(Math.random()*10), shrink:0.28, shape:'circle' });
+                    }
+                    // 羽毛群
+                    for (let i=0; i<30; i++) emit({ x:(Math.random()<0.5?-25:canvas.width+25), y:y+(Math.random()-0.5)*100, vx:(Math.random()<0.5?12:(-12))+Math.random()*5, vy:(Math.random()-0.5)*4, size:9+Math.random()*7, color: i%3===0?'#fffde7':'#fff', life:25, shrink:0.18, gravity:-0.04, shape:'leaf', angle:Math.random()*Math.PI, spin:(Math.random()-0.5)*0.18 });
+                    // 龍捲風（環形旋轉粒子）
+                    setTimeout(()=>{
+                        for (let i=0; i<50; i++) { const ang=i/50*Math.PI*2*3; const r=5+i*1.2;
+                            emit({ x:x+Math.cos(ang)*r, y:y+Math.sin(ang)*r*0.5-i*0.5, vx:-Math.sin(ang)*3, vy:-1.5, size:4+Math.random()*4, color:'rgba(220,240,255,0.7)', life:20, shrink:0.2, shape:'circle' }); }
+                    }, 250);
+                },
+                // 毒系：毒泡氣泡+毒液噴射
+                poison: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 毒液粒子
+                    for (let i=0; i<55; i++) {
+                        const ang=Math.random()*Math.PI*2; const spd=1.5+Math.random()*5;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd-0.7, size:6+Math.random()*12,
+                              color:`hsl(${268+Math.random()*30},72%,${35+Math.random()*28}%)`, life:32+Math.floor(Math.random()*18), shrink:0.18, gravity:-0.05, shape:'circle' });
+                    }
+                    // 毒氣泡爆裂
+                    for (let i=0; i<7; i++) setTimeout(()=>{
+                        const bx=x+(Math.random()-0.5)*80; const by=y+(Math.random()-0.5)*60;
+                        emit({ x:bx, y:by, size:18+Math.random()*15, color:'rgba(130,0,180,0.45)', life:10, shrink:2.2, shape:'circle', vx:0,vy:-0.7 });
+                        // 爆裂後的小粒子
+                        for (let j=0;j<8;j++){const a=Math.random()*Math.PI*2;
+                            emit({x:bx,y:by,vx:Math.cos(a)*3,vy:Math.sin(a)*3,size:4,color:'rgba(170,0,230,0.6)',life:10,shrink:0.5,shape:'circle'});}
+                    }, i*130);
+                    // 毒霧殘留
+                    setTimeout(()=>{
+                        for (let i=0; i<25; i++) emit({ x:x+(Math.random()-0.5)*100, y:y+(Math.random()-0.5)*80, vx:(Math.random()-0.5)*1, vy:-1-Math.random(), size:10+Math.random()*12, color:'rgba(100,0,150,0.25)', life:30, shrink:0.12, gravity:-0.04, shape:'circle' });
+                    }, 600);
+                },
+                // 暗系：暗影球+黑色漩渦+靈魂粒子
+                dark: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 暗影漩渦（雙層）
+                    for (let ring=0; ring<2; ring++) {
+                        const dir = ring===0?1:-1;
+                        for (let i=0; i<40; i++) {
+                            const ang=i/40*Math.PI*2*3*dir; const r=8+ring*25+Math.random()*15;
+                            emit({ x:x+Math.cos(ang)*r, y:y+Math.sin(ang)*r, vx:-Math.sin(ang)*3*dir, vy:Math.cos(ang)*3*dir-1, size:5+Math.random()*7,
+                                  color:`hsl(${265+Math.random()*50},60%,${20+Math.random()*22}%)`, life:25+Math.floor(Math.random()*18), shrink:0.22, shape:'circle', alpha:0.85 });
+                        }
+                    }
+                    // 暗影碎片爆炸
+                    for (let i=0; i<25; i++) { const ang=Math.random()*Math.PI*2; const spd=5+Math.random()*7;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:5+Math.random()*6, color:'#080808', life:18, shrink:0.38, shape:'circle' }); }
+                    // 黑光閃爍
+                    for (let i=0; i<4; i++) setTimeout(()=>{
+                        for (let j=0;j<12;j++){const ang=Math.random()*Math.PI*2;
+                            emit({x:x+(Math.random()-0.5)*60,y:y+(Math.random()-0.5)*60,vx:Math.cos(ang)*4,vy:Math.sin(ang)*4,size:6,color:'rgba(60,0,80,0.7)',life:10,shrink:0.7,shape:'circle'});}
+                    }, i*150);
+                    // 靈魂粒子浮起
+                    setTimeout(()=>{
+                        for (let i=0;i<15;i++) emit({x:x+(Math.random()-0.5)*60,y:y,vx:(Math.random()-0.5)*1.5,vy:-2-Math.random()*2,size:6+Math.random()*8,color:'rgba(150,0,200,0.5)',life:30,shrink:0.15,gravity:-0.05,shape:'circle'});
+                    }, 500);
+                },
+                // 睡眠系：Zzz + 夢境氣泡
+                sleep: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    for (let i=0; i<4; i++) setTimeout(()=>{
+                        emit({ x:x+(Math.random()-0.5)*40, y:y-20-i*15, vx:(Math.random()-0.5)*0.7, vy:-1.5, size:22+i*10, color:'#9b59b6', life:55, shrink:0.28, shape:'text', text:'z' });
+                    }, i*280);
+                    for (let i=0; i<30; i++) { const ang=Math.random()*Math.PI*2;
+                        emit({ x, y, vx:Math.cos(ang)*2.5, vy:Math.sin(ang)*2.5-1.2, size:9+Math.random()*9, color:'rgba(200,150,255,0.55)', life:32, shrink:0.25, gravity:-0.07, shape:'circle' }); }
+                    // 夢境星星
+                    setTimeout(()=>{
+                        for(let i=0;i<12;i++){const ang=Math.random()*Math.PI*2;
+                            emit({x:x+(Math.random()-0.5)*80,y:y+(Math.random()-0.5)*60,vx:Math.cos(ang)*1,vy:-1.5-Math.random(),size:6+Math.random()*6,color:'rgba(255,220,255,0.7)',life:35,shrink:0.15,gravity:-0.04,shape:'star',angle:Math.random()*Math.PI,spin:0.08});}
+                    }, 400);
+                },
+                // 混亂系：彩色漩渦+問號
+                confuse: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    const colors=['#e74c3c','#f1c40f','#2ecc71','#3498db','#9b59b6','#e67e22','#1abc9c'];
+                    for (let i=0; i<80; i++) {
+                        const ang=Math.random()*Math.PI*2; const spd=2.5+Math.random()*7;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:5+Math.random()*8, color:colors[Math.floor(Math.random()*colors.length)], life:25+Math.floor(Math.random()*18), shrink:0.22, shape:'star', angle:Math.random()*Math.PI, spin:(Math.random()-0.5)*0.35 });
+                    }
+                    // 問號浮起
+                    for(let i=0;i<3;i++) setTimeout(()=>{
+                        emit({x:x+(Math.random()-0.5)*50,y:y,vx:(Math.random()-0.5)*1,vy:-2,size:22,color:colors[Math.floor(Math.random()*colors.length)],life:40,shrink:0.4,shape:'text',text:'?'});
+                    }, i*200);
+                },
+                // 回復系：綠光氣泡+心形上升
+                heal: (to) => {
+                    const el = document.getElementById(to);
+                    if (!el || !canvas) return;
+                    const rect = el.getBoundingClientRect(); const cr = canvas.getBoundingClientRect();
+                    const ex = rect.left-cr.left+rect.width/2; const ey = rect.top-cr.top+rect.height;
+                    for (let i=0; i<55; i++) setTimeout(()=>{
+                        emit({ x:ex+(Math.random()-0.5)*rect.width*0.7, y:ey, vx:(Math.random()-0.5)*2, vy:-2-Math.random()*3, size:7+Math.random()*10, color:`hsl(${118+Math.random()*28},82%,${48+Math.random()*22}%)`, life:38+Math.floor(Math.random()*22), shrink:0.16, gravity:-0.03, shape:'circle' });
+                    }, Math.random()*600);
+                    // 多個愛心浮起
+                    for(let i=0;i<5;i++) setTimeout(()=>{
+                        emit({ x:ex+(Math.random()-0.5)*rect.width*0.5, y:ey-rect.height/2, size:22+i*5, color:`rgba(${80+i*20},${200+i*10},${80+i*20},0.85)`, life:20, shrink:1.5, shape:'text', text:'♥', vx:(Math.random()-0.5)*2, vy:-2-Math.random() });
+                    }, i*150);
+                },
+                // 普通系：衝擊波+白光爆炸
+                normal: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 三層衝擊環
+                    for (let r=0; r<4; r++) {
+                        const count = 22+r*10; for (let i=0; i<count; i++) { const ang=i/count*Math.PI*2;
+                            emit({ x:x+Math.cos(ang)*(12+r*22), y:y+Math.sin(ang)*(12+r*22), vx:Math.cos(ang)*(3.5+r*0.8), vy:Math.sin(ang)*(3.5+r*0.8), size:6-r*0.8, color:`rgba(255,255,255,${0.85-r*0.18})`, life:12+r*4, shrink:0.38, shape:'circle' }); }
+                    }
+                    // 閃光中心爆炸
+                    for (let i=0; i<22; i++) { const ang=Math.random()*Math.PI*2; const spd=5+Math.random()*8;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:5+Math.random()*5, color:'#fff', life:12, shrink:0.55, shape:'circle' }); }
+                    // 延遲第二波
+                    setTimeout(()=>{
+                        for (let i=0; i<18; i++) { const ang=Math.random()*Math.PI*2; const spd=3+Math.random()*5;
+                            emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:4+Math.random()*4, color:'rgba(220,220,255,0.8)', life:10, shrink:0.45, shape:'circle' }); }
+                    }, 350);
+                },
+                // 地面系：岩石湧出+塵埃+地裂
+                ground: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    const by = canvas ? canvas.height : 300;
+                    // 岩石從底部湧出
+                    for (let i=0; i<65; i++) {
+                        emit({ x:x+(Math.random()-0.5)*130, y:by, vx:(Math.random()-0.5)*5, vy:-5-Math.random()*10, size:8+Math.random()*14,
+                              color:`hsl(${22+Math.random()*22},62%,${30+Math.random()*18}%)`, life:30+Math.floor(Math.random()*18), shrink:0.22, gravity:0.28, shape:'circle' });
+                    }
+                    // 地裂線（橫向粒子帶）
+                    for (let row=0; row<3; row++) setTimeout(()=>{
+                        const ry = y + 20 + row*18;
+                        for (let j=0; j<20; j++) emit({ x: x-200+j*22, y: ry+(Math.random()-0.5)*12, vx:(Math.random()-0.5)*2, vy:-2-Math.random()*3, size:6+Math.random()*8, color:`hsl(${25+Math.random()*20},55%,${30+Math.random()*15}%)`, life:18, shrink:0.3, gravity:0.15, shape:'circle' });
+                    }, row*120);
+                    // 塵埃雲
+                    for (let i=0; i<40; i++) { const ang=Math.random()*Math.PI;
+                        emit({ x:x+(Math.random()-0.5)*100, y:y+25, vx:Math.cos(ang)*4, vy:Math.sin(ang)*(-4)-1.5, size:10+Math.random()*10, color:'rgba(180,130,80,0.45)', life:25, shrink:0.25, shape:'circle' }); }
+                },
+                // 龍系：龍爪光束+紫色龍氣
+                dragon: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 龍氣漩渦（藍紫色）
+                    for (let i=0; i<70; i++) {
+                        const ang=i/70*Math.PI*2*2.5; const r=5+Math.random()*40;
+                        emit({ x:x+Math.cos(ang)*r, y:y+Math.sin(ang)*r, vx:-Math.sin(ang)*4, vy:Math.cos(ang)*4-1, size:6+Math.random()*9,
+                              color:`hsl(${240+Math.random()*60},75%,${35+Math.random()*30}%)`, life:28+Math.floor(Math.random()*18), shrink:0.2, shape:'circle', alpha:0.9 });
+                    }
+                    // 龍爪斬擊（3條線）
+                    for (let c=0; c<3; c++) setTimeout(()=>{
+                        const startX = x-100+c*40, startY=y-60+c*30;
+                        for(let j=0;j<15;j++) emit({x:startX+j*14,y:startY+j*14,vx:2+Math.random(),vy:2+Math.random(),size:8-j*0.3,color:`hsl(${270+c*30},80%,${50+j*2}%)`,life:12,shrink:0.6,shape:'circle'});
+                    }, c*100);
+                    // 龍炎爆炸
+                    setTimeout(()=>{
+                        for(let i=0;i<35;i++){const ang=Math.random()*Math.PI*2;const spd=5+Math.random()*8;
+                            emit({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:7+Math.random()*8,color:`hsl(${260+Math.random()*80},85%,${45+Math.random()*25}%)`,life:22,shrink:0.3,gravity:-0.04,shape:'circle'});}
+                    }, 400);
+                },
+                // 格鬥系：橙色衝擊波+拳擊殘影
+                fighting: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 橙色衝擊圓環
+                    for (let r=0; r<4; r++) setTimeout(()=>{
+                        const count=22+r*8; for(let i=0;i<count;i++){const ang=i/count*Math.PI*2;
+                            emit({x:x+Math.cos(ang)*(15+r*18),y:y+Math.sin(ang)*(15+r*18),vx:Math.cos(ang)*(4+r),vy:Math.sin(ang)*(4+r),size:6-r*0.8,color:`hsl(${25+r*8},90%,${50+r*5}%)`,life:12+r*3,shrink:0.4,shape:'circle'});}
+                    }, r*80);
+                    // 拳擊衝擊碎片
+                    for (let i=0; i<30; i++) { const ang=Math.random()*Math.PI*2; const spd=4+Math.random()*9;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:5+Math.random()*5, color:`hsl(${15+Math.random()*25},95%,${55+Math.random()*20}%)`, life:16, shrink:0.45, gravity:0.05, shape:'circle' }); }
+                    // 衝擊閃光
+                    for(let i=0;i<3;i++) setTimeout(()=>{
+                        for(let j=0;j<10;j++){const ang=Math.random()*Math.PI*2;
+                            emit({x:x+(Math.random()-0.5)*40,y:y+(Math.random()-0.5)*40,vx:Math.cos(ang)*5,vy:Math.sin(ang)*5,size:7,color:'#fff8e1',life:8,shrink:0.9,shape:'circle'});}
+                    }, i*100);
+                },
+                // 鋼系：金屬碎片+光澤反射
+                steel: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 金屬碎片爆散
+                    for (let i=0; i<55; i++) { const ang=Math.random()*Math.PI*2; const spd=3+Math.random()*9;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:4+Math.random()*7,
+                              color:`hsl(${210+Math.random()*20},${30+Math.random()*40}%,${60+Math.random()*30}%)`, life:22+Math.floor(Math.random()*15), shrink:0.28, gravity:0.08, shape:'circle' }); }
+                    // 鋼光射線
+                    for (let i=0; i<12; i++) { const ang=i/12*Math.PI*2;
+                        emit({ x, y, vx:Math.cos(ang)*14, vy:Math.sin(ang)*14, size:4, color:'#e8eaf6', life:10, shrink:0.5, shape:'circle' }); }
+                    // 金屬光澤閃爍
+                    for(let i=0;i<4;i++) setTimeout(()=>{
+                        for(let j=0;j<12;j++){const ang=Math.random()*Math.PI*2;
+                            emit({x:x+(Math.random()-0.5)*80,y:y+(Math.random()-0.5)*60,vx:Math.cos(ang)*3,vy:Math.sin(ang)*3,size:6,color:'rgba(255,255,255,0.9)',life:8,shrink:0.85,shape:'circle'});}
+                    }, i*150);
+                },
+                // 念力系：粉紫能量環+念力波
+                psychic: (to) => {
+                    const {x,y} = getTargetPos(to);
+                    // 念力能量環（同心擴散）
+                    for (let r=0; r<5; r++) setTimeout(()=>{
+                        const count=30; for(let i=0;i<count;i++){const ang=i/count*Math.PI*2;
+                            emit({x:x+Math.cos(ang)*(12+r*20),y:y+Math.sin(ang)*(12+r*20),vx:Math.cos(ang)*2.5,vy:Math.sin(ang)*2.5,size:6,color:`hsl(${300+r*15},80%,${55+r*5}%)`,life:14+r*2,shrink:0.35,shape:'circle'});}
+                    }, r*90);
+                    // 念力波粒子
+                    for (let i=0; i<45; i++) { const ang=Math.random()*Math.PI*2; const spd=2+Math.random()*6;
+                        emit({ x, y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd, size:5+Math.random()*8,
+                              color:`hsl(${290+Math.random()*40},75%,${55+Math.random()*25}%)`, life:28+Math.floor(Math.random()*15), shrink:0.2, gravity:-0.02, shape:'star', angle:Math.random()*Math.PI, spin:0.12 }); }
+                    // 眼睛符號
+                    setTimeout(()=>{
+                        emit({x,y,vx:0,vy:-1.5,size:25,color:'rgba(255,100,255,0.8)',life:30,shrink:0.6,shape:'text',text:'👁'});
+                    }, 300);
+                }
+            };
+
+            return {
+                play(animType, targetId, duration) {
+                    if (!canvas && !init()) return;
+                    resize();
+                    clear();
+                    const fn = EFFECTS[animType] || EFFECTS.normal;
+                    fn(targetId || 'enemy-sprite');
+                    if (duration) setTimeout(clear, duration);
+                },
+                getEffect(animType) { return EFFECTS[animType] || EFFECTS.normal; },
+                clear
+            };
+        })();
+
+        // 覆蓋 applyMoveEffect 使用粒子特效
+        window._origApplyFX = null; // 標記已注入
         
         const TONE_MAP = { '1': '', '2': 'ˊ', '3': 'ˇ', '4': 'ˋ', '5': '˙' };
         window.formatZhuyin = (str) => { 
@@ -3697,7 +4152,8 @@ window.MOE_DATA_STRING = `
             const zone = mapZones[zoneIdx]; 
             let baseLv = zone.minLv + Math.floor(Math.random() * 10); 
             if (zone.isWeekendRaid) { baseLv = window.player.level; } 
-            else { baseLv = Math.max(Math.max(1, window.player.level - 5), Math.min(window.player.level + 5, baseLv)); }
+            // 一般地圖：baseLv 固定在 zone.minLv ~ zone.maxLv 範圍內，不隨玩家等級變動
+            else { baseLv = Math.min(baseLv, zone.maxLv); }
             
             let isBossEncounter = Math.random() < 0.15 || baseLv % 10 === 0; 
             let eLv = baseLv + (isBossEncounter ? 2 : 0);
@@ -3875,9 +4331,31 @@ window.MOE_DATA_STRING = `
         };
 
         window.applyMoveEffect = async (move, attacker, aBuffs, defender, dBuffs, aId, dId) => {
+            // 根據招式名稱/ID 細化動畫類型
+            const MOVE_ANIM_MAP = {
+                // 龍系
+                m_dragonrage:'dragon', m_dragonpulse:'dragon', m_dragonclaw:'dragon', m_outrage:'dragon', m_aeroblast:'dragon',
+                // 格鬥系
+                m_karatechop:'fighting', m_crosschop:'fighting', m_forcepalm:'fighting', m_vacuumwave:'fighting', m_lowkick:'fighting',
+                // 鋼系
+                m_metalclaw:'steel', m_meteormash:'steel', m_flashcannon:'steel', m_metalsound:'steel',
+                // 念力系
+                m_psychic:'psychic', m_psystrike:'psychic', m_psybeam:'psychic', m_confusion:'psychic', m_aurasphere:'psychic',
+                // 吸血/幽靈
+                m_shadowball:'dark', m_shadowpunch:'dark', m_dreameater:'dark', m_curse:'dark', m_destinybond:'dark',
+                // 月亮之力
+                m_moonblast:'psychic',
+            };
+            const resolvedAnim = MOVE_ANIM_MAP[move.id] || move.anim;
+
             if (move.type === 'damage' || move.type === 'drain') {
-                window.AudioEngine.sfx.attack(); window.playAnim(`${aId}-sprite`, `anim-atk-${aId}`); await window.wait(200); 
-                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600); }
+                window.AudioEngine.sfx.attack(); window.playAnim(`${aId}-sprite`, `anim-atk-${aId}`); await window.wait(300);
+                // 粒子特效
+                if(resolvedAnim) {
+                    window.FXEngine.play(resolvedAnim, `${dId}-sprite`, 1700);
+                    // 保留舊版 CSS 層作為背景光暈
+                    const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='7'; fx.className = `fx-${resolvedAnim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 1600);
+                }
 
                 let atkStat = (attacker.atk || 10) + (aBuffs.atk || 0); let defStat = (defender.def || 5) + (dBuffs.def || 0); let critChance = (attacker.crit || 0) + (aBuffs.crit || 0) + (move.critBonus ? move.critBonus * 100 : 0); 
                 let isCrit = Math.random() * 100 < critChance;
@@ -3905,7 +4383,10 @@ window.MOE_DATA_STRING = `
                 if(isCrit) { await window.typeDialog(`💥 擊中要害！\n造成了 ${dmg} 點巨大傷害！`); } else await window.typeDialog(`造成了 ${dmg} 點傷害！`); await window.wait(600);
                 if (move.type === 'drain' && defender.hp >= 0) { let heal = Math.max(1, Math.floor(dmg / 2)); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`吸收了 ${heal} 點 HP！`); await window.wait(600); }
             } else if (move.type === 'status') {
-                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 1500); }
+                if(resolvedAnim) {
+                    window.FXEngine.play(resolvedAnim, `${dId}-sprite`, 1700);
+                    const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='7'; fx.className = `fx-${resolvedAnim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 1600);
+                }
                 if (Math.random() < move.chance) {
                     window.AudioEngine.sfx.status(); let targetState = dId === 'player' ? window.battleState.player : window.battleState.enemy; let tag = document.getElementById(`${dId}-status`);
                     if(!targetState.status) {
@@ -3921,7 +4402,10 @@ window.MOE_DATA_STRING = `
                 } else { await window.typeDialog(`但是沒有命中！`); await window.wait(600); }
             } else if (move.type === 'debuff') {
                 window.AudioEngine.sfx.item();
-                if(move.anim) { const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${move.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600); }
+                if(resolvedAnim) {
+                    window.FXEngine.play(resolvedAnim, `${dId}-sprite`, 1000);
+                    const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='7'; fx.className = `fx-${resolvedAnim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 1000);
+                }
                 if(dId === 'enemy') { window.currentEnemy.def = Math.max(1, window.currentEnemy.def - move.amount); } else { window.battleBuffs.def = Math.max(-20, window.battleBuffs.def - move.amount); }
                 await window.typeDialog(`對手的防禦力下降了！`); await window.wait(600);
             } else if (move.type === 'buff') {
@@ -3930,9 +4414,13 @@ window.MOE_DATA_STRING = `
                 else { if(move.stat === 'atk') window.currentEnemy.atk += move.amount; if(move.stat === 'def') window.currentEnemy.def += move.amount; if(move.stat === 'dodge') window.currentEnemy.dodgeRate += move.amount; }
                 await window.typeDialog(`${statN}大幅提升了！`); await window.wait(600);
             } else if (move.type === 'heal') {
-                window.AudioEngine.sfx.item(); let heal = Math.floor(attacker.maxHp * move.amount); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`回復了 ${heal} 點 HP！`); await window.wait(600);
+                window.AudioEngine.sfx.item();
+                window.FXEngine.play('heal', `${aId}-sprite`, 1700);
+                let heal = Math.floor(attacker.maxHp * move.amount); attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal); window.updateHpBar(aId, attacker.hp, attacker.maxHp); await window.typeDialog(`回復了 ${heal} 點 HP！`); await window.wait(600);
             } else if (move.type === 'heal_sleep') {
-                window.AudioEngine.sfx.item(); attacker.hp = attacker.maxHp; window.updateHpBar(aId, attacker.hp, attacker.maxHp);
+                window.AudioEngine.sfx.item();
+                window.FXEngine.play('heal', `${aId}-sprite`, 1700);
+                attacker.hp = attacker.maxHp; window.updateHpBar(aId, attacker.hp, attacker.maxHp);
                 let targetState = aId === 'player' ? window.battleState.player : window.battleState.enemy; let tag = document.getElementById(`${aId}-status`);
                 targetState.status = 'sleep'; targetState.statusTimer = 3; tag.innerText="睡"; tag.className="status-tag status-slp"; tag.style.display = 'inline-block';
                 await window.typeDialog(`回復了所有 HP！\n但也睡著了！`); await window.wait(600);
@@ -4438,7 +4926,8 @@ window.MOE_DATA_STRING = `
             await window.typeDialog(`${attackerName} 使用了\n【${usedMove.name}】！`); await window.wait(600);
             
             if (usedMove.anim) {
-                const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='8'; fx.className = `fx-${usedMove.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600);
+                window.FXEngine.play(usedMove.anim, dSprite, 700);
+                const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='7'; fx.className = `fx-${usedMove.anim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 600);
             }
 
             window.AudioEngine.sfx.attack(); window.playAnim(aSprite, attacker === window.pvpState.role ? 'anim-atk-player' : 'anim-atk-enemy'); await window.wait(200); 
@@ -6218,7 +6707,6 @@ window.MOE_DATA_STRING = `
             members.forEach(m => {
                 updatePayload[`${m.key}.alive`] = true;
                 updatePayload[`${m.key}.hp`] = m.maxHp;
-                updatePayload[`${m.key}.extraTimeReduction`] = 0;
             });
 
             const firstQuiz = window.quizBank[Math.floor(Math.random() * window.quizBank.length)];
@@ -6453,81 +6941,121 @@ window.MOE_DATA_STRING = `
             const myKey = window.towerPartyState.role;
             const me = data[myKey];
             const quizInfo = data.quiz;
+            if (!me || !me.alive) return;
 
             const isCorrect = answer !== null && quizInfo && answer === quizInfo.answer;
 
-            // 計算傷害
-            // 新機制：優先攻打自己對應的BOSS，打完自身對應的BOSS才幫其他隊友打
+            // 優先攻打自己對應的BOSS，打完自身對應的BOSS才幫其他隊友打
             const myBossIdx = data.bossTargets ? data.bossTargets[myKey] : 0;
             const myOwnBoss = data.bosses ? data.bosses[myBossIdx] : null;
             let bossTarget = myOwnBoss && myOwnBoss.hp > 0 ? myOwnBoss
                 : (data.bosses || []).filter(b => b.hp > 0).sort((a,b) => a.idx - b.idx)[0];
-            if (!me || !me.alive) return;
             const bossForDmg = bossTarget;
 
-            // 選擇招式
+            // 選擇招式 — 隨機從技能組合選取
             const myMoves = window.player.moves ? window.player.moves.filter(m => m) : [];
             const move = myMoves.length > 0 ? myMoves[Math.floor(Math.random() * myMoves.length)] : null;
             const moveName = move ? move.name : '普通攻擊';
-            const moveAnim = move ? move.type : 'normal';
+            const moveType = move ? move.type : 'damage';
+            // 視覺特效：優先用 move.anim；heal/heal_sleep 用綠色特效；drain 用草系；其餘 fallback normal
+            const moveAnim = move
+                ? (move.anim || (moveType === 'heal' || moveType === 'heal_sleep' ? 'heal' : moveType === 'drain' ? 'grass' : 'normal'))
+                : 'normal';
+
+            // 產生下一題（答對答錯都需要）
+            const nextQ = window.quizBank[Math.floor(Math.random() * window.quizBank.length)];
+            const nextOptions = [nextQ.answer, ...nextQ.wrongs].sort(() => Math.random() - 0.5);
+            const nextQuizPayload = { id: Date.now() + 1, question: nextQ.question, answer: nextQ.answer, options: nextOptions, startTime: Date.now() };
 
             let actionPayload;
             const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'tower_rooms', window.towerPartyState.roomId);
 
-            if (isCorrect && bossForDmg) {
-                // 答對：計算傷害
-                const def = bossForDmg.def || 5;
-                const rawAtk = (me.atk || window.player.stats.atk || 10);
-                const dmg = Math.max(1, Math.floor(rawAtk * (1 + Math.random() * 0.3) - def * 0.3));
-                const newBossHp = Math.max(0, bossForDmg.hp - dmg);
-
-                // 更新 Firestore
-                const newBosses = [...(data.bosses || [])];
-                const bIdx = newBosses.findIndex(b => b.idx === bossForDmg.idx);
-                if (bIdx !== -1) {
-                    newBosses[bIdx] = { ...newBosses[bIdx], hp: newBossHp };
+            if (isCorrect) {
+                // ── 答對：依招式類型決定效果 ──
+                if (moveType === 'heal' || moveType === 'heal_sleep') {
+                    // 回血招式（自我再生、羽棲、水流環…）→ 補自己血量
+                    const healAmt = Math.max(1, Math.floor(me.maxHp * (move.amount || 0.5)));
+                    const newHp = Math.min(me.maxHp, (me.hp || 0) + healAmt);
+                    actionPayload = {
+                        [`${myKey}.hp`]: newHp,
+                        lastAction: { id: Date.now(), type: 'player_heal', role: myKey, heal: healAmt, moveName, moveAnim },
+                        quiz: nextQuizPayload
+                    };
+                } else if (moveType === 'drain' && bossForDmg) {
+                    // 吸血招式（吸取、吸血、食夢…）→ 攻擊BOSS並回血
+                    const def = bossForDmg.def || 5;
+                    const rawAtk = (me.atk || window.player.stats.atk || 10);
+                    const dmg = Math.max(1, Math.floor(rawAtk * (1 + Math.random() * 0.3) - def * 0.3));
+                    const healAmt = Math.max(1, Math.floor(dmg / 2));
+                    const newPlayerHp = Math.min(me.maxHp, (me.hp || 0) + healAmt);
+                    const newBossHp = Math.max(0, bossForDmg.hp - dmg);
+                    const newBosses = [...(data.bosses || [])];
+                    const bIdx = newBosses.findIndex(b => b.idx === bossForDmg.idx);
+                    if (bIdx !== -1) newBosses[bIdx] = { ...newBosses[bIdx], hp: newBossHp };
+                    actionPayload = {
+                        bosses: newBosses,
+                        [`${myKey}.hp`]: newPlayerHp,
+                        lastAction: { id: Date.now(), type: 'player_drain', role: myKey, bossIdx: bossForDmg.idx, dmg, heal: healAmt, moveName, moveAnim },
+                        quiz: nextQuizPayload
+                    };
+                } else if (bossForDmg) {
+                    // 一般傷害 / buff / status / debuff → 攻擊BOSS
+                    const def = bossForDmg.def || 5;
+                    const rawAtk = (me.atk || window.player.stats.atk || 10);
+                    const dmg = Math.max(1, Math.floor(rawAtk * (1 + Math.random() * 0.3) - def * 0.3));
+                    const newBossHp = Math.max(0, bossForDmg.hp - dmg);
+                    const newBosses = [...(data.bosses || [])];
+                    const bIdx = newBosses.findIndex(b => b.idx === bossForDmg.idx);
+                    if (bIdx !== -1) newBosses[bIdx] = { ...newBosses[bIdx], hp: newBossHp };
+                    actionPayload = {
+                        bosses: newBosses,
+                        lastAction: { id: Date.now(), type: 'player_attack', role: myKey, bossIdx: bossForDmg.idx, dmg, moveName, moveAnim },
+                        quiz: nextQuizPayload
+                    };
+                } else {
+                    // 沒有可攻擊 BOSS（極端情況）→ 只刷題
+                    actionPayload = {
+                        lastAction: { id: Date.now(), type: 'player_attack', role: myKey, bossIdx: 0, dmg: 0, moveName, moveAnim },
+                        quiz: nextQuizPayload
+                    };
                 }
-
-                // 產生下一題
-                const nextQuiz = window.quizBank[Math.floor(Math.random() * window.quizBank.length)];
-                const nextOptions = [nextQuiz.answer, ...nextQuiz.wrongs].sort(() => Math.random() - 0.5);
-
-                actionPayload = {
-                    bosses: newBosses,
-                    lastAction: { id: Date.now(), type: 'player_attack', role: myKey, bossIdx: bossForDmg.idx, dmg, moveName, moveAnim },
-                    quiz: { id: Date.now() + 1, question: nextQuiz.question, answer: nextQuiz.answer, options: nextOptions, startTime: Date.now() }
-                };
             } else {
-                // 答錯或時間到：Boss 反擊
-                const myAtk = bossForDmg ? bossForDmg.atk || 15 : 15;
-                const isCrit = Math.random() < 0.15;
-                const dmg = Math.max(1, Math.floor(myAtk * (isCrit ? 1.8 : 1) * (0.85 + Math.random() * 0.3)));
-                const myNewHp = Math.max(0, (me.hp || 0) - dmg);
-                const stillAlive = myNewHp > 0;
+                // ── 答錯 / 時間到：BOSS 反擊，先判斷閃避 ──
+                const dodgeRate = Math.min(60, (window.player.stats.dodge || 0) + (window.battleBuffs ? (window.battleBuffs.dodge || 0) : 0));
+                const isDodged = Math.random() * 100 < dodgeRate;
 
-                // 若剛好陣亡，發放安慰獎金幣（等級 × 20）
-                if (!stillAlive && me.alive) {
-                    const consolationGold = (window.player.level || 1) * 20;
-                    window.player.gold = (window.player.gold || 0) + consolationGold;
-                    window.player.records.goldEarned = (window.player.records.goldEarned || 0) + consolationGold;
-                    window.showToast(`💀 陣亡！獲得安慰獎 💰${consolationGold} 金幣`, '#e67e22');
-                    window.saveData();
+                if (isDodged) {
+                    // 成功閃避：不扣血，僅顯示閃避動畫
+                    actionPayload = {
+                        lastAction: { id: Date.now(), type: 'boss_attack_dodge', target: myKey, bossIdx: myBossIdx, moveName: '閃避！', moveAnim: 'normal' },
+                        quiz: nextQuizPayload
+                    };
+                } else {
+                    // 未能閃避：扣血
+                    const myAtk = bossForDmg ? bossForDmg.atk || 15 : 15;
+                    const isCrit = Math.random() < 0.15;
+                    const dmg = Math.max(1, Math.floor(myAtk * (isCrit ? 1.8 : 1) * (0.85 + Math.random() * 0.3)));
+                    const myNewHp = Math.max(0, (me.hp || 0) - dmg);
+                    const stillAlive = myNewHp > 0;
+
+                    // 若剛好陣亡，發放安慰獎金幣
+                    if (!stillAlive && me.alive) {
+                        const consolationGold = (window.player.level || 1) * 20;
+                        window.player.gold = (window.player.gold || 0) + consolationGold;
+                        window.player.records.goldEarned = (window.player.records.goldEarned || 0) + consolationGold;
+                        window.showToast(`💀 陣亡！獲得安慰獎 💰${consolationGold} 金幣`, '#e67e22');
+                        window.saveData();
+                    }
+
+                    actionPayload = {
+                        [`${myKey}.hp`]: myNewHp,
+                        [`${myKey}.alive`]: stillAlive,
+                        lastAction: { id: Date.now(), type: 'boss_attack', target: myKey, bossIdx: myBossIdx, dmg,
+                            moveName: bossForDmg ? (bossForDmg.moves && bossForDmg.moves[0] ? bossForDmg.moves[0].name : '試煉攻擊') : '試煉攻擊',
+                            moveAnim: 'dark', isCrit },
+                        quiz: nextQuizPayload
+                    };
                 }
-
-                // 時間增量（每次答錯加 1 秒）
-                const newTimeReduction = (me.extraTimeReduction || 0) + 1;
-
-                // 產生下一題
-                const nextQuiz = window.quizBank[Math.floor(Math.random() * window.quizBank.length)];
-                const nextOptions = [nextQuiz.answer, ...nextQuiz.wrongs].sort(() => Math.random() - 0.5);
-
-                actionPayload = {
-                    [`${myKey}.hp`]: myNewHp,
-                    [`${myKey}.alive`]: stillAlive,
-                    [`${myKey}.extraTimeReduction`]: newTimeReduction,
-                    lastAction: { id: Date.now(), type: 'boss_attack', target: myKey, bossIdx: myBossIdx, dmg, moveName: bossForDmg ? (bossForDmg.moves && bossForDmg.moves[0] ? bossForDmg.moves[0].name : '試煉攻擊') : '試煉攻擊', moveAnim: 'dark', isCrit },
-                    quiz: { id: Date.now() + 1, question: nextQuiz.question, answer: nextQuiz.answer, options: nextOptions, startTime: Date.now() }
-                };
             }
 
             try {
@@ -6562,8 +7090,12 @@ window.MOE_DATA_STRING = `
 
             // 招式特效
             if (action.moveAnim) {
+                const fxTarget = (action.type === 'player_attack' || action.type === 'player_drain')
+                    ? `tower-boss-sprite-${action.bossIdx !== undefined ? action.bossIdx : 0}`
+                    : `tower-ally-sprite-0`;
+                window.FXEngine.play(action.moveAnim, fxTarget, 700);
                 const fx = document.createElement('div');
-                fx.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:8;';
+                fx.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:7;';
                 fx.className = `fx-${action.moveAnim}-run`;
                 document.getElementById('fx-layer').appendChild(fx);
                 setTimeout(() => fx.remove(), 600);
@@ -6815,8 +7347,8 @@ window.MOE_DATA_STRING = `
 
             const bossHpPct = myBoss ? (myBoss.hp / myBoss.maxHp) : 1;
             const baseTime = window.getBossTimeLimit(bossHpPct);
-            const extraReduction = (me && me.extraTimeReduction) ? me.extraTimeReduction : 0;
-            let timeLimit = Math.max(1, baseTime - extraReduction);
+            // 固定計時：綠血12秒、黃血8秒、紅血4秒，不因答錯而縮減
+            let timeLimit = baseTime;
 
             if (window.towerTimerInterval) clearInterval(window.towerTimerInterval);
             let remaining = timeLimit;
@@ -6866,77 +7398,151 @@ window.MOE_DATA_STRING = `
         window.playTowerPartyAction = (action, data) => {
             const myKey = window.towerPartyState.role;
             const bosses = data.bosses || [];
-            const isMultiBoss = bosses.length > 1;
 
+            // ── 戰鬥日誌元素 ──
             let logEl = document.getElementById('tower-party-log');
             if (!logEl) {
                 logEl = document.createElement('div');
                 logEl.id = 'tower-party-log';
-                logEl.style.cssText = 'color:#f1c40f; font-size:1rem; font-weight:bold; text-align:center; padding-bottom:5px;';
+                logEl.style.cssText = 'color:#f1c40f; font-size:1rem; font-weight:bold; text-align:center; padding-bottom:5px; line-height:1.4;';
                 const uiPanel = document.querySelector('.battle-ui-panel');
                 uiPanel.insertBefore(logEl, uiPanel.firstChild);
             }
 
-            const getEnemySprite = (bossIdx) => {
-                return document.getElementById(`tower-boss-sprite-${bossIdx}`) || document.getElementById('enemy-sprite');
-            };
-            
+            // ── 取得精靈元素 ──
+            // 多人時 enemy 用 tower-boss-sprite-N，單人用 enemy-sprite
+            const getEnemySprite = (bossIdx) =>
+                document.getElementById(`tower-boss-sprite-${bossIdx}`) || document.getElementById('enemy-sprite');
+
+            // 多人時 ally 用 tower-ally-sprite-N，單人用 player-sprite（有 fallback）
             const getAllySprite = (roleKey) => {
                 const members = window.getTowerPartyMembers(data);
                 const idx = members.findIndex(m => m.key === roleKey);
-                return document.getElementById(`tower-ally-sprite-${idx}`);
+                return document.getElementById(`tower-ally-sprite-${idx}`)
+                    || (roleKey === myKey ? document.getElementById('player-sprite') : null);
             };
 
-            // 執行招式動畫特效
-            if (action.moveAnim) {
+            // ── 全屏視覺特效 ──
+            const playFx = (animType) => {
+                if (!animType) return;
                 const fx = document.createElement('div');
-                fx.style.position = 'absolute';
-                fx.style.top = '0';
-                fx.style.left = '0';
-                fx.style.width = '100%';
-                fx.style.height = '100%';
-                fx.style.zIndex = '8';
-                fx.className = `fx-${action.moveAnim}-run`;
+                fx.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:8;pointer-events:none;';
+                fx.className = `fx-${animType}-run`;
                 document.getElementById('fx-layer').appendChild(fx);
-                setTimeout(() => fx.remove(), 600);
-            }
+                setTimeout(() => fx.remove(), 750);
+            };
 
+            // ── 浮動數字特效 ──
+            const showFloat = (text, spriteEl, color) => {
+                if (!spriteEl) return;
+                const rect = spriteEl.getBoundingClientRect();
+                const sceneRect = document.getElementById('battle-scene').getBoundingClientRect();
+                const floatEl = document.createElement('div');
+                floatEl.innerText = text;
+                floatEl.style.cssText = `position:absolute;left:${rect.left - sceneRect.left + rect.width / 2}px;top:${rect.top - sceneRect.top + rect.height / 2}px;color:${color};font-size:2.2rem;font-weight:900;text-shadow:0 0 12px rgba(0,0,0,0.9),2px 2px 0 #000;z-index:100;transform:translate(-50%,-50%);pointer-events:none;animation:float-up 1s ease-out forwards;`;
+                document.getElementById('fx-layer').appendChild(floatEl);
+                setTimeout(() => floatEl.remove(), 1000);
+            };
+
+            // ══════════════════════════════
             if (action.type === 'player_attack') {
+            // ── 玩家 / 隊友攻擊 BOSS ──
                 const isMe = action.role === myKey;
                 const bossName = bosses[action.bossIdx] ? bosses[action.bossIdx].name : '試煉BOSS';
                 const enemyEl = getEnemySprite(action.bossIdx);
                 const playerEl = getAllySprite(action.role);
 
+                playFx(action.moveAnim || 'normal');
                 if (playerEl) { playerEl.classList.remove('anim-atk-player'); void playerEl.offsetWidth; playerEl.classList.add('anim-atk-player'); }
-                setTimeout(() => { 
+                setTimeout(() => {
                     if (enemyEl) { enemyEl.classList.remove('anim-dmg'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-dmg'); }
-                    window.AudioEngine.sfx.hit(); 
-                }, 200);
-                
-                if (isMe) {
-                    logEl.innerText = `✅ 答對！使用【${action.moveName || '普通攻擊'}】\n對 ${bossName} 造成 ${action.dmg} 傷害！`;
-                } else {
-                    const attacker = data[action.role];
-                    logEl.innerText = `${attacker ? attacker.name : '隊友'} 使用【${action.moveName || '普通攻擊'}】 對 ${bossName} 造成 ${action.dmg} 傷害！`;
-                }
+                    if (action.dmg > 0) showFloat(`-${action.dmg}`, enemyEl, '#ff6b6b');
+                    window.AudioEngine.sfx.hit();
+                }, 220);
+
+                logEl.innerHTML = isMe
+                    ? `✅ 答對！使用【${action.moveName || '普通攻擊'}】<br>對 ${bossName} 造成 <span style="color:#ff6b6b;font-size:1.1em;">${action.dmg}</span> 傷害！`
+                    : `${(data[action.role] || {}).name || '隊友'} 使用【${action.moveName || '普通攻擊'}】<br>對 ${bossName} 造成 <span style="color:#ff6b6b;">${action.dmg}</span> 傷害！`;
+
+            } else if (action.type === 'player_heal') {
+            // ── 玩家 / 隊友使用回血招式 ──
+                const isMe = action.role === myKey;
+                const playerEl = getAllySprite(action.role);
+
+                playFx('heal');
+                window.AudioEngine.sfx.item();
+                if (playerEl) { playerEl.classList.remove('anim-atk-player'); void playerEl.offsetWidth; playerEl.classList.add('anim-atk-player'); }
+                setTimeout(() => { showFloat(`+${action.heal}`, playerEl, '#2ecc71'); }, 200);
+
+                logEl.innerHTML = isMe
+                    ? `✅ 答對！使用【${action.moveName}】<br>回復了 <span style="color:#2ecc71;font-size:1.1em;">${action.heal}</span> HP！`
+                    : `${(data[action.role] || {}).name || '隊友'} 使用【${action.moveName}】<br>回復了 <span style="color:#2ecc71;">${action.heal}</span> HP！`;
+
+            } else if (action.type === 'player_drain') {
+            // ── 玩家 / 隊友使用吸血招式 ──
+                const isMe = action.role === myKey;
+                const bossName = bosses[action.bossIdx] ? bosses[action.bossIdx].name : '試煉BOSS';
+                const enemyEl = getEnemySprite(action.bossIdx);
+                const playerEl = getAllySprite(action.role);
+
+                playFx(action.moveAnim || 'grass');
+                if (playerEl) { playerEl.classList.remove('anim-atk-player'); void playerEl.offsetWidth; playerEl.classList.add('anim-atk-player'); }
+                setTimeout(() => {
+                    if (enemyEl) { enemyEl.classList.remove('anim-dmg'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-dmg'); }
+                    showFloat(`-${action.dmg}`, enemyEl, '#ff6b6b');
+                    window.AudioEngine.sfx.hit();
+                }, 220);
+                setTimeout(() => {
+                    showFloat(`+${action.heal}`, playerEl, '#2ecc71');
+                    window.AudioEngine.sfx.item();
+                }, 550);
+
+                logEl.innerHTML = isMe
+                    ? `✅ 答對！使用【${action.moveName}】<br>對 ${bossName} 造成 <span style="color:#ff6b6b;">${action.dmg}</span> 傷害，吸收 <span style="color:#2ecc71;">${action.heal}</span> HP！`
+                    : `${(data[action.role] || {}).name || '隊友'} 使用【${action.moveName}】<br>造成 <span style="color:#ff6b6b;">${action.dmg}</span> 傷害並吸收 <span style="color:#2ecc71;">${action.heal}</span> HP！`;
+
             } else if (action.type === 'boss_attack') {
+            // ── BOSS 反擊玩家 / 隊友 ──
                 const isMe = action.target === myKey;
-                const myBossIdx = data.bossTargets ? data.bossTargets[action.target] : 0;
-                const enemyEl = getEnemySprite(myBossIdx);
+                const bossIdx = data.bossTargets ? data.bossTargets[action.target] : (action.bossIdx || 0);
+                const enemyEl = getEnemySprite(bossIdx);
+                const targetEl = getAllySprite(action.target);
+
+                playFx(action.moveAnim || 'dark');
+                if (enemyEl) { enemyEl.classList.remove('anim-atk-enemy'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-atk-enemy'); }
+                setTimeout(() => {
+                    if (action.isCrit) {
+                        if (targetEl) { targetEl.classList.remove('anim-crit-dmg'); void targetEl.offsetWidth; targetEl.classList.add('anim-crit-dmg'); }
+                        showFloat(`-${action.dmg}💥`, targetEl, '#ff4757');
+                        window.AudioEngine.sfx.superEffective();
+                    } else {
+                        if (targetEl) { targetEl.classList.remove('anim-dmg'); void targetEl.offsetWidth; targetEl.classList.add('anim-dmg'); }
+                        showFloat(`-${action.dmg}`, targetEl, '#e74c3c');
+                        window.AudioEngine.sfx.hit();
+                    }
+                }, 220);
+
+                logEl.innerHTML = isMe
+                    ? `❌ 答錯！遭受 BOSS 的【${action.moveName || '試煉攻擊'}】反擊${action.isCrit ? ' 💥暴擊' : ''}！<br>失去 <span style="color:#e74c3c;font-size:1.1em;">${action.dmg}</span> 生命！`
+                    : `${(data[action.target] || {}).name || '隊友'} 遭受 BOSS 反擊，失去 <span style="color:#e74c3c;">${action.dmg}</span> 生命！`;
+
+            } else if (action.type === 'boss_attack_dodge') {
+            // ── 玩家 / 隊友成功閃避 ──
+                const isMe = action.target === myKey;
+                const bossIdx = data.bossTargets ? data.bossTargets[action.target] : (action.bossIdx || 0);
+                const enemyEl = getEnemySprite(bossIdx);
                 const targetEl = getAllySprite(action.target);
 
                 if (enemyEl) { enemyEl.classList.remove('anim-atk-enemy'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-atk-enemy'); }
                 setTimeout(() => {
-                    if (action.isCrit) { if (targetEl) { targetEl.classList.remove('anim-crit-dmg'); void targetEl.offsetWidth; targetEl.classList.add('anim-crit-dmg'); } window.AudioEngine.sfx.superEffective(); }
-                    else { if (targetEl) { targetEl.classList.remove('anim-dmg'); void targetEl.offsetWidth; targetEl.classList.add('anim-dmg'); } window.AudioEngine.sfx.hit(); }
-                }, 200);
-                
-                if (isMe) {
-                    logEl.innerText = `❌ 答錯！\n遭受 BOSS 的【${action.moveName || '普通攻擊'}】反擊${action.isCrit ? ' 💥暴擊' : ''}！失去 ${action.dmg} 生命！`;
-                } else {
-                    const target = data[action.target];
-                    logEl.innerText = `${target ? target.name : '隊友'} 遭受 BOSS 反擊，失去 ${action.dmg} 生命！`;
-                }
+                    if (targetEl) { targetEl.classList.remove('anim-dodge-player'); void targetEl.offsetWidth; targetEl.classList.add('anim-dodge-player'); }
+                    showFloat('閃！', targetEl, '#3498db');
+                    window.AudioEngine.sfx.dodge();
+                }, 220);
+
+                logEl.innerHTML = isMe
+                    ? `💨 BOSS 攻擊！但你成功 <span style="color:#3498db;font-size:1.1em;">閃避</span> 了！`
+                    : `${(data[action.target] || {}).name || '隊友'} 成功 <span style="color:#3498db;">閃避</span> 了 BOSS 的攻擊！`;
             }
         };
 
