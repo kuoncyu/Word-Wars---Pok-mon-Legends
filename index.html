@@ -438,7 +438,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260513</div><div>題庫版本：20260417</div><div>更新資訊：寶可夢造型系統、新增商品造型卡碎片、試煉塔挑戰、招式動畫細化、一般地圖等級修正</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260513</div><div>題庫版本：20260417</div><div>更新資訊：寶可夢造型系統、新增商品造型卡碎片、試煉塔挑戰、招式動畫細化、一般地圖等級修正、造型穿戴系統</div>
             </div>
         </div>
     </div>
@@ -1048,7 +1048,10 @@ window.MOE_DATA_STRING = `
         <div id="tab-battle" class="tab-page active">
             <div class="stat-card">
                 <div class="profile-header">
-                    <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+                        <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
+                        <div onclick="window.openSkinSwitcher()" style="font-size:0.7rem;color:var(--enhance);cursor:pointer;background:rgba(224,86,253,0.15);border:1px solid var(--enhance);border-radius:8px;padding:2px 8px;white-space:nowrap;">👗 切換造型</div>
+                    </div>
                     <div class="profile-info">
                         <div style="margin-bottom: 5px;">
                             <h3 style="margin: 0; display:flex; align-items:center; gap: 5px;">
@@ -2146,9 +2149,13 @@ window.MOE_DATA_STRING = `
             'z_wk200': { cat: 4, starNum: 5, icon: '🔱', title: '海洋霸主', desc: '擊敗周末限定敵人 200 次', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.weekendKills || 0) >= 200, maxReq: 200, getReq: () => window.player.records?.weekendKills || 0 },
             'die50': { cat: 4, starNum: 2, icon: '🩹', title: '堅韌', desc: '累積死亡 50 次', stars: '⭐⭐', check: () => (window.player.records?.deaths || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.deaths || 0 },
             'die100': { cat: 4, starNum: 3, icon: '🧟', title: '不屈不撓', desc: '累積死亡 100 次', stars: '⭐⭐⭐', check: () => (window.player.records?.deaths || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.deaths || 0 },
+            'dmg100': { cat: 4, starNum: 1, icon: '🗡️', title: '初試鋒芒', desc: '單次攻擊超過 100 傷害', stars: '⭐', check: () => (window.player.records?.maxDmg || 0) >= 100, maxReq: 100, getReq: () => window.player.records?.maxDmg || 0 },
+            'dmg500': { cat: 4, starNum: 2, icon: '⚔️', title: '利刃出鞘', desc: '單次攻擊超過 500 傷害', stars: '⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 500, maxReq: 500, getReq: () => window.player.records?.maxDmg || 0 },
+            'dmg1k': { cat: 4, starNum: 2, icon: '💢', title: '千鈞一擊', desc: '單次攻擊超過 1,000 傷害', stars: '⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 1000, maxReq: 1000, getReq: () => window.player.records?.maxDmg || 0 },
+            'dmg3k': { cat: 4, starNum: 3, icon: '🌪️', title: '颶風衝擊', desc: '單次攻擊超過 3,000 傷害', stars: '⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 3000, maxReq: 3000, getReq: () => window.player.records?.maxDmg || 0 },
             'dmg10k': { cat: 4, starNum: 3, icon: '☄️', title: '猛擊', desc: '單次攻擊超過 10,000 傷害', stars: '⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 10000, maxReq: 10000, getReq: () => window.player.records?.maxDmg || 0 },
             'dmg50k': { cat: 4, starNum: 4, icon: '🔥', title: '隕星墜落', desc: '單次攻擊超過 50,000 傷害', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 50000, maxReq: 50000, getReq: () => window.player.records?.maxDmg || 0 },
-            'dmg100k': { cat: 4, starNum: 5, icon: '💥', title: '毀滅者', desc: '單次攻擊超過 100,000 傷害', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 100000, maxReq: 100000, getReq: () => window.player.records?.maxDmg || 0 },
+            'dmg100k': { cat: 4, starNum: 5, icon: '💥', title: '毀滅者', desc: '單次攻擊超過 5,000 傷害', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.maxDmg || 0) >= 5000, maxReq: 5000, getReq: () => window.player.records?.maxDmg || 0 },
             'dg1': { cat: 4, starNum: 1, icon: '🕯️', title: '探險者', desc: '參與地下城討伐 1 次', stars: '⭐', check: () => (window.player.records?.dungeonPlays || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.dungeonPlays || 0 },
             'dg_win10': { cat: 4, starNum: 2, icon: '⚔️', title: '初級討伐', desc: '成功討伐地下城 BOSS 10 次', stars: '⭐⭐', check: () => (window.player.records?.dungeonWins || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.dungeonWins || 0 },
             'dg_win50': { cat: 4, starNum: 3, icon: '🗡️', title: '討伐先鋒', desc: '成功討伐地下城 BOSS 50 次', stars: '⭐⭐⭐', check: () => (window.player.records?.dungeonWins || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.dungeonWins || 0 },
@@ -3500,25 +3507,59 @@ window.MOE_DATA_STRING = `
             modal.style.display = 'flex';
         };
 
-        // 【新增】：更換造型的執行邏輯
+        // 【更新】：更換造型的執行邏輯（已擁有的造型可任意切換）
         window.equipSkin = (skinUrl, baseId) => {
             window.AudioEngine.sfx.click();
-            // 限定必須該系列為先鋒才能換造型
-            if (window.player.avatarId !== baseId) {
-                return window.showToast("必須先將該寶可夢設為先鋒，才能更換此系列的造型！", "var(--boss)");
+            // 確認是否擁有此造型（default 造型或已解鎖）
+            const skinDef = window.SKIN_DB[baseId] ? window.SKIN_DB[baseId].find(s => s.url === skinUrl) : null;
+            const skinId = skinDef ? skinDef.id : null;
+            const isOwned = !skinId || skinId === 'default' || (window.player.unlockedSkins && window.player.unlockedSkins.includes(skinId));
+            if (!isOwned) {
+                return window.showToast("需要使用【👗造型解鎖券】來獲取此造型！", "var(--boss)");
             }
-            
+            // 若此造型屬於不同寶可夢系列，自動切換先鋒（需已解鎖該寶可夢）
+            if (window.player.avatarId !== baseId) {
+                if (!window.player.unlockedAvatars.includes(baseId)) {
+                    return window.showToast("尚未解鎖該系列的寶可夢，無法切換此造型！", "var(--boss)");
+                }
+                window.player.avatarId = baseId;
+                const pkMoves = window.POKEMON_MOVES ? window.POKEMON_MOVES[baseId] : null;
+                if (pkMoves) window.player.moves = pkMoves.map(id => window.ALL_MOVES[id]).filter(Boolean);
+            }
             window.player.avatar = skinUrl;
             document.getElementById('pd-sprite').src = skinUrl;
-            
             const skin = window.SKIN_DB[baseId].find(s => s.url === skinUrl);
             if(skin) document.getElementById('pd-name').innerText = skin.name;
-            
             window.showToast(`✨ 成功換上造型：${skin ? skin.name : '新造型'}！`, '#e056fd');
             window.updateUI();
             window.saveData();
             // 重新渲染圖鑑視窗，以更新裝備中(紫框)的邊框狀態
             window.openPokedexModal(skinUrl, baseId); 
+        };
+
+        // 【新增】快速切換已擁有造型的衣櫃入口
+        window.openSkinSwitcher = () => {
+            window.AudioEngine.sfx.click();
+            let allSpecialOwned = [];
+            Object.keys(window.SKIN_DB || {}).forEach(baseId => {
+                (window.SKIN_DB[baseId] || []).forEach(skin => {
+                    if (skin.id !== 'default' && window.player.unlockedSkins && window.player.unlockedSkins.includes(skin.id)) {
+                        allSpecialOwned.push({ ...skin, baseId });
+                    }
+                });
+            });
+            if (allSpecialOwned.length === 0) {
+                return window.showToast("尚未擁有任何特殊造型！使用【👗造型解鎖券】來獲取造型。", "var(--boss)");
+            }
+            let modal = document.getElementById('skin-switcher-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'skin-switcher-modal';
+                modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9500;display:flex;align-items:center;justify-content:center;padding:20px;';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `<div style="background:#1a1a2e;border:2px solid var(--enhance);border-radius:15px;width:100%;max-width:420px;padding:20px;text-align:center;max-height:80vh;overflow-y:auto;"><h3 style="color:var(--enhance);margin:0 0 5px;">👗 我的造型衣櫃</h3><p style="color:#aaa;font-size:0.85rem;margin:0 0 15px;">點擊即可切換已擁有的造型（若為其他寶可夢系列將自動切換先鋒）</p><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px;">${allSpecialOwned.map(skin => { const isCurrent = window.player.avatar === skin.url; return `<div onclick="window.equipSkin('${skin.url}','${skin.baseId}');document.getElementById('skin-switcher-modal').style.display='none';" style="background:${isCurrent?'rgba(224,86,253,0.2)':'rgba(0,0,0,0.3)'};border:2px solid ${isCurrent?'var(--enhance)':'#444'};border-radius:10px;padding:8px;cursor:pointer;"><img src="${skin.url}" style="width:100%;aspect-ratio:1;object-fit:contain;image-rendering:pixelated;border-radius:6px;background:#111;"><div style="font-size:0.7rem;color:#ccc;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${skin.name}</div>${isCurrent?'<div style="font-size:0.65rem;color:var(--enhance);">✔ 使用中</div>':''}</div>`; }).join('')}</div><button onclick="document.getElementById('skin-switcher-modal').style.display='none'" style="background:#555;color:#fff;border:none;border-radius:8px;padding:10px 25px;font-size:1rem;cursor:pointer;">關閉</button></div>`;
+            modal.style.display = 'flex';
         };
 
         window.executeChangeChar = (newAvatarUrl, itemId) => {
@@ -7453,6 +7494,7 @@ window.MOE_DATA_STRING = `
                 const playerEl = getAllySprite(action.role);
 
                 playFx(action.moveAnim || 'normal');
+                window.AudioEngine.sfx.attack();
                 if (playerEl) { playerEl.classList.remove('anim-atk-player'); void playerEl.offsetWidth; playerEl.classList.add('anim-atk-player'); }
                 setTimeout(() => {
                     if (enemyEl) { enemyEl.classList.remove('anim-dmg'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-dmg'); }
@@ -7513,7 +7555,9 @@ window.MOE_DATA_STRING = `
                 setTimeout(() => {
                     if (action.isCrit) {
                         if (targetEl) { targetEl.classList.remove('anim-crit-dmg'); void targetEl.offsetWidth; targetEl.classList.add('anim-crit-dmg'); }
+                        window.playAnim('battle-scene', 'anim-screen-shake');
                         showFloat(`-${action.dmg}💥`, targetEl, '#ff4757');
+                        window.showFloatingText('💥 暴擊！', targetEl ? targetEl.id : 'player-sprite', '#e74c3c');
                         window.AudioEngine.sfx.superEffective();
                     } else {
                         if (targetEl) { targetEl.classList.remove('anim-dmg'); void targetEl.offsetWidth; targetEl.classList.add('anim-dmg'); }
@@ -7536,7 +7580,8 @@ window.MOE_DATA_STRING = `
                 if (enemyEl) { enemyEl.classList.remove('anim-atk-enemy'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-atk-enemy'); }
                 setTimeout(() => {
                     if (targetEl) { targetEl.classList.remove('anim-dodge-player'); void targetEl.offsetWidth; targetEl.classList.add('anim-dodge-player'); }
-                    showFloat('閃！', targetEl, '#3498db');
+                    showFloat('Miss', targetEl, '#ccc');
+                    window.showFloatingText('Miss', targetEl ? targetEl.id : 'player-sprite', '#ccc');
                     window.AudioEngine.sfx.dodge();
                 }, 220);
 
