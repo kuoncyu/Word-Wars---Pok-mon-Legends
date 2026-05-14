@@ -545,7 +545,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v13</div><div>題庫版本：20260417</div><div>更新資訊：(1)管理員試煉塔只需設定結束時間即可立即開放；(2)移除戰鬥分頁特殊造型圖鑑；(3)試煉塔與地下城新增逃跑按鍵（任一隊員逃跑即整隊失敗）；(4)黑市裝備點擊查看後再確認購買；(5)寶箱商店介紹文字獨立且標示等級；(6)修復試煉塔後返回一般地圖寶可夢半透明問題</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514</div><div>題庫版本：20260417</div><div>更新資訊：新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試煉塔後返回一般地圖寶可夢半透明問題</div>
             </div>
         </div>
     </div>
@@ -673,13 +673,23 @@ window.MOE_DATA_STRING = `
                                 <optgroup label="── 皇家召喚相關 ──">
                                     <option value="royal_summon_voucher">👑 皇家召喚券（保底造型）</option>
                                 </optgroup>
-                                <optgroup label="── 商店道具 ──">
+                                <optgroup label="── 招式學習機 ──">
+                                    <option value="tm_thunder">⚡ 招式學習機：閃電拳</option>
+                                    <option value="tm_fire">🔥 招式學習機：火焰拳</option>
+                                    <option value="tm_ice">❄️ 招式學習機：冰凍拳</option>
+                                </optgroup>
+                                <optgroup label="── 經驗加倍卡 ──">
+                                    <option value="exp_x2">📜 經驗 2 倍卡（1小時）</option>
+                                    <option value="exp_x3">📜 經驗 3 倍卡（1小時）</option>
+                                </optgroup>
+                                <optgroup label="── 金幣加倍卡 ──">
+                                    <option value="gold_x2">🎫 金幣 2 倍卡（1小時）</option>
+                                    <option value="gold_x3">🎫 金幣 3 倍卡（1小時）</option>
+                                </optgroup>
+                                <optgroup label="── 其他商店道具 ──">
                                     <option value="name_card">📛 改名卡</option>
                                     <option value="reset_card">🔄 重置卡</option>
                                     <option value="change_char">🔀 換角卡</option>
-                                    <option value="tm">📀 招式學習器</option>
-                                    <option value="buff_exp">📚 經驗加成符</option>
-                                    <option value="buff_gold">💎 金幣加成符</option>
                                 </optgroup>
                             </select>
                             <input type="number" id="admin-personal-item-count" class="input-box" placeholder="數量" style="padding:10px; flex:1;">
@@ -2585,6 +2595,20 @@ window.MOE_DATA_STRING = `
             'dg_t5_20': { cat: 4, starNum: 4, icon: '🏰', title: '破淵', desc: '成功討伐地下城第 5 層 20 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.dungeonT5Wins || 0) >= 20, maxReq: 20, getReq: () => window.player.records?.dungeonT5Wins || 0 },
             'dg_perfect': { cat: 4, starNum: 4, icon: '🦋', title: '幻影', desc: '滿血擊敗任何地下城 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonPerfect || false, maxReq: 1, getReq: () => window.player.records?.dungeonPerfect ? 1 : 0 },
             'dg_solo': { cat: 4, starNum: 4, icon: '🐺', title: '孤膽英雄', desc: '雙人地下城隊友陣亡後獨自擊敗 BOSS', stars: '⭐⭐⭐⭐', check: () => window.player.records?.dungeonSolo || false, maxReq: 1, getReq: () => window.player.records?.dungeonSolo ? 1 : 0 },
+            'dg_play50': { cat: 4, starNum: 2, icon: '🗺️', title: '地下城常客', desc: '累積參與地下城討伐 50 次', stars: '⭐⭐', check: () => (window.player.records?.dungeonPlays || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.dungeonPlays || 0 },
+            'dg_t5_1': { cat: 4, starNum: 3, icon: '🏰', title: '秘境首探', desc: '首次成功討伐地下城第 5 層（秘境）', stars: '⭐⭐⭐', check: () => (window.player.records?.dungeonT5Wins || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.dungeonT5Wins || 0 },
+            'dg_t5_5': { cat: 4, starNum: 3, icon: '⚜️', title: '秘境剋星', desc: '成功討伐地下城第 5 層（秘境）5 次', stars: '⭐⭐⭐', check: () => (window.player.records?.dungeonT5Wins || 0) >= 5, maxReq: 5, getReq: () => window.player.records?.dungeonT5Wins || 0 },
+
+            // 四-B、 試煉塔篇 (cat: 4)
+            'tw_win1': { cat: 4, starNum: 2, icon: '🏯', title: '初登塔頂', desc: '首次通關試煉塔任意層', stars: '⭐⭐', check: () => (window.player.records?.towerWins || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.towerWins || 0 },
+            'tw_win10': { cat: 4, starNum: 3, icon: '🌀', title: '試煉老手', desc: '累積通關試煉塔 10 次', stars: '⭐⭐⭐', check: () => (window.player.records?.towerWins || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.towerWins || 0 },
+            'tw_win50': { cat: 4, starNum: 4, icon: '🔮', title: '試煉宗師', desc: '累積通關試煉塔 50 次', stars: '⭐⭐⭐⭐', check: () => (window.player.records?.towerWins || 0) >= 50, maxReq: 50, getReq: () => window.player.records?.towerWins || 0 },
+            'tw_f7': { cat: 4, starNum: 5, icon: '👑', title: '至高試煉者', desc: '通關試煉塔第 7 層（至高試煉）', stars: '⭐⭐⭐⭐⭐', check: () => (window.player.records?.towerFloor7Wins || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.towerFloor7Wins || 0 },
+
+            // 四-C、 懸賞任務篇 (cat: 4)
+            'bnt_1': { cat: 4, starNum: 2, icon: '🎯', title: '初次懸賞', desc: '完成懸賞任務 1 次', stars: '⭐⭐', check: () => (window.player.records?.bountyCount || 0) >= 1, maxReq: 1, getReq: () => window.player.records?.bountyCount || 0 },
+            'bnt_10': { cat: 4, starNum: 3, icon: '🎖️', title: '懸賞獵人', desc: '累積完成懸賞任務 10 次', stars: '⭐⭐⭐', check: () => (window.player.records?.bountyCount || 0) >= 10, maxReq: 10, getReq: () => window.player.records?.bountyCount || 0 },
+            'bnt_s': { cat: 4, starNum: 4, icon: '🌟', title: '完美討伐', desc: '懸賞任務評級達 S 級', stars: '⭐⭐⭐⭐', check: () => window.player.records?.bountyBestGrade === 'S', maxReq: 1, getReq: () => window.player.records?.bountyBestGrade === 'S' ? 1 : 0 },
 
             // 五、 連線對戰篇 (cat: 5)
             'pvp1': { cat: 5, starNum: 1, icon: '🥊', title: '鬥士', desc: 'PvP 獲勝 1 次', stars: '⭐', check: () => (window.player.pvpWins || 0) >= 1, maxReq: 1, getReq: () => window.player.pvpWins || 0 },
@@ -3478,7 +3502,7 @@ window.MOE_DATA_STRING = `
             // 初始化數據追蹤中心 (Stats Tracker for Achievements)
             if (!window.player.records) window.player.records = {};
             const r = window.player.records;
-            ['resets', 'charChanges', 'correct', 'wrong', 'correctStreak', 'wrongStreak', 'reports', 'goldEarned', 'goldSpent', 'chestsOpened', 'royalTotal', 'royalStreak', 'trashStreak', 'zone1Kills', 'zone2Kills', 'zone5Kills', 'zone6Kills', 'zone8Kills', 'zone10Kills', 'weekendKills', 'dungeonPlays', 'dungeonWins', 'dungeonT5Wins', 'deaths', 'maxDmg', 'pvpWinStreak', 'pvpWinStreakMax', 'chestDropStreak', 'chestDropStreakMax', 'hpPotsUsed', 'godSummons', 'skinDupes', 'candyUsed', 'buffsUsed'].forEach(k => { r[k] = r[k] || 0; });
+            ['resets', 'charChanges', 'correct', 'wrong', 'correctStreak', 'wrongStreak', 'reports', 'goldEarned', 'goldSpent', 'chestsOpened', 'royalTotal', 'royalStreak', 'trashStreak', 'zone1Kills', 'zone2Kills', 'zone5Kills', 'zone6Kills', 'zone8Kills', 'zone10Kills', 'weekendKills', 'dungeonPlays', 'dungeonWins', 'dungeonT5Wins', 'deaths', 'maxDmg', 'pvpWinStreak', 'pvpWinStreakMax', 'chestDropStreak', 'chestDropStreakMax', 'hpPotsUsed', 'godSummons', 'skinDupes', 'candyUsed', 'buffsUsed', 'towerWins', 'towerFloor7Wins', 'bountyCount'].forEach(k => { r[k] = r[k] || 0; });
             if (typeof r.pvpComeback === 'undefined') r.pvpComeback = false;
 
             // 初始化邊界防瀏海設計
@@ -3881,12 +3905,16 @@ window.MOE_DATA_STRING = `
             const modal = document.getElementById('change-char-modal');
             const grid = document.getElementById('change-char-grid');
             grid.innerHTML = '';
-            window.changeCharSelectedUrl = window.player.avatar;
+
+            // 若玩家目前穿戴造型（skin），player.avatar 是造型 URL，
+            // 需改用基礎寶可夢精靈圖作為預設，避免確認時傳入造型 URL 導致招式學錯
+            const baseSprite = window.getSprite(window.player.avatarId);
+            window.changeCharSelectedUrl = avatarDatabase.includes(baseSprite) ? baseSprite : avatarDatabase[0];
 
             avatarDatabase.forEach((url) => {
                 const img = document.createElement('img');
                 img.src = url;
-                img.className = 'avatar-option' + (url === window.player.avatar ? ' selected' : '');
+                img.className = 'avatar-option' + (url === window.changeCharSelectedUrl ? ' selected' : '');
                 img.onclick = () => {
                     grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
                     img.classList.add('selected');
@@ -4060,8 +4088,12 @@ window.MOE_DATA_STRING = `
                 });
             }
 
+            // 排除當前使用中寶可夢的造型（那些在圖鑑中直接更換即可）
+            const currentAvatarBaseId = window.player.avatarId;
+            allOwned = allOwned.filter(skin => skin.baseId !== currentAvatarBaseId);
+
             if (allOwned.length === 0) {
-                return window.showToast("尚未擁有任何造型！先解鎖寶可夢，或使用【👗造型解鎖券】來獲取特殊造型。", "var(--boss)");
+                return window.showToast("尚未擁有其他寶可夢的造型！先解鎖其他寶可夢，或使用【👗造型解鎖券】來獲取特殊造型。", "var(--boss)");
             }
 
             let modal = document.getElementById('skin-switcher-modal');
@@ -4111,10 +4143,27 @@ window.MOE_DATA_STRING = `
                 window.player.records.charChanges = (window.player.records.charChanges || 0) + 1;
             }
 
+            // 解析新寶可夢 ID（支援帶有 -mega / -ash 等造型後綴）
+            const match = newAvatarUrl.match(/\/([^/]+)\.gif$/);
+            let newId = match ? match[1] : "448";
+
+            // 安全防護：若解析出的 ID 是造型 ID（不在招式庫中），
+            // 嘗試從 SKIN_DB 找回基礎寶可夢 ID，確保招式學習正確
+            if (!window.POKEMON_LEARNSETS[newId]) {
+                let resolved = null;
+                for (let bId in (window.SKIN_DB || {})) {
+                    if ((window.SKIN_DB[bId] || []).some(s => s.id === newId || s.url === newAvatarUrl)) {
+                        resolved = bId;
+                        break;
+                    }
+                }
+                newId = (resolved && window.POKEMON_LEARNSETS[resolved]) ? resolved : "448";
+                // 強制換回基礎精靈圖（清除造型）
+                newAvatarUrl = window.getSprite(newId);
+            }
+
             window.player.avatar = newAvatarUrl;
-            // 修正正則表達式，支援讀取帶有 -mega 或 -ash 的造型 ID
-            const match = newAvatarUrl.match(/\/([^/]+)\.gif$/); 
-            window.player.avatarId = match ? match[1] : "448";
+            window.player.avatarId = newId;
             
             // 圖鑑解鎖進度更新
             if (!window.player.unlockedAvatars.includes(window.player.avatarId)) {
@@ -4541,13 +4590,8 @@ window.MOE_DATA_STRING = `
 
             collectibleSet.forEach((baseId) => {
                 const realDexNum = parseInt(baseId);
-                if (window.SKIN_DB[baseId]) {
-                    window.SKIN_DB[baseId].forEach((skin) => {
-                        allEntries.push({ baseId, skinId: skin.id, url: skin.url, name: skin.name, num: realDexNum, isBountyTarget: baseId === bountyPokeId });
-                    });
-                } else {
-                    allEntries.push({ baseId, skinId: 'default', url: window.getSprite(baseId), name: pokeNames[baseId] || `#${baseId}`, num: realDexNum, isBountyTarget: baseId === bountyPokeId });
-                }
+                // 圖鑑只顯示寶可夢本體，不顯示造型變體
+                allEntries.push({ baseId, skinId: 'default', url: window.getSprite(baseId), name: pokeNames[baseId] || `#${baseId}`, num: realDexNum, isBountyTarget: baseId === bountyPokeId });
             });
 
             // 依照全國圖鑑編號排序（特殊形態如 10034 等排在最後）
@@ -6316,6 +6360,8 @@ window.MOE_DATA_STRING = `
             }
 
             await window.typeDialog(`🏆 試煉塔第 ${f.floor} 層挑戰成功！\n${rewardMsg}`);
+            window.player.records.towerWins = (window.player.records.towerWins || 0) + 1;
+            if (f.floor === 7) window.player.records.towerFloor7Wins = (window.player.records.towerFloor7Wins || 0) + 1;
             window.checkAchievements();
             window.updateUI();
             window.saveData();
@@ -7827,27 +7873,34 @@ window.MOE_DATA_STRING = `
             window.AudioEngine.sfx.encounter();
             setTimeout(() => window.renderTowerQuestion(window.currentTowerPartyData || data), 1500);
 
-            // ── 孤兒BOSS計時器（由host負責）：陣亡者對應的BOSS每12秒隨機攻擊存活的寶可夢 ──
+            // ── 孤兒BOSS計時器（由host負責）：陣亡者對應的BOSS依血量百分比決定攻擊間隔 ──
+            // 綠血(>50%) → 12秒，黃血(20~50%) → 8秒，紅血(≤20%) → 4秒
             if (window.towerPartyState.role === 'host') {
-                if (window._orphanBossInterval) { clearInterval(window._orphanBossInterval); }
-                window._orphanBossInterval = setInterval(async () => {
-                    if (!window.inTowerPartyBattle) { clearInterval(window._orphanBossInterval); return; }
+                if (window._orphanBossInterval) { clearTimeout(window._orphanBossInterval); }
+                const runOrphanBossAttack = async () => {
+                    if (!window.inTowerPartyBattle) return;
                     const d = window.currentTowerPartyData;
                     if (!d || d.state !== 'battling') return;
                     const members = window.getTowerPartyMembers(d);
                     const deadMembers = members.filter(m => !m.alive);
                     const aliveMembers = members.filter(m => m.alive);
-                    if (deadMembers.length === 0 || aliveMembers.length === 0) return;
+                    if (deadMembers.length === 0 || aliveMembers.length === 0) {
+                        scheduleNextOrphanAttack(d);
+                        return;
+                    }
 
-                    // 每個陣亡者對應的BOSS攻擊一名隨機存活者
                     const docRef = window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'tower_rooms', window.towerPartyState.roomId);
                     let updates = {};
                     let anyAttack = false;
+                    let nextInterval = 12000; // 預設綠血
                     for (const dead of deadMembers) {
                         const orphanBossIdx = d.bossTargets ? d.bossTargets[dead.key] : null;
                         if (orphanBossIdx === null || orphanBossIdx === undefined) continue;
                         const orphanBoss = d.bosses ? d.bosses[orphanBossIdx] : null;
-                        if (!orphanBoss || orphanBoss.hp <= 0) continue; // 孤兒BOSS已死則不攻擊
+                        if (!orphanBoss || orphanBoss.hp <= 0) continue;
+                        // 依孤兒BOSS當前血量決定下次攻擊間隔
+                        const hpPct = orphanBoss.hp / orphanBoss.maxHp;
+                        nextInterval = Math.min(nextInterval, window.getBossTimeLimit(hpPct) * 1000);
                         // 隨機選一個存活的玩家
                         const target = aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
                         const atk = orphanBoss.atk || 15;
@@ -7862,7 +7915,27 @@ window.MOE_DATA_STRING = `
                     if (anyAttack) {
                         try { await window.updateDoc(docRef, updates); } catch(e) {}
                     }
-                }, 12000);
+                    scheduleNextOrphanAttack(d);
+                };
+
+                const scheduleNextOrphanAttack = (d) => {
+                    if (!window.inTowerPartyBattle) return;
+                    // 計算所有孤兒BOSS中最快的攻擊間隔
+                    const members = window.getTowerPartyMembers(d || window.currentTowerPartyData || {});
+                    const deadMembers = members.filter(m => !m.alive);
+                    let interval = 12000;
+                    for (const dead of deadMembers) {
+                        const idx = (d || window.currentTowerPartyData || {}).bossTargets ? (d || window.currentTowerPartyData).bossTargets[dead.key] : null;
+                        if (idx === null || idx === undefined) continue;
+                        const boss = ((d || window.currentTowerPartyData || {}).bosses || [])[idx];
+                        if (!boss || boss.hp <= 0) continue;
+                        const hpPct = boss.hp / boss.maxHp;
+                        interval = Math.min(interval, window.getBossTimeLimit(hpPct) * 1000);
+                    }
+                    window._orphanBossInterval = setTimeout(runOrphanBossAttack, interval);
+                };
+
+                scheduleNextOrphanAttack(data);
             }
         };
 
@@ -7883,11 +7956,26 @@ window.MOE_DATA_STRING = `
 
             const isCorrect = answer !== null && quizInfo && answer === quizInfo.answer;
 
-            // 優先攻打自己對應的BOSS，打完自身對應的BOSS才幫其他隊友打
+            // 優先攻打自己對應的BOSS，打完自身對應的BOSS才幫其他隊友打未打完的BOSS
             const myBossIdx = data.bossTargets ? data.bossTargets[myKey] : 0;
             const myOwnBoss = data.bosses ? data.bosses[myBossIdx] : null;
-            let bossTarget = myOwnBoss && myOwnBoss.hp > 0 ? myOwnBoss
-                : (data.bosses || []).filter(b => b.hp > 0).sort((a,b) => a.idx - b.idx)[0];
+            let bossTarget;
+            if (myOwnBoss && myOwnBoss.hp > 0) {
+                // 還沒打完自己的BOSS，優先打自己的
+                bossTarget = myOwnBoss;
+            } else {
+                // 已打完自己的BOSS：找隊友對應的、還有血的BOSS（依隊友 slot 順序）
+                const members = window.getTowerPartyMembers(data);
+                const allyBossIndices = members
+                    .filter(m => m.key !== myKey)
+                    .map(m => data.bossTargets ? data.bossTargets[m.key] : null)
+                    .filter(idx => idx !== null && idx !== undefined);
+                // 優先攻打隊友對應的（有血的）BOSS；若都打完則抓任意剩餘存活BOSS
+                const allyBossWithHp = allyBossIndices
+                    .map(idx => (data.bosses || [])[idx])
+                    .filter(b => b && b.hp > 0);
+                bossTarget = allyBossWithHp[0] || (data.bosses || []).filter(b => b.hp > 0)[0] || null;
+            }
             const bossForDmg = bossTarget;
 
             // 選擇招式 — 隨機從技能組合選取
@@ -7988,7 +8076,7 @@ window.MOE_DATA_STRING = `
                     actionPayload = {
                         [`${myKey}.hp`]: myNewHp,
                         [`${myKey}.alive`]: stillAlive,
-                        lastAction: { id: Date.now(), type: 'boss_attack', target: myKey, bossIdx: myBossIdx, dmg,
+                        lastAction: { id: Date.now(), type: 'boss_attack', target: myKey, bossIdx: bossForDmg ? bossForDmg.idx : myBossIdx, dmg,
                             moveName: bossForDmg ? (bossForDmg.moves && bossForDmg.moves[0] ? bossForDmg.moves[0].name : '試煉攻擊') : '試煉攻擊',
                             moveAnim: 'dark', isCrit },
                         quiz: nextQuizPayload
@@ -8051,7 +8139,7 @@ window.MOE_DATA_STRING = `
                     : `${(data[action.role] || {}).name || '隊友'} 使用【${action.moveName || '普通攻擊'}】對 ${bossName} 造成 ${action.dmg} 傷害！`;
             } else if (action.type === 'boss_attack') {
                 const isMe = action.target === myKey;
-                const bossIdx = data.bossTargets ? data.bossTargets[action.target] : 0;
+                const bossIdx = action.bossIdx !== undefined ? action.bossIdx : (data.bossTargets ? data.bossTargets[action.target] : 0);
                 const enemyEl = getEnemySprite(bossIdx);
                 const targetEl = getAllySprite(action.target);
                 if (enemyEl) { enemyEl.classList.remove('anim-atk-enemy'); void enemyEl.offsetWidth; enemyEl.classList.add('anim-atk-enemy'); }
@@ -8093,6 +8181,9 @@ window.MOE_DATA_STRING = `
                 }
                 if (iSurvived) {
                     msg = `🎉 試煉塔第 ${data.floor} 層成功！\n你存活了，獲得豐厚獎勵！`;
+                    // 記錄試煉塔通關次數
+                    window.player.records.towerWins = (window.player.records.towerWins || 0) + 1;
+                    if (data.floor === 7) window.player.records.towerFloor7Wins = (window.player.records.towerFloor7Wins || 0) + 1;
                     // 發放獎勵
                     if (floorDef) {
                         if (floorDef.fragments > 0) {
@@ -8109,9 +8200,6 @@ window.MOE_DATA_STRING = `
                 } else {
                     const members = window.getTowerPartyMembers(data);
                     const myAllyImg = members.findIndex(m => m.key === myKey);
-                    const playerEl = document.getElementById(`tower-ally-sprite-${myAllyImg}`) || document.getElementById('player-sprite');
-                    if (playerEl) { playerEl.classList.remove('anim-sink-player'); void playerEl.offsetWidth; playerEl.classList.add('anim-sink-player'); }
-                    msg = `😔 試煉成功，但你在戰鬥中陣亡了。\n陣亡者無法獲得獎勵。`;
                 }
             } else {
                 const members = window.getTowerPartyMembers(data);
@@ -8269,10 +8357,22 @@ window.MOE_DATA_STRING = `
             const myBossIdx = data.bossTargets ? data.bossTargets[myKey] : 0;
             let myBoss = data.bosses ? data.bosses[myBossIdx] : null;
 
-            // 如果我的目標 BOSS 已死，找血量最多的
-            if (!myBoss || myBoss.hp <= 0) {
-                myBoss = (data.bosses || []).filter(b => b.hp > 0).sort((a,b) => b.hp - a.hp)[0] || null;
+            // 計算玩家此輪實際會攻打的BOSS（自己的 or 隊友的）
+            let activeBoss = myBoss && myBoss.hp > 0 ? myBoss : null;
+            if (!activeBoss) {
+                // 自己的BOSS已倒：找隊友對應的、還有血的BOSS
+                const members = window.getTowerPartyMembers(data);
+                const allyBossIndices = members
+                    .filter(m => m.key !== myKey)
+                    .map(m => data.bossTargets ? data.bossTargets[m.key] : null)
+                    .filter(idx => idx !== null && idx !== undefined);
+                const allyBossWithHp = allyBossIndices
+                    .map(idx => (data.bosses || [])[idx])
+                    .filter(b => b && b.hp > 0);
+                activeBoss = allyBossWithHp[0] || (data.bosses || []).filter(b => b.hp > 0)[0] || null;
             }
+            // fallback：若找不到任何存活BOSS，沿用 myBoss（顯示用）
+            if (!activeBoss) activeBoss = myBoss;
 
             const optionsDiv = document.getElementById('battle-options');
             const isDead = !me || !me.alive;
@@ -8283,7 +8383,8 @@ window.MOE_DATA_STRING = `
                 return;
             }
 
-            const bossHpPct = myBoss ? (myBoss.hp / myBoss.maxHp) : 1;
+            // 倒數時間依「實際攻打的BOSS」血量百分比計算
+            const bossHpPct = activeBoss ? (activeBoss.hp / activeBoss.maxHp) : 1;
             const baseTime = window.getBossTimeLimit(bossHpPct);
             // 固定計時：綠血12秒、黃血8秒、紅血4秒，不因答錯而縮減
             let timeLimit = baseTime;
@@ -8297,10 +8398,12 @@ window.MOE_DATA_STRING = `
             optionsDiv.innerHTML = '';
 
             // 題目顯示在 battle-dialog
+            const targetBossName = activeBoss ? activeBoss.name : 'BOSS';
+            const isHelpingAlly = myBoss && myBoss.hp <= 0 && activeBoss && activeBoss !== myBoss;
             document.getElementById('battle-dialog').innerHTML = `
                 <div style="width:100%; text-align:center;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                        <span style="color:#2ecc71; font-size:0.85rem; font-weight:bold;">答對攻擊你的目標BOSS！</span>
+                        <span style="color:${isHelpingAlly ? '#f39c12' : '#2ecc71'}; font-size:0.85rem; font-weight:bold;">${isHelpingAlly ? `🤝 支援隊友！攻擊 ${targetBossName}` : `答對攻擊你的目標BOSS！`}</span>
                         <span id="tower-countdown" style="color:#e74c3c; font-size:1.4rem; font-weight:900; min-width:36px; text-align:right;">${remaining}s</span>
                     </div>
                     <div style="color:var(--accent); font-size:1.2rem; font-weight:900; line-height:1.4;">【 ${quizInfo.question} 】</div>
@@ -8312,7 +8415,7 @@ window.MOE_DATA_STRING = `
                 const btn = document.createElement('div');
                 btn.className = 'battle-btn';
                 btn.innerText = opt;
-                btn.onclick = () => window.handleTowerAnswer(opt, myBoss);
+                btn.onclick = () => window.handleTowerAnswer(opt, activeBoss);
                 optionsDiv.appendChild(btn);
             });
             document.getElementById('battle-actions').innerHTML = '';
@@ -8350,7 +8453,7 @@ window.MOE_DATA_STRING = `
                 }
                 if (remaining <= 0) {
                     clearInterval(window.towerTimerInterval);
-                    window.handleTowerAnswer(null, myBoss); // 時間到視為答錯
+                    window.handleTowerAnswer(null, activeBoss); // 時間到視為答錯
                 }
             }, 1000);
         };
@@ -8466,7 +8569,8 @@ window.MOE_DATA_STRING = `
             } else if (action.type === 'boss_attack') {
             // ── BOSS 反擊玩家 / 隊友 ──
                 const isMe = action.target === myKey;
-                const bossIdx = data.bossTargets ? data.bossTargets[action.target] : (action.bossIdx || 0);
+                // 直接使用 action.bossIdx（已在 handleTowerAnswer / orphanBoss 中正確設定）
+                const bossIdx = action.bossIdx !== undefined ? action.bossIdx : (data.bossTargets ? data.bossTargets[action.target] : 0);
                 const enemyEl = getEnemySprite(bossIdx);
                 const targetEl = getAllySprite(action.target);
 
@@ -8493,7 +8597,7 @@ window.MOE_DATA_STRING = `
             } else if (action.type === 'boss_attack_dodge') {
             // ── 玩家 / 隊友成功閃避 ──
                 const isMe = action.target === myKey;
-                const bossIdx = data.bossTargets ? data.bossTargets[action.target] : (action.bossIdx || 0);
+                const bossIdx = action.bossIdx !== undefined ? action.bossIdx : (data.bossTargets ? data.bossTargets[action.target] : 0);
                 const enemyEl = getEnemySprite(bossIdx);
                 const targetEl = getAllySprite(action.target);
 
@@ -8514,7 +8618,7 @@ window.MOE_DATA_STRING = `
         // 戰鬥結算
         window.endTowerPartyBattle = async (isWin, data) => {
             if (window.towerTimerInterval) clearInterval(window.towerTimerInterval);
-            if (window._orphanBossInterval) { clearInterval(window._orphanBossInterval); window._orphanBossInterval = null; }
+            if (window._orphanBossInterval) { clearTimeout(window._orphanBossInterval); window._orphanBossInterval = null; }
             window.AudioEngine.playSFXTrack(isWin ? 'win' : 'lose');
             document.getElementById('battle-options').innerHTML = '';
             document.getElementById('battle-actions').innerHTML = '';
@@ -8537,6 +8641,9 @@ window.MOE_DATA_STRING = `
                 }
                 if (iSurvived) {
                     msg = `🎉 試煉塔第 ${data.floor} 層成功！\n你存活了，獲得豐厚獎勵！`;
+                    // 記錄試煉塔通關次數
+                    window.player.records.towerWins = (window.player.records.towerWins || 0) + 1;
+                    if (data.floor === 7) window.player.records.towerFloor7Wins = (window.player.records.towerFloor7Wins || 0) + 1;
                     // 發放獎勵
                     if (floorDef) {
                         if (floorDef.fragments > 0) {
@@ -8587,7 +8694,7 @@ window.MOE_DATA_STRING = `
         window.leaveTowerParty = async (forced = false) => {
             window.AudioEngine.sfx.click();
             if (window.towerTimerInterval) { clearInterval(window.towerTimerInterval); window.towerTimerInterval = null; }
-            if (window._orphanBossInterval) { clearInterval(window._orphanBossInterval); window._orphanBossInterval = null; }
+            if (window._orphanBossInterval) { clearTimeout(window._orphanBossInterval); window._orphanBossInterval = null; }
             if (window.towerPartyState.unsub) window.towerPartyState.unsub();
             if (!forced && window.towerPartyState.roomId) {
                 try {
