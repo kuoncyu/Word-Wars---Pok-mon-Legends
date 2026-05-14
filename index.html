@@ -545,7 +545,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v14</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題<</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v15</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題</div>
             </div>
         </div>
     </div>
@@ -2489,7 +2489,7 @@ window.MOE_DATA_STRING = `
         window.isSmallPoke = (idStr) => { if(!idStr) return false; idStr = idStr.toString(); if(idStr.includes('mega') || idStr.includes('gmax') || idStr.includes('ash')) return false; return SMALL_POKES.includes(parseInt(idStr)); };
 
         window.SPECIAL_ITEM_TYPES = ['name_card', 'rare_candy', 'change_char', 'reset_card', 'tm', 'buff_exp', 'buff_gold', 'summon_scroll', 'summon_scroll_normal', 'skin_voucher', 'skin_fragment'];
-        window.ALL_COLLECTIBLE_POKEMON = ["448", "624", "65", "68", "282", "478", "407", "477", "151", "25", "6", "658", "700", "778", "609", "359", "196", "197", "445", "149", "181", "94", "121", "471", "470", "150", "249", "250", "251", "382", "384", "483", "493", "718"];
+        window.ALL_COLLECTIBLE_POKEMON = ["448", "624", "65", "68", "282", "478", "407", "477", "151", "25", "6", "658", "700", "778", "609", "359", "196", "197", "445", "149", "181", "94", "121", "471", "470", "150", "249", "250", "251", "382", "384", "483", "493", "718", "906", "909", "912"];
 
         // 修正：造型資料庫庫 (更新為統由 window.getSprite 判斷世代路徑，防止新世代破圖)
         window.SKIN_DB = {
@@ -9714,8 +9714,45 @@ window.MOE_DATA_STRING = `
                 window.saveData();
                 window.showToast(`✨ 已擁有此寶可夢！轉換為 💰 1,000,000 金幣！`, '#f1c40f');
             } else {
-                window.showToast('✨ 懸賞召喚成功！', '#ffd700');
-                window.executeChangeChar(window.bountySummonSelectedUrl, null);
+                // 未擁有 → 解鎖圖鑑、換角、隨機學習招式
+                const newAvatarUrl = window.bountySummonSelectedUrl;
+                const match = newAvatarUrl.match(/\/([^/]+)\.gif$/);
+                let newId = match ? match[1] : targetId || "448";
+
+                // 若為造型 ID，查回本體 ID
+                if (!window.POKEMON_LEARNSETS[newId]) {
+                    let resolved = null;
+                    for (let bId in (window.SKIN_DB || {})) {
+                        if ((window.SKIN_DB[bId] || []).some(s => s.id === newId || s.url === newAvatarUrl)) {
+                            resolved = bId; break;
+                        }
+                    }
+                    newId = (resolved && window.POKEMON_LEARNSETS[resolved]) ? resolved : (targetId || "448");
+                }
+
+                // 解鎖圖鑑
+                if (!window.player.unlockedAvatars.includes(newId)) {
+                    window.player.unlockedAvatars.push(newId);
+                }
+
+                // 更換先鋒
+                window.player.avatar = newAvatarUrl;
+                window.player.avatarId = newId;
+
+                // 依等級隨機學習招式
+                const pool = window.POKEMON_LEARNSETS[newId] || window.POKEMON_LEARNSETS["448"];
+                let availableMoves = pool.filter(m => m.lv <= window.player.level);
+                if (availableMoves.length === 0) availableMoves = [pool[0]];
+                const shuffled = [...availableMoves].sort(() => Math.random() - 0.5);
+                window.player.moves = shuffled.slice(0, 4).map(m => ({ id: m.m, ...MOVES[m.m] }));
+
+                if (!window.player.records) window.player.records = {};
+                window.player.records.charChanges = (window.player.records.charChanges || 0) + 1;
+
+                window.showToast(`✨ 懸賞召喚成功！${window.pokeNames[parseInt(newId)] || newId} 已加入圖鑑並成為先鋒！`, '#ffd700');
+                window.checkAchievements();
+                window.updateUI();
+                window.saveData();
             }
         };
 
