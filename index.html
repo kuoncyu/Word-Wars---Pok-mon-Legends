@@ -1173,7 +1173,10 @@ window.MOE_DATA_STRING = `
     <div id="bounty-summon-modal" class="modal-overlay" style="z-index: 8100;">
         <div class="modal-box" style="padding: 20px; max-width: 450px; background: #2c3e50; border-color: #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.5);">
             <h2 style="color:#ffd700; margin-top:0; text-shadow: 0 0 10px #b8860b;">✨ 懸賞召喚！</h2>
-            <p style="font-size:1rem; color:#ccc; margin-bottom:15px;">碎片已集滿！傳說中的寶可夢聽從了召喚！<br>選擇一隻作為你的新先鋒，將自動學會對應招式！</p>
+            <p style="font-size:1rem; color:#ccc; margin-bottom:10px;">碎片已集滿！傳說中的寶可夢聽從了召喚！<br>可選擇目標本體或任一造型作為先鋒。</p>
+            <div id="bounty-summon-duplicate-hint" style="display:none; background:rgba(241,196,15,0.15); border:1px solid #f1c40f; border-radius:8px; padding:10px; margin-bottom:10px; color:#f1c40f; font-size:0.9rem; font-weight:bold; text-align:center;">
+                ⚠️ 你已擁有此寶可夢！<br>召喚將轉換為 💰 1,000,000 金幣
+            </div>
             <div id="bounty-summon-grid" class="avatar-grid" style="grid-template-columns: repeat(3, 1fr); max-height: 40vh; overflow-y: auto; padding: 5px;"></div>
             <button type="button" class="btn" style="background:#3498db; margin-top:10px;" onclick="window.openPokedexModal(window.bountySummonSelectedUrl, null)">🔍 預覽寶可夢資訊</button>
             <div style="display:flex; gap:10px; margin-top: 15px;">
@@ -1374,7 +1377,7 @@ window.MOE_DATA_STRING = `
                 <div class="profile-header">
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
-                        <div onclick="window.openSkinSwitcher()" style="font-size:0.7rem;color:var(--enhance);cursor:pointer;background:rgba(224,86,253,0.15);border:1px solid var(--enhance);border-radius:8px;padding:2px 8px;white-space:nowrap;">👗 切換造型</div>
+                        <div onclick="window.openSkinSwitcher()" style="font-size:0.7rem;color:var(--enhance);cursor:pointer;background:rgba(224,86,253,0.15);border:1px solid var(--enhance);border-radius:8px;padding:2px 8px;white-space:nowrap;">👗 已擁有造型</div>
                     </div>
                     <div class="profile-info">
                         <div style="margin-bottom: 5px;">
@@ -2153,8 +2156,8 @@ window.MOE_DATA_STRING = `
                 if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 if(this.ctx.state === 'suspended') this.ctx.resume();
                 
-                this.tracks = { login: new Audio('login.mp3'), lobby: new Audio('lobby.mp3'), battle: new Audio('battle.mp3'), boss: new Audio('boss.mp3'), win: new Audio('win.mp3'), lose: new Audio('lose.mp3'), levelup: new Audio('levelup.mp3') };
-                this.tracks.login.loop = true; this.tracks.lobby.loop = true; this.tracks.battle.loop = true; this.tracks.boss.loop = true;
+                this.tracks = { login: new Audio('login.mp3'), lobby: new Audio('lobby.mp3'), battle: new Audio('battle.mp3'), boss: new Audio('boss.mp3'), win: new Audio('win.mp3'), lose: new Audio('lose.mp3'), levelup: new Audio('levelup.mp3'), tower: new Audio('tower.mp3'), dungeon: new Audio('dungeon.mp3'), bounty: new Audio('bounty.mp3') };
+                this.tracks.login.loop = true; this.tracks.lobby.loop = true; this.tracks.battle.loop = true; this.tracks.boss.loop = true; this.tracks.tower.loop = true; this.tracks.dungeon.loop = true; this.tracks.bounty.loop = true;
                 for (let key in this.tracks) { this.tracks[key].preload = 'auto'; }
             },
 
@@ -3827,9 +3830,11 @@ window.MOE_DATA_STRING = `
             
             const normalSkins = [];
             const superSkins = [];
+            const seenIds = new Set();
             for (let baseId in window.SKIN_DB) {
                 window.SKIN_DB[baseId].forEach(skin => {
-                    if (skin.id !== 'default') {
+                    if (skin.id !== 'default' && !seenIds.has(skin.id)) {
+                        seenIds.add(skin.id);
                         const entry = { ...skin, baseId };
                         // 超級進化：id 以 "10" 開頭（超級/原始/起源/超極巨化等形態）
                         if (String(skin.id).startsWith('10')) {
@@ -3947,14 +3952,26 @@ window.MOE_DATA_STRING = `
                 skinsGrid.innerHTML = window.SKIN_DB[baseId].map(skin => {
                     const isUnlocked = skin.id === 'default' || (window.player.unlockedSkins && window.player.unlockedSkins.includes(skin.id));
                     const isCurrent = window.player.avatar === skin.url;
+                    // 只有「已解鎖」且「此寶可夢是目前先鋒系列」才可點擊更換
+                    const isCurrentBase = window.player.avatarId === baseId;
+                    const canEquip = isUnlocked && isCurrentBase;
                     const borderStyle = isCurrent ? '2px solid #e056fd' : (isUnlocked ? '2px solid #2ecc71' : '2px dashed #555');
                     const opacityStyle = isUnlocked ? '1' : '0.4';
                     const filterStyle = isUnlocked ? 'none' : 'grayscale(1)';
-                    const clickAction = isUnlocked ? `window.equipSkin('${skin.url}', '${baseId}')` : `window.showToast('需要使用【👗造型解鎖券】來獲取此造型！', 'var(--boss)')`;
+                    let clickAction;
+                    if (canEquip) {
+                        clickAction = `window.equipSkin('${skin.url}', '${baseId}')`;
+                    } else if (isUnlocked && !isCurrentBase) {
+                        clickAction = `window.showToast('請先在地圖解鎖並切換此寶可夢為先鋒，才能更換造型！', 'var(--boss)')`;
+                    } else {
+                        clickAction = `window.showToast('需要使用【👗造型解鎖券】來獲取此造型！', 'var(--boss)')`;
+                    }
+                    const cursorStyle = canEquip ? 'pointer' : 'default';
                     
-                    return `<div style="flex-shrink:0; text-align:center; cursor:pointer; opacity:${opacityStyle}; filter:${filterStyle}; transition:0.2s;" onclick="${clickAction}" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    return `<div style="flex-shrink:0; text-align:center; cursor:${cursorStyle}; opacity:${opacityStyle}; filter:${filterStyle}; transition:0.2s;" onclick="${clickAction}" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                         <img src="${skin.url}" style="width:60px; height:60px; object-fit:contain; background:#222; border-radius:8px; border:${borderStyle}; padding:3px;">
                         <div style="font-size:0.75rem; color:#ccc; margin-top:3px; max-width:60px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${skin.name}</div>
+                        ${isUnlocked && !isCurrent && !isCurrentBase ? '<div style="font-size:0.6rem;color:#888;margin-top:1px;">👁️ 僅預覽</div>' : ''}
                     </div>`;
                 }).join('');
             } else {
@@ -3978,7 +3995,7 @@ window.MOE_DATA_STRING = `
             modal.style.display = 'flex';
         };
 
-        // 【更新】：更換造型的執行邏輯（已擁有的造型可任意切換）
+        // 【更新】：更換造型的執行邏輯（只能更換當前先鋒系列的造型）
         window.equipSkin = (skinUrl, baseId) => {
             window.AudioEngine.sfx.click();
             // 確認是否擁有此造型（default 造型或已解鎖）
@@ -3988,14 +4005,9 @@ window.MOE_DATA_STRING = `
             if (!isOwned) {
                 return window.showToast("需要使用【👗造型解鎖券】來獲取此造型！", "var(--boss)");
             }
-            // 若此造型屬於不同寶可夢系列，自動切換先鋒（需已解鎖該寶可夢）
+            // 【安全防呆】：禁止透過造型切換來更換先鋒寶可夢，必須在地圖解鎖後才能更換
             if (window.player.avatarId !== baseId) {
-                if (!window.player.unlockedAvatars.includes(baseId)) {
-                    return window.showToast("尚未解鎖該系列的寶可夢，無法切換此造型！", "var(--boss)");
-                }
-                window.player.avatarId = baseId;
-                const pkMoves = window.POKEMON_MOVES ? window.POKEMON_MOVES[baseId] : null;
-                if (pkMoves) window.player.moves = pkMoves.map(id => window.ALL_MOVES[id]).filter(Boolean);
+                return window.showToast("請先至地圖解鎖並切換此寶可夢為先鋒，才能更換其造型！", "var(--boss)");
             }
             window.player.avatar = skinUrl;
             document.getElementById('pd-sprite').src = skinUrl;
@@ -4008,28 +4020,83 @@ window.MOE_DATA_STRING = `
             window.openPokedexModal(skinUrl, baseId); 
         };
 
-        // 【新增】快速切換已擁有造型的衣櫃入口
-        window.openSkinSwitcher = () => {
+        // 【更新】快速切換已擁有造型的衣櫃入口 → 改為預覽展示，不可直接更換
+        window.openSkinSwitcher = (sortMode) => {
             window.AudioEngine.sfx.click();
-            let allSpecialOwned = [];
+            if (!sortMode) sortMode = window._skinSortMode || 'acquired';
+
+            // 收集所有已擁有的特殊造型（含 default 造型，依 baseId 遍歷）
+            // 以 skin.id 去重，避免伊布系列在多個 baseId 出現重複
+            const seenSwitcherIds = new Set();
+            let allOwned = [];
             Object.keys(window.SKIN_DB || {}).forEach(baseId => {
+                if (!window.player.unlockedAvatars.includes(baseId)) return;
                 (window.SKIN_DB[baseId] || []).forEach(skin => {
-                    if (skin.id !== 'default' && window.player.unlockedSkins && window.player.unlockedSkins.includes(skin.id)) {
-                        allSpecialOwned.push({ ...skin, baseId });
+                    const isOwned = skin.id === 'default' || (window.player.unlockedSkins && window.player.unlockedSkins.includes(skin.id));
+                    if (isOwned && !seenSwitcherIds.has(skin.id)) {
+                        seenSwitcherIds.add(skin.id);
+                        allOwned.push({ ...skin, baseId });
                     }
                 });
             });
-            if (allSpecialOwned.length === 0) {
-                return window.showToast("尚未擁有任何特殊造型！使用【👗造型解鎖券】來獲取造型。", "var(--boss)");
+
+            // 排序
+            if (sortMode === 'number') {
+                allOwned.sort((a, b) => {
+                    const na = a.id === 'default' ? parseInt(a.baseId) : parseInt(a.id);
+                    const nb = b.id === 'default' ? parseInt(b.baseId) : parseInt(b.id);
+                    return na - nb;
+                });
+            } else {
+                // 獲得順序：default 造型依解鎖順序（unlockedAvatars），特殊造型依 unlockedSkins 順序
+                allOwned.sort((a, b) => {
+                    const idxA = a.id === 'default'
+                        ? (window.player.unlockedAvatars.indexOf(a.baseId))
+                        : (window.player.unlockedSkins ? window.player.unlockedSkins.indexOf(a.id) + 10000 : 10000);
+                    const idxB = b.id === 'default'
+                        ? (window.player.unlockedAvatars.indexOf(b.baseId))
+                        : (window.player.unlockedSkins ? window.player.unlockedSkins.indexOf(b.id) + 10000 : 10000);
+                    return idxA - idxB;
+                });
             }
+
+            if (allOwned.length === 0) {
+                return window.showToast("尚未擁有任何造型！先解鎖寶可夢，或使用【👗造型解鎖券】來獲取特殊造型。", "var(--boss)");
+            }
+
             let modal = document.getElementById('skin-switcher-modal');
             if (!modal) {
                 modal = document.createElement('div');
                 modal.id = 'skin-switcher-modal';
-                modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9500;display:flex;align-items:center;justify-content:center;padding:20px;';
+                modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9500;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
                 document.body.appendChild(modal);
             }
-            modal.innerHTML = `<div style="background:#1a1a2e;border:2px solid var(--enhance);border-radius:15px;width:100%;max-width:420px;padding:20px;text-align:center;max-height:80vh;overflow-y:auto;"><h3 style="color:var(--enhance);margin:0 0 5px;">👗 我的造型衣櫃</h3><p style="color:#aaa;font-size:0.85rem;margin:0 0 15px;">點擊即可切換已擁有的造型（若為其他寶可夢系列將自動切換先鋒）</p><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px;">${allSpecialOwned.map(skin => { const isCurrent = window.player.avatar === skin.url; return `<div onclick="window.equipSkin('${skin.url}','${skin.baseId}');document.getElementById('skin-switcher-modal').style.display='none';" style="background:${isCurrent?'rgba(224,86,253,0.2)':'rgba(0,0,0,0.3)'};border:2px solid ${isCurrent?'var(--enhance)':'#444'};border-radius:10px;padding:8px;cursor:pointer;"><img src="${skin.url}" style="width:100%;aspect-ratio:1;object-fit:contain;image-rendering:pixelated;border-radius:6px;background:#111;"><div style="font-size:0.7rem;color:#ccc;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${skin.name}</div>${isCurrent?'<div style="font-size:0.65rem;color:var(--enhance);">✔ 使用中</div>':''}</div>`; }).join('')}</div><button onclick="document.getElementById('skin-switcher-modal').style.display='none'" style="background:#555;color:#fff;border:none;border-radius:8px;padding:10px 25px;font-size:1rem;cursor:pointer;">關閉</button></div>`;
+
+            const gridHtml = allOwned.map(skin => {
+                const isCurrent = window.player.avatar === skin.url;
+                return `<div
+                    title="僅供預覽，如需更換請至地圖切換先鋒後操作"
+                    style="background:${isCurrent ? 'rgba(224,86,253,0.22)' : 'rgba(0,0,0,0.35)'};border:2px solid ${isCurrent ? 'var(--enhance)' : '#444'};border-radius:10px;padding:8px;cursor:default;transition:border-color 0.2s,background 0.2s;position:relative;">
+                    <img src="${skin.url}" style="width:100%;aspect-ratio:1;object-fit:contain;image-rendering:pixelated;border-radius:6px;background:#111;">
+                    <div style="font-size:0.68rem;color:#ccc;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${skin.name}</div>
+                    ${isCurrent ? '<div style="font-size:0.6rem;color:var(--enhance);font-weight:bold;">✔ 使用中</div>' : '<div style="font-size:0.6rem;color:#888;">👁️ 僅預覽</div>'}
+                </div>`;
+            }).join('');
+
+            modal.innerHTML = `
+                <div style="background:#1a1a2e;border:2px solid var(--enhance);border-radius:15px;width:100%;max-width:440px;padding:20px;text-align:center;max-height:85vh;overflow-y:auto;box-sizing:border-box;">
+                    <h3 style="color:var(--enhance);margin:0 0 4px;">👗 我的造型衣櫃</h3>
+                    <p style="color:#aaa;font-size:0.8rem;margin:0 0 6px;line-height:1.4;">以下為你已擁有的造型（僅供預覽）</p>
+                    <div style="background:rgba(224,86,253,0.08);border:1px solid rgba(224,86,253,0.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;">
+                        <span style="color:#e056fd;font-size:0.82rem;">💡 請至地圖解鎖並切換寶可夢為先鋒後，再進入圖鑑更換造型</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;">
+                        <button onclick="window._skinSortMode='acquired';window.openSkinSwitcher('acquired')" style="flex:1;padding:6px 0;border-radius:6px;border:1px solid #555;background:${sortMode==='acquired'?'var(--enhance)':'#333'};color:#fff;font-size:0.85rem;cursor:pointer;font-weight:bold;">📅 獲得順序</button>
+                        <button onclick="window._skinSortMode='number';window.openSkinSwitcher('number')" style="flex:1;padding:6px 0;border-radius:6px;border:1px solid #555;background:${sortMode==='number'?'var(--enhance)':'#333'};color:#fff;font-size:0.85rem;cursor:pointer;font-weight:bold;">🔢 編號順序</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px;">${gridHtml}</div>
+                    <button onclick="document.getElementById('skin-switcher-modal').style.display='none'" style="background:#555;color:#fff;border:none;border-radius:8px;padding:10px 25px;font-size:1rem;cursor:pointer;width:100%;">關閉</button>
+                </div>`;
             modal.style.display = 'flex';
         };
 
@@ -4450,20 +4517,36 @@ window.MOE_DATA_STRING = `
 
         // 新增：渲染寶可夢圖鑑 (帶編號與搜尋)
         window._pokedexAllEntries = null;
-        window.renderPokedex = () => {
+        window.renderPokedex = async () => {
             const grid = document.getElementById('pokedex-grid');
+            grid.innerHTML = '<div style="grid-column:span 4;text-align:center;color:#aaa;padding:20px;">載入中...</div>';
             let unlockedCount = 0; let totalCount = 0;
-            
+
+            // 動態讀取懸賞目標，若圖鑑清單未包含則自動加入（含其 SKIN_DB 造型）
+            let bountyPokeId = null;
+            try {
+                const cfg = await window.getBountyConfig();
+                if (cfg && cfg.pokeId) {
+                    const pid = String(cfg.pokeId);
+                    const isExpired = cfg.endTime && Date.now() > cfg.endTime;
+                    if (!isExpired && !window.ALL_COLLECTIBLE_POKEMON.includes(pid)) {
+                        bountyPokeId = pid;
+                    }
+                }
+            } catch(e) {}
+
             const allEntries = [];
-            window.ALL_COLLECTIBLE_POKEMON.forEach((baseId) => {
-                // 取得真實全國圖鑑編號（baseId 本身就是全國圖鑑號，如 "6" → 006）
+            const collectibleSet = [...window.ALL_COLLECTIBLE_POKEMON];
+            if (bountyPokeId) collectibleSet.push(bountyPokeId);
+
+            collectibleSet.forEach((baseId) => {
                 const realDexNum = parseInt(baseId);
                 if (window.SKIN_DB[baseId]) {
-                    window.SKIN_DB[baseId].forEach((skin, skinIdx) => {
-                        allEntries.push({ baseId, skinId: skin.id, url: skin.url, name: skin.name, num: realDexNum });
+                    window.SKIN_DB[baseId].forEach((skin) => {
+                        allEntries.push({ baseId, skinId: skin.id, url: skin.url, name: skin.name, num: realDexNum, isBountyTarget: baseId === bountyPokeId });
                     });
                 } else {
-                    allEntries.push({ baseId, skinId: 'default', url: window.getSprite(baseId), name: pokeNames[baseId] || "未知", num: realDexNum });
+                    allEntries.push({ baseId, skinId: 'default', url: window.getSprite(baseId), name: pokeNames[baseId] || `#${baseId}`, num: realDexNum, isBountyTarget: baseId === bountyPokeId });
                 }
             });
 
@@ -4501,6 +4584,7 @@ window.MOE_DATA_STRING = `
 
                 if (entry.isUnlocked) {
                     html += `<div class="pokedex-item unlocked" onclick="window.openPokedexModal('${entry.url}', '${entry.skinId === 'default' ? entry.baseId : entry.skinId}')">
+                        ${entry.isBountyTarget ? '<div style="position:absolute;top:4px;left:4px;background:rgba(255,215,0,0.85);color:#000;font-size:0.6rem;font-weight:bold;border-radius:4px;padding:1px 5px;z-index:2;">🎯懸賞</div>' : ''}
                         <div class="pk-img-area"><img src="${entry.url}"></div>
                         <div class="pk-info">
                             <div class="pk-number">#${String(entry.num).padStart(3,'0')}</div>
@@ -4508,11 +4592,13 @@ window.MOE_DATA_STRING = `
                         </div>
                     </div>`;
                 } else {
-                    html += `<div class="pokedex-item locked" onclick="window.showToast('尚未獲得此寶可夢或造型', 'var(--boss)')">
+                    const bountyHint = entry.isBountyTarget ? '（懸賞目標！集碎片可召喚）' : '尚未獲得此寶可夢或造型';
+                    html += `<div class="pokedex-item locked" style="${entry.isBountyTarget ? 'border-color:#b8860b;' : ''}" onclick="window.showToast('${bountyHint}', '${entry.isBountyTarget ? '#b8860b' : 'var(--boss)'}')">
+                        ${entry.isBountyTarget ? '<div style="position:absolute;top:4px;left:4px;background:rgba(184,134,11,0.9);color:#fff;font-size:0.6rem;font-weight:bold;border-radius:4px;padding:1px 5px;z-index:2;">🎯懸賞</div>' : ''}
                         <div class="pk-img-area"><img src="${entry.url}"></div>
                         <div class="pk-info">
-                            <div class="pk-number" style="color:rgba(255,255,255,0.25);">#${String(entry.num).padStart(3,'0')}</div>
-                            <div class="pk-name" style="color:#666;">???</div>
+                            <div class="pk-number" style="color:${entry.isBountyTarget ? 'rgba(255,200,80,0.6)' : 'rgba(255,255,255,0.25)'};">#${String(entry.num).padStart(3,'0')}</div>
+                            <div class="pk-name" style="color:${entry.isBountyTarget ? '#b8860b' : '#666'};">${entry.isBountyTarget ? entry.name : '???'}</div>
                         </div>
                     </div>`;
                 }
@@ -6288,9 +6374,13 @@ window.MOE_DATA_STRING = `
         window.performRoyalSkinGacha = () => {
             if (!window.player.unlockedSkins) window.player.unlockedSkins = [];
             const allSkins = [];
+            const seenRoyalIds = new Set();
             for (let baseId in window.SKIN_DB) {
                 window.SKIN_DB[baseId].forEach(skin => {
-                    if (skin.id !== 'default') allSkins.push({ ...skin, baseId });
+                    if (skin.id !== 'default' && !seenRoyalIds.has(skin.id)) {
+                        seenRoyalIds.add(skin.id);
+                        allSkins.push({ ...skin, baseId });
+                    }
                 });
             }
             if (allSkins.length === 0) return window.showToast("目前沒有造型可抽取！", "var(--boss)");
@@ -7582,7 +7672,7 @@ window.MOE_DATA_STRING = `
             const myBoss = data.bosses[myBossIdx];
             const floorDef = window.TOWER_FLOORS.find(f => f.floor === data.floor);
 
-            window.AudioEngine.playBGM('boss');
+            window.AudioEngine.playBGM('tower');
             document.getElementById('battle-scene').style.background = 'linear-gradient(to bottom,#1a0533 0%,#0d1a2e 50%,#4a0e0e 50%,#1a0505 100%)';
 
             const playerSprite = document.getElementById('player-sprite');
@@ -8978,7 +9068,7 @@ window.MOE_DATA_STRING = `
             window.inspectingZoneIdx = window.inspectingZoneIdx ?? 0;
 
             // 啟動戰鬥畫面
-            window.AudioEngine.playBGM('dungeon');
+            window.AudioEngine.playBGM('bounty');
             window.battleBuffs = { atk: 0, def: 0, dodge: 0, crit: 0, luck: 0 };
             window.battleState = { player: { status: null, statusTimer: 0 }, enemy: { status: null, statusTimer: 0 } };
             window.itemUsedThisTurn = false;
@@ -9380,28 +9470,30 @@ window.MOE_DATA_STRING = `
                 return;
             }
 
-            // 建立召喚候選池：只包含懸賞目標寶可夢，玩家可自由選擇
-            // 實際上可以同時選多種（允許所有普通可召喚的）
-            const poolIds = [cfg.pokeId, "196", "197", "445", "149", "181", "94", "121", "471", "470"];
-            const uniquePool = [...new Set(poolIds)];
+            const targetId = String(cfg.pokeId);
+            const targetUrl = window.getSprite(targetId);
+            const targetName = (window.pokeNames && window.pokeNames[parseInt(targetId)]) || `#${targetId}`;
+
+            // 判斷是否已擁有（重複召喚→轉金幣）
+            const alreadyOwned = window.player.unlockedAvatars.includes(targetId);
 
             const modal = document.getElementById('bounty-summon-modal');
             const grid = document.getElementById('bounty-summon-grid');
             grid.innerHTML = '';
 
-            window.bountySummonSelectedUrl = window.getSprite(String(cfg.pokeId));
+            window.bountySummonSelectedUrl = targetUrl;
+            window.bountySummonTargetId = targetId;
 
-            // 特別標示目標寶可夢
-            uniquePool.forEach(id => {
-                const url = window.getSprite(String(id));
+            // 只顯示目標寶可夢（含其所有造型）
+            const skinEntries = window.SKIN_DB[targetId] || [{ id: 'default', name: targetName, url: targetUrl }];
+            skinEntries.forEach(skin => {
+                const url = skin.url;
                 const wrapper = document.createElement('div');
                 wrapper.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:4px;';
+                wrapper.innerHTML = `<div style="font-size:0.65rem; color:#ffd700; font-weight:bold; background:rgba(255,215,0,0.2); border-radius:4px; padding:1px 5px;">🎯 ${skin.name}</div>`;
                 const img = document.createElement('img');
                 img.src = url;
                 img.className = 'avatar-option' + (url === window.bountySummonSelectedUrl ? ' selected' : '');
-                if (String(id) === String(cfg.pokeId)) {
-                    wrapper.innerHTML = `<div style="font-size:0.65rem; color:#ffd700; font-weight:bold; background:rgba(255,215,0,0.2); border-radius:4px; padding:1px 5px;">🎯 目標</div>`;
-                }
                 img.onclick = () => {
                     grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
                     img.classList.add('selected');
@@ -9412,10 +9504,16 @@ window.MOE_DATA_STRING = `
                 grid.appendChild(wrapper);
             });
 
+            // 若已擁有，顯示提示
+            const duplicateHint = document.getElementById('bounty-summon-duplicate-hint');
+            if (duplicateHint) {
+                duplicateHint.style.display = alreadyOwned ? 'block' : 'none';
+            }
+
             modal.style.display = 'flex';
         };
 
-        // 執行懸賞召喚（扣除碎片，換角）
+        // 執行懸賞召喚（扣除碎片，換角；若重複則轉金幣）
         window.executeBountySummon = () => {
             window.AudioEngine.sfx.click();
             if ((window.player.bountyFragments || 0) < 100) {
@@ -9423,11 +9521,27 @@ window.MOE_DATA_STRING = `
                 return;
             }
             if (!window.bountySummonSelectedUrl) return;
+
+            const targetId = window.bountySummonTargetId || '';
+            const alreadyOwned = targetId && window.player.unlockedAvatars.includes(targetId);
+
             window.player.bountyFragments -= 100;
             document.getElementById('bounty-summon-modal').style.display = 'none';
             window.AudioEngine.playSFXTrack('levelup');
-            window.showToast('✨ 懸賞召喚成功！', '#ffd700');
-            window.executeChangeChar(window.bountySummonSelectedUrl, null);
+
+            if (alreadyOwned) {
+                // 已擁有 → 轉為金幣
+                const compensation = 1000000;
+                window.player.gold += compensation;
+                if (!window.player.records) window.player.records = {};
+                window.player.records.goldEarned = (window.player.records.goldEarned || 0) + compensation;
+                window.updateUI();
+                window.saveData();
+                window.showToast(`✨ 已擁有此寶可夢！轉換為 💰 1,000,000 金幣！`, '#f1c40f');
+            } else {
+                window.showToast('✨ 懸賞召喚成功！', '#ffd700');
+                window.executeChangeChar(window.bountySummonSelectedUrl, null);
+            }
         };
 
         // ===== 管理員：懸賞設定 =====
