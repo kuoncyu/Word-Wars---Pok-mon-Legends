@@ -2252,7 +2252,7 @@ window.MOE_DATA_STRING = `
             m_rocktomb: {name:"岩石封鎖", type:'damage', power:60, anim:'ground', desc:"用岩石封鎖對手。威力: 60"},
             m_fireblast: {name:"大字爆炎", type:'damage', power:110, anim:'fire', desc:"大字型的火焰。威力: 110"},
             m_ember: {name:"火花", type:'damage', power:40, anim:'fire', desc:"發射小火焰。威力: 40"},
-            m_firespin: {name:"火焰旋渦", type:'damage', power:35, anim:'fire', desc:"將對手困在火之旋渦。威力: 35"},
+            m_firespin: {name:"火焰旋渦", type:'trap', trapTurns:4, trapDmgRate:0.0625, anim:'fire', desc:"將對手困在火之旋渦中，連續 4 回合每回合扣除敵方最大HP 1/16 的傷害。"},
             m_hyperbeam: {name:"破壞光線", type:'damage', power:150, anim:'normal', desc:"毀滅性傷害。威力: 150"},
             m_icywind: {name:"冰凍之風", type:'damage', power:55, anim:'ice', desc:"吹出結冰的冷氣。威力: 55"},
             m_icepunch: {name:"冰凍拳", type:'damage', power:75, anim:'ice', desc:"帶有冷氣的拳頭。威力: 75"},
@@ -3736,9 +3736,13 @@ window.MOE_DATA_STRING = `
                 if(newMoveData) {
                     let mDef = MOVES[newMoveData.m]; 
                     if(window.player.moves.length < 4) { 
-                        window.player.moves.push({ id: newMoveData.m, ...mDef }); 
-                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 500);
-                        window.updateUI(); window.saveData();
+                        document.getElementById('item-detail-modal').style.display = 'none';
+                        setTimeout(async () => { 
+                            const confirmLearn = await window.promptConfirmLearnMove(newMoveData);
+                            if (confirmLearn) { window.player.moves.push({ id: newMoveData.m, ...mDef }); window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'); }
+                            else { window.showToast(`放棄學習【${mDef.name}】。`, '#e74c3c'); }
+                            window.updateUI(); window.saveData(); 
+                        }, 300);
                     } else { 
                         window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
                         document.getElementById('item-detail-modal').style.display = 'none'; // 先關閉道具視窗以免重疊
@@ -5232,6 +5236,8 @@ window.MOE_DATA_STRING = `
             if (window.battleState.enemy.status === 'poison') { window.AudioEngine.sfx.status(); window.playAnim('enemy-sprite', 'anim-dmg'); let dmg = Math.max(1, Math.floor(window.currentEnemy.maxHp * 0.1)); window.currentEnemy.hp = Math.max(0, window.currentEnemy.hp - dmg); window.updateHpBar('enemy', window.currentEnemy.hp, window.currentEnemy.maxHp); await window.typeDialog(`${window.currentEnemy.name} 受到了毒的傷害！`); await window.wait(600); if(window.currentEnemy.hp <= 0) return window.winCombat(); }
             if (window.battleState.enemy.status === 'burn') { window.AudioEngine.sfx.status(); window.playAnim('enemy-sprite', 'anim-dmg'); let dmg = Math.max(1, Math.floor(window.currentEnemy.maxHp * 0.08)); window.currentEnemy.hp = Math.max(0, window.currentEnemy.hp - dmg); window.updateHpBar('enemy', window.currentEnemy.hp, window.currentEnemy.maxHp); await window.typeDialog(`${window.currentEnemy.name} 受到了灼傷傷害！`); await window.wait(600); if(window.currentEnemy.hp <= 0) return window.winCombat(); }
             
+            if (window.battleState.enemy.trap) { let t = window.battleState.enemy.trap; window.AudioEngine.sfx.status(); window.playAnim("enemy-sprite", "anim-dmg"); let trapDmg = Math.max(1, Math.floor(window.currentEnemy.maxHp * t.dmgRate)); window.currentEnemy.hp = Math.max(0, window.currentEnemy.hp - trapDmg); window.updateHpBar("enemy", window.currentEnemy.hp, window.currentEnemy.maxHp); t.turnsLeft--; if (t.turnsLeft <= 0) { await window.typeDialog(`${window.currentEnemy.name} 受到火焰旋渦傷害 ${trapDmg}！
+旋渦消散了！`); window.battleState.enemy.trap = null; } else { await window.typeDialog(`${window.currentEnemy.name} 受到火焰旋渦傷害 ${trapDmg}！（剩餘 ${t.turnsLeft} 回合）`); } await window.wait(600); if (window.currentEnemy.hp <= 0) return window.winCombat(); }
             window.isAnimating = false; window.nextQuestion();
         };
 
@@ -5305,6 +5311,21 @@ window.MOE_DATA_STRING = `
                         tag.style.display = 'inline-block'; await window.typeDialog(`對手陷入了異常狀態！`); await window.wait(600);
                     } else { await window.typeDialog(`但是沒有產生效果！`); await window.wait(600); }
                 } else { await window.typeDialog(`但是沒有命中！`); await window.wait(600); }
+            } else if (move.type === 'trap') {
+                if(resolvedAnim) {
+                    window.FXEngine.play(resolvedAnim, `${dId}-sprite`, 1700);
+                    const fx = document.createElement('div'); fx.style.position='absolute'; fx.style.top='0'; fx.style.left='0'; fx.style.width='100%'; fx.style.height='100%'; fx.style.zIndex='7'; fx.className = `fx-${resolvedAnim}-run`; document.getElementById('fx-layer').appendChild(fx); setTimeout(()=>fx.remove(), 1600);
+                }
+                window.AudioEngine.sfx.hit();
+                let targetTrapState = dId === 'player' ? window.battleState.player : window.battleState.enemy;
+                let trapDefenderName = dId === 'player' ? window.player.name : window.currentEnemy.name;
+                if (!targetTrapState.trap) {
+                    targetTrapState.trap = { turnsLeft: move.trapTurns || 4, dmgRate: move.trapDmgRate || 0.0625 };
+                    await window.typeDialog(`${trapDefenderName} 被困在火焰旋渦中！`);
+                } else {
+                    await window.typeDialog(`${trapDefenderName} 已在旋渦中了！`);
+                }
+                await window.wait(600);
             } else if (move.type === 'debuff') {
                 window.AudioEngine.sfx.item();
                 if(resolvedAnim) {
@@ -5415,7 +5436,11 @@ window.MOE_DATA_STRING = `
                 if(newMoveData) {
                     let mDef = MOVES[newMoveData.m]; window.AudioEngine.sfx.encounter();
                     await window.typeDialog(`${window.player.name} 想要學習新招式\n【${mDef.name}】！`); await window.wait(800);
-                    if(window.player.moves.length < 4) { window.player.moves.push({ id: newMoveData.m, ...mDef }); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`學會了【${mDef.name}】！`); await window.wait(600); } 
+                    if(window.player.moves.length < 4) { 
+                        const confirmLearn = await window.promptConfirmLearnMove(newMoveData);
+                        if (confirmLearn) { window.player.moves.push({ id: newMoveData.m, ...mDef }); window.AudioEngine.playSFXTrack('levelup'); await window.typeDialog(`學會了【${mDef.name}】！`); await window.wait(600); }
+                        else { await window.typeDialog(`放棄學習【${mDef.name}】了。`); await window.wait(600); }
+                    } 
                     else { window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; await window.promptLearnMove(newMoveData); }
                 }
             }
@@ -5477,9 +5502,32 @@ window.MOE_DATA_STRING = `
             window.isAnimating = false;
         };
 
+        window.promptConfirmLearnMove = (newMoveData) => {
+            return new Promise(resolve => {
+                const modal = document.getElementById('learn-move-modal');
+                const mDef = MOVES[newMoveData.m];
+                document.getElementById('lm-new-name').innerText = mDef.name;
+                const grid = document.getElementById('lm-moves-grid'); grid.innerHTML = '';
+                // 顯示招式說明
+                const desc = document.createElement('p');
+                desc.style.cssText = 'color:#aaa; font-size:0.9rem; margin:0 0 10px; text-align:left;';
+                desc.innerText = mDef.desc || '';
+                grid.appendChild(desc);
+                // 確認學習按鈕
+                const confirmBtn = document.createElement('button'); confirmBtn.className = 'btn'; confirmBtn.style.background = '#27ae60'; confirmBtn.innerText = `✅ 學習【${mDef.name}】`;
+                confirmBtn.onclick = () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; resolve(true); };
+                grid.appendChild(confirmBtn);
+                // 放棄按鈕（使用已有的 cancel btn）
+                document.getElementById('lm-cancel-btn').onclick = () => { window.AudioEngine.sfx.click(); modal.style.display = 'none'; resolve(false); };
+                // 更新說明文字
+                document.getElementById('learn-move-desc').innerHTML = `想學習「<span style="color:var(--accent); font-weight:bold;">${mDef.name}</span>」！<br>要學習這個招式嗎？`;
+                modal.style.display = 'flex';
+            });
+        };
+
         window.promptLearnMove = (newMoveData) => {
             return new Promise(resolve => {
-                const modal = document.getElementById('learn-move-modal'); document.getElementById('lm-new-name').innerText = MOVES[newMoveData.m].name; const grid = document.getElementById('lm-moves-grid'); grid.innerHTML = '';
+                const modal = document.getElementById('learn-move-modal'); document.getElementById('lm-new-name').innerText = MOVES[newMoveData.m].name; document.getElementById('learn-move-desc').innerHTML = `想學習「<span id="lm-new-name" style="color:var(--accent); font-weight:bold;">${MOVES[newMoveData.m].name}</span>」！<br>但只能記住 4 個招式。要忘記哪個呢？`; const grid = document.getElementById('lm-moves-grid'); grid.innerHTML = '';
                 window.player.moves.forEach((m, idx) => {
                     const btn = document.createElement('button'); btn.className = 'btn'; btn.style.background = '#34495e'; btn.innerText = `忘記 【${m.name}】`;
                     btn.onclick = async () => { 
@@ -6115,8 +6163,12 @@ window.MOE_DATA_STRING = `
                 if(newMoveData) {
                     let mDef = MOVES[newMoveData.m]; 
                     if(window.player.moves.length < 4) { 
-                        window.player.moves.push({ id: newMoveData.m, ...mDef }); 
-                        setTimeout(() => window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'), 500);
+                        setTimeout(async () => { 
+                            const confirmLearn = await window.promptConfirmLearnMove(newMoveData);
+                            if (confirmLearn) { window.player.moves.push({ id: newMoveData.m, ...mDef }); window.showToast(`學會了新招式【${mDef.name}】！`, '#3498db'); }
+                            else { window.showToast(`放棄學習【${mDef.name}】。`, '#e74c3c'); }
+                            window.updateUI(); window.saveData(); 
+                        }, 500);
                     } else { 
                         window.pendingMoveToLearn = { id: newMoveData.m, ...mDef }; 
                         setTimeout(() => window.promptLearnMove(newMoveData).then(() => { window.updateUI(); window.saveData(); }), 500); 
