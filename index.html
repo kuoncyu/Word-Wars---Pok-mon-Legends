@@ -545,7 +545,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514</div><div>題庫版本：20260417</div><div>更新資訊：新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試煉塔後返回一般地圖寶可夢半透明問題</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v14</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題<</div>
             </div>
         </div>
     </div>
@@ -4175,9 +4175,10 @@ window.MOE_DATA_STRING = `
             let availableMoves = pool.filter(m => m.lv <= window.player.level);
             if(availableMoves.length === 0) availableMoves = [pool[0]];
             
-            // 改為取得「該等級前最新學會的最多 4 個招式」，而不是隨機分配，更符合正常升級邏輯
-            let latestMoves = availableMoves.slice(-4).map(m => m.m);
-            window.player.moves = latestMoves.map(mid => ({ id: mid, ...MOVES[mid] }));
+            // 依等級從可學招式中「隨機」選取最多 4 個（符合遊戲設定）
+            const shuffledMoves = [...availableMoves].sort(() => Math.random() - 0.5);
+            const chosenMoves = shuffledMoves.slice(0, 4).map(m => m.m);
+            window.player.moves = chosenMoves.map(mid => ({ id: mid, ...MOVES[mid] }));
             
             window.AudioEngine.playSFXTrack('levelup');
             window.showToast(`🎭 成功更換先鋒寶可夢並重新學習了招式！`, '#3498db');
@@ -4627,13 +4628,19 @@ window.MOE_DATA_STRING = `
                 if (!matchName || !matchType || !matchUnlock) return;
 
                 if (entry.isUnlocked) {
-                    html += `<div class="pokedex-item unlocked" onclick="window.openPokedexModal('${entry.url}', '${entry.skinId === 'default' ? entry.baseId : entry.skinId}')">
+                    const isCurrent = window.player.avatarId === entry.baseId;
+                    const switchBtnHtml = isCurrent
+                        ? `<div style="background:rgba(46,204,113,0.2);color:#2ecc71;font-size:0.65rem;font-weight:bold;text-align:center;padding:3px 2px;border-top:1px solid rgba(46,204,113,0.3);">✅ 使用中</div>`
+                        : `<div style="background:rgba(52,152,219,0.25);color:#3498db;font-size:0.65rem;font-weight:bold;text-align:center;padding:3px 2px;border-top:1px solid rgba(52,152,219,0.3);">🔀 點擊更換</div>`;
+                    html += `<div class="pokedex-item unlocked" onclick="window.pokedexSwitchChar('${entry.baseId}', '${entry.url}', '${entry.name}')">
                         ${entry.isBountyTarget ? '<div style="position:absolute;top:4px;left:4px;background:rgba(255,215,0,0.85);color:#000;font-size:0.6rem;font-weight:bold;border-radius:4px;padding:1px 5px;z-index:2;">🎯懸賞</div>' : ''}
+                        ${isCurrent ? '<div style="position:absolute;top:4px;right:4px;background:rgba(46,204,113,0.85);color:#fff;font-size:0.6rem;font-weight:bold;border-radius:4px;padding:1px 5px;z-index:2;">先鋒</div>' : ''}
                         <div class="pk-img-area"><img src="${entry.url}"></div>
                         <div class="pk-info">
                             <div class="pk-number">#${String(entry.num).padStart(3,'0')}</div>
                             <div class="pk-name">${entry.name}</div>
                         </div>
+                        ${switchBtnHtml}
                     </div>`;
                 } else {
                     const bountyHint = entry.isBountyTarget ? '（懸賞目標！集碎片可召喚）' : '尚未獲得此寶可夢或造型';
@@ -4650,9 +4657,70 @@ window.MOE_DATA_STRING = `
             grid.innerHTML = html || '<div style="grid-column:span 4;text-align:center;color:#666;padding:20px;">沒有符合條件的寶可夢</div>';
         };
 
+        // 圖鑑直接換角：確認手續費並執行更換
+        window.pokedexSwitchChar = (baseId, avatarUrl, pokeName) => {
+            window.AudioEngine.sfx.click();
+
+            // 若點擊的是當前使用中的寶可夢，改為開啟圖鑑預覽
+            if (window.player.avatarId === baseId) {
+                return window.openPokedexModal(avatarUrl, baseId);
+            }
+
+            // 計算手續費
+            const fee = window.player.level * 100;
+
+            if (window.player.gold < fee) {
+                return window.showToast(`💰 金幣不足！更換 ${pokeName} 需要 ${fee} 金幣（等級 × 100）`, 'var(--boss)');
+            }
+
+            window.showCustomConfirm(
+                `🔀 更換先鋒寶可夢\n\n目標：${pokeName}\n手續費：${fee} 金幣（等級 ${window.player.level} × 100）\n\n更換後將依等級隨機重新學習招式。\n確定要更換嗎？`,
+                () => {
+                    // 扣除手續費
+                    window.player.gold -= fee;
+                    window.player.records = window.player.records || {};
+                    window.player.records.charChanges = (window.player.records.charChanges || 0) + 1;
+
+                    // 解析新ID（確認learnset存在）
+                    let newId = baseId;
+                    if (!window.POKEMON_LEARNSETS[newId]) {
+                        newId = "448";
+                        avatarUrl = window.getSprite(newId);
+                    }
+
+                    window.player.avatar = avatarUrl;
+                    window.player.avatarId = newId;
+
+                    // 圖鑑解鎖（理論上已解鎖，但確保）
+                    if (!window.player.unlockedAvatars.includes(newId)) {
+                        window.player.unlockedAvatars.push(newId);
+                    }
+
+                    // 依等級「隨機」分配招式（不取最後4個，而是從可學招式中隨機選4個）
+                    let pool = window.POKEMON_LEARNSETS[newId] || window.POKEMON_LEARNSETS["448"];
+                    let availableMoves = pool.filter(m => m.lv <= window.player.level);
+                    if (availableMoves.length === 0) availableMoves = [pool[0]];
+                    // 隨機打亂後取前4個
+                    const shuffled = [...availableMoves].sort(() => Math.random() - 0.5);
+                    const chosen = shuffled.slice(0, 4);
+                    window.player.moves = chosen.map(m => ({ id: m.m, ...MOVES[m.m] }));
+
+                    window.AudioEngine.playSFXTrack('levelup');
+                    window.showToast(`🎭 已更換為 ${pokeName}！\n💰 扣除手續費 ${fee} 金幣，招式已隨機重置！`, '#3498db');
+                    window.checkAchievements();
+                    window.updateUI();
+                    window.saveData();
+                    // 重新渲染圖鑑反映先鋒標記
+                    window.renderPokedex();
+                },
+                `✅ 確認更換（-${fee} 金幣）`
+            );
+        };
+
         // 新增：自訂警告視窗函數
-        window.showCustomConfirm = (msg, onConfirm) => {
+        window.showCustomConfirm = (msg, onConfirm, confirmBtnText) => {
             document.getElementById('custom-confirm-msg').innerText = msg;
+            document.getElementById('custom-confirm-yes-btn').innerText = confirmBtnText || '確認';
             document.getElementById('custom-confirm-yes-btn').onclick = () => {
                 document.getElementById('custom-confirm-modal').style.display = 'none';
                 if(onConfirm) onConfirm();
