@@ -545,7 +545,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v15</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v15</div><div>題庫版本：20260417</div><div>更新資訊：更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題</div>
             </div>
         </div>
     </div>
@@ -4088,46 +4088,44 @@ window.MOE_DATA_STRING = `
                 });
             }
 
-            // 排除當前使用中寶可夢的造型（那些在圖鑑中直接更換即可）
-            const currentAvatarBaseId = window.player.avatarId;
-            allOwned = allOwned.filter(skin => skin.baseId !== currentAvatarBaseId);
-
             if (allOwned.length === 0) {
-                return window.showToast("尚未擁有其他寶可夢的造型！先解鎖其他寶可夢，或使用【👗造型解鎖券】來獲取特殊造型。", "var(--boss)");
+                return window.showToast("尚未擁有任何造型！先解鎖寶可夢，或使用【👗造型解鎖券】來獲取特殊造型。", "var(--boss)");
             }
 
             let modal = document.getElementById('skin-switcher-modal');
             if (!modal) {
                 modal = document.createElement('div');
                 modal.id = 'skin-switcher-modal';
-                modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9500;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;';
+                modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9500;display:flex;align-items:flex-start;justify-content:center;padding:20px;box-sizing:border-box;overflow-y:auto;';
                 document.body.appendChild(modal);
             }
 
             const gridHtml = allOwned.map(skin => {
                 const isCurrent = window.player.avatar === skin.url;
+                const isCurrentPoke = skin.baseId === window.player.avatarId;
                 return `<div
-                    title="僅供預覽，如需更換請至地圖切換先鋒後操作"
-                    style="background:${isCurrent ? 'rgba(224,86,253,0.22)' : 'rgba(0,0,0,0.35)'};border:2px solid ${isCurrent ? 'var(--enhance)' : '#444'};border-radius:10px;padding:8px;cursor:default;transition:border-color 0.2s,background 0.2s;position:relative;">
+                    title="${isCurrentPoke ? '點擊可在圖鑑更換此造型' : '僅供預覽，如需更換請至地圖切換先鋒後操作'}"
+                    onclick="${isCurrentPoke ? `window.openPokedexModal('${skin.url}','${skin.baseId}');document.getElementById('skin-switcher-modal').style.display='none';` : `window.showToast('請先至地圖切換【${skin.name.replace(/'/g,'')}】為先鋒，再進入圖鑑更換造型！','var(--boss)')`}"
+                    style="background:${isCurrent ? 'rgba(224,86,253,0.22)' : (isCurrentPoke ? 'rgba(46,204,113,0.1)' : 'rgba(0,0,0,0.35)')};border:2px solid ${isCurrent ? 'var(--enhance)' : (isCurrentPoke ? '#2ecc71' : '#444')};border-radius:10px;padding:8px;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;">
                     <img src="${skin.url}" style="width:100%;aspect-ratio:1;object-fit:contain;image-rendering:pixelated;border-radius:6px;background:#111;">
                     <div style="font-size:0.68rem;color:#ccc;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${skin.name}</div>
-                    ${isCurrent ? '<div style="font-size:0.6rem;color:var(--enhance);font-weight:bold;">✔ 使用中</div>' : '<div style="font-size:0.6rem;color:#888;">👁️ 僅預覽</div>'}
+                    ${isCurrent ? '<div style="font-size:0.6rem;color:var(--enhance);font-weight:bold;">✔ 使用中</div>' : (isCurrentPoke ? '<div style="font-size:0.6rem;color:#2ecc71;">🔄 可更換</div>' : '<div style="font-size:0.6rem;color:#888;">👁️ 預覽</div>')}
                 </div>`;
             }).join('');
 
             modal.innerHTML = `
-                <div style="background:#1a1a2e;border:2px solid var(--enhance);border-radius:15px;width:100%;max-width:440px;padding:20px;text-align:center;max-height:85vh;overflow-y:auto;box-sizing:border-box;">
+                <div style="background:#1a1a2e;border:2px solid var(--enhance);border-radius:15px;width:100%;max-width:440px;padding:20px;text-align:center;box-sizing:border-box;margin:auto;">
                     <h3 style="color:var(--enhance);margin:0 0 4px;">👗 我的造型衣櫃</h3>
-                    <p style="color:#aaa;font-size:0.8rem;margin:0 0 6px;line-height:1.4;">以下為你已擁有的造型（僅供預覽）</p>
+                    <p style="color:#aaa;font-size:0.8rem;margin:0 0 6px;line-height:1.4;">共 <span style="color:var(--enhance);font-weight:bold;">${allOwned.length}</span> 款已擁有造型</p>
                     <div style="background:rgba(224,86,253,0.08);border:1px solid rgba(224,86,253,0.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;">
-                        <span style="color:#e056fd;font-size:0.82rem;">💡 請至地圖解鎖並切換寶可夢為先鋒後，再進入圖鑑更換造型</span>
+                        <span style="color:#e056fd;font-size:0.82rem;">💡 🟢 先鋒寶可夢造型可直接點擊更換；其他造型僅供預覽</span>
                     </div>
                     <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;">
                         <button onclick="window._skinSortMode='acquired';window.openSkinSwitcher('acquired')" style="flex:1;padding:6px 0;border-radius:6px;border:1px solid #555;background:${sortMode==='acquired'?'var(--enhance)':'#333'};color:#fff;font-size:0.85rem;cursor:pointer;font-weight:bold;">📅 獲得順序</button>
                         <button onclick="window._skinSortMode='number';window.openSkinSwitcher('number')" style="flex:1;padding:6px 0;border-radius:6px;border:1px solid #555;background:${sortMode==='number'?'var(--enhance)':'#333'};color:#fff;font-size:0.85rem;cursor:pointer;font-weight:bold;">🔢 編號順序</button>
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px;">${gridHtml}</div>
-                    <button onclick="document.getElementById('skin-switcher-modal').style.display='none'" style="background:#555;color:#fff;border:none;border-radius:8px;padding:10px 25px;font-size:1rem;cursor:pointer;width:100%;">關閉</button>
+                    <button onclick="document.getElementById('skin-switcher-modal').style.display='none'" style="background:#555;color:#fff;border:none;border-radius:8px;padding:10px 25px;font-size:1rem;cursor:pointer;width:100%;position:sticky;bottom:0;">關閉</button>
                 </div>`;
             modal.style.display = 'flex';
         };
