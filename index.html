@@ -76,6 +76,16 @@ window.MOE_DATA_STRING = `
         body { font-family: var(--font-main); background-color: var(--bg-dark); color: var(--text); margin: 0; padding: var(--safe-t) var(--safe-r) var(--safe-b) var(--safe-l); width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         #splash-screen { position: fixed; top: var(--safe-t); left: var(--safe-l); width: calc(100vw - var(--safe-l) - var(--safe-r)); height: calc(100vh - var(--safe-t) - var(--safe-b)); background-color: #0f0f10; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: opacity 0.5s ease; }
         @keyframes splashPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* ===== 廣播橫幅 ===== */
+        #broadcast-banner { position: fixed; top: calc(var(--safe-t) + 8px); left: 50%; transform: translateX(-50%) translateY(-120%); z-index: 99000; max-width: 92vw; min-width: 260px; background: linear-gradient(90deg, #1a3a5c, #1a4a2c); border: 1.5px solid #3498db; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(52,152,219,0.4); transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), opacity 0.3s ease; opacity: 0; pointer-events: none; }
+        #broadcast-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+        #broadcast-banner.login-type { background: linear-gradient(90deg, #1a3a5c, #0d2b3a); border-color: #3498db; }
+        #broadcast-banner.broadcast-type { background: linear-gradient(90deg, #3a2800, #1a1200); border-color: #f1c40f; box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(241,196,15,0.4); }
+        #broadcast-banner-icon { font-size: 1.3rem; flex-shrink: 0; }
+        #broadcast-banner-text { font-size: 0.88rem; color: #fff; font-weight: bold; line-height: 1.4; flex: 1; }
+        @keyframes bannerSlideIn { from { transform: translateX(-50%) translateY(-120%); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+        @keyframes bannerSlideOut { from { transform: translateX(-50%) translateY(0); opacity: 1; } to { transform: translateX(-50%) translateY(-120%); opacity: 0; } }
         .btn { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight:bold; transition: 0.2s; display: inline-block; text-align: center; text-decoration:none; }
         .btn:active { transform: scale(0.95); filter: brightness(0.8); }
         .btn:disabled { background: #555 !important; cursor: not-allowed; opacity: 0.5; border-color: #333 !important; color:#aaa; }
@@ -486,6 +496,12 @@ window.MOE_DATA_STRING = `
 </head>
 <body>
     
+    <!-- 廣播橫幅 -->
+    <div id="broadcast-banner" class="login-type">
+        <span id="broadcast-banner-icon">🔔</span>
+        <span id="broadcast-banner-text"></span>
+    </div>
+
     <!-- 點擊進入畫面 -->
     <div id="splash-screen">
         <h1 style="color: var(--accent); font-size: 4rem; text-shadow: 0 0 20px var(--primary); margin-bottom: 20px; text-align: center; animation: splashPulse 1.5s infinite;">字靈獵人<br>寶可夢傳說</h1>
@@ -545,7 +561,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260514-v15</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260515</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題；個人簡介；廣播輪播系統</div>
             </div>
         </div>
     </div>
@@ -782,6 +798,16 @@ window.MOE_DATA_STRING = `
                         <button class="btn" style="background:#9b59b6; flex:1; padding:10px;" onclick="window.adminSetTowerEvent()">✅ 設定並開放</button>
                         <button class="btn" style="background:#c0392b; flex:1; padding:10px;" onclick="window.adminClearTowerEvent()">❌ 立即關閉活動</button>
                     </div>
+                </div>
+
+                <!-- 輪播廣播設定 -->
+                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #2ecc71; margin-top:10px;">
+                    <h3 style="color:#2ecc71; margin-top:0; margin-bottom:10px;">📢 輪播廣播設定</h3>
+                    <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">每5分鐘自動輪播一句廣播訊息（不影響聊天室警語），管理員可自行增刪。</div>
+                    <div id="admin-broadcast-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;"></div>
+                    <button class="btn" style="background:#2ecc71; color:#000; font-weight:bold; padding:8px;" onclick="window.adminAddBroadcastRow()">➕ 增加欄位</button>
+                    <button class="btn" style="background:#3498db; margin-top:8px; padding:8px;" onclick="window.adminSaveBroadcast()">💾 儲存輪播設定</button>
+                    <div id="admin-broadcast-status" style="color:#aaa; font-size:0.82rem; margin-top:6px;"></div>
                 </div>
 
                 <button class="btn" style="background:#555; margin-top: 10px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
@@ -1324,7 +1350,14 @@ window.MOE_DATA_STRING = `
             <h3 id="pi-name" style="color:#fff; margin:5px 0;"></h3>
             <!-- 補回遺漏的勳章容器 -->
             <div id="pi-badges" style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-bottom:10px;"></div>
-            <div style="color:var(--luck); font-weight:bold; margin-bottom:15px;">Lv. <span id="pi-level"></span></div>
+            <div style="color:var(--luck); font-weight:bold; margin-bottom:10px;">Lv. <span id="pi-level"></span></div>
+            <!-- 個人簡介 -->
+            <div id="pi-bio-section" style="display:none; background:rgba(52,152,219,0.1); border:1px solid #3498db; border-radius:8px; padding:8px 12px; margin-bottom:10px; text-align:left; font-size:0.9rem; color:#ccc; line-height:1.5;"></div>
+            <!-- 上線時段與目標關卡 -->
+            <div id="pi-extra-section" style="display:none; background:rgba(0,0,0,0.4); border:1px solid #444; border-radius:8px; padding:8px 12px; margin-bottom:10px; text-align:left; font-size:0.88rem;">
+                <div id="pi-schedule" style="color:#f39c12; margin-bottom:4px;"></div>
+                <div id="pi-target-quest" style="color:#2ecc71;"></div>
+            </div>
             <div style="background:#111; padding:15px; border-radius:8px; text-align:left; color:#ccc;">
                 <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:5px; margin-bottom:10px;">
                     <span>⚔️ PvP 勝場: <span id="pi-wins" style="color:#2ecc71; font-weight:bold; font-size:1.1rem;"></span></span>
@@ -1335,6 +1368,30 @@ window.MOE_DATA_STRING = `
                 <div id="pi-history" style="max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
             </div>
             <button class="btn" style="background:#555; margin-top:15px;" onclick="document.getElementById('player-info-modal').style.display='none'">關閉情報</button>
+        </div>
+    </div>
+
+    <!-- 個人簡介編輯 Modal -->
+    <div id="profile-edit-modal" class="modal-overlay" style="z-index: 8300;">
+        <div class="modal-box" style="padding: 20px; max-width: 420px; background: #222; border-color: #3498db;">
+            <h2 style="color:#3498db; margin-top:0;">✏️ 編輯個人簡介</h2>
+            <div style="margin-bottom:12px;">
+                <label style="color:#aaa; font-size:0.9rem; display:block; margin-bottom:5px;">📝 個人簡介 (最多100字)</label>
+                <textarea id="profile-bio-input" class="input-box" maxlength="100" style="width:100%; height:70px; padding:10px; resize:none;" placeholder="介紹一下自己吧..."></textarea>
+                <div id="profile-bio-count" style="text-align:right; font-size:0.8rem; color:#888;">0 / 100</div>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="color:#aaa; font-size:0.9rem; display:block; margin-bottom:5px;">🕐 可上線時段 (例：晚上8點~10點)</label>
+                <input type="text" id="profile-schedule-input" class="input-box" maxlength="30" style="width:100%; padding:10px;" placeholder="例：平日 20:00~22:00">
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="color:#aaa; font-size:0.9rem; display:block; margin-bottom:5px;">🎯 想打的關卡 (例：試煉塔第7層、地下城淵層)</label>
+                <input type="text" id="profile-target-input" class="input-box" maxlength="30" style="width:100%; padding:10px;" placeholder="例：試煉塔第7層">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" style="background:#555; flex:1;" onclick="document.getElementById('profile-edit-modal').style.display='none'">取消</button>
+                <button class="btn" style="background:#3498db; flex:1;" onclick="window.saveProfileEdit()">💾 儲存</button>
+            </div>
         </div>
     </div>
 
@@ -1388,6 +1445,7 @@ window.MOE_DATA_STRING = `
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
                         <div onclick="window.openSkinSwitcher()" style="font-size:0.7rem;color:var(--enhance);cursor:pointer;background:rgba(224,86,253,0.15);border:1px solid var(--enhance);border-radius:8px;padding:2px 8px;white-space:nowrap;">👗 已擁有造型</div>
+                        <div onclick="window.openProfileEditModal()" style="font-size:0.7rem;color:#3498db;cursor:pointer;background:rgba(52,152,219,0.15);border:1px solid #3498db;border-radius:8px;padding:2px 8px;white-space:nowrap;margin-top:3px;">✏️ 編輯簡介</div>
                     </div>
                     <div class="profile-info">
                         <div style="margin-bottom: 5px;">
@@ -2072,6 +2130,32 @@ window.MOE_DATA_STRING = `
         };
 
         window.showToast = (t, c) => { const m = document.createElement('div'); m.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${c};color:#fff;padding:10px 20px;border-radius:5px;z-index:8000;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:opacity 0.3s;pointer-events:none;text-align:center;`; m.innerText = t; document.body.appendChild(m); setTimeout(() => { m.style.opacity = '0'; setTimeout(() => m.remove(), 300); }, 2000); };
+
+        // 廣播橫幅：在畫面中上方滑入顯示，持續數秒後自動消失
+        window._bannerQueue = [];
+        window._bannerShowing = false;
+        window.showBroadcastBanner = (text, type = 'login', duration = 4000) => {
+            window._bannerQueue.push({ text, type, duration });
+            if (!window._bannerShowing) window._processBannerQueue();
+        };
+        window._processBannerQueue = () => {
+            if (window._bannerQueue.length === 0) { window._bannerShowing = false; return; }
+            window._bannerShowing = true;
+            const { text, type, duration } = window._bannerQueue.shift();
+            const banner = document.getElementById('broadcast-banner');
+            const iconEl = document.getElementById('broadcast-banner-icon');
+            const textEl = document.getElementById('broadcast-banner-text');
+            if (!banner) { window._bannerShowing = false; return; }
+            banner.className = type === 'broadcast' ? 'broadcast-type' : 'login-type';
+            iconEl.innerText = type === 'broadcast' ? '📢' : '🔔';
+            textEl.innerHTML = text;
+            banner.classList.add('show');
+            clearTimeout(window._bannerHideTimer);
+            window._bannerHideTimer = setTimeout(() => {
+                banner.classList.remove('show');
+                setTimeout(() => window._processBannerQueue(), 500);
+            }, duration);
+        };
         window.playAnim = (id, cls) => { const e = document.getElementById(id); e.classList.remove(cls); void e.offsetWidth; e.classList.add(cls); };
         window.updateHpBar = (tgt, cur, max) => { 
             const p = Math.max(0, Math.min(100, (cur / max) * 100)); 
@@ -2114,7 +2198,10 @@ window.MOE_DATA_STRING = `
                             wins: window.player.pvpWins || 0,
                             losses: window.player.pvpLosses || 0,
                             pvpHistory: window.player.pvpHistory || [],
-                            badges: window.player.equippedBadges || []
+                            badges: window.player.equippedBadges || [],
+                            bio: window.player.profile ? (window.player.profile.bio || '') : '',
+                            schedule: window.player.profile ? (window.player.profile.schedule || '') : '',
+                            targetQuest: window.player.profile ? (window.player.profile.targetQuest || '') : ''
                         }, { merge: true }); 
                     }
                 } catch(e) {} 
@@ -2432,7 +2519,7 @@ window.MOE_DATA_STRING = `
             gold_x2: {name:"金幣2倍卡", icon:"🎫", desc:"1小時內戰鬥金幣2倍", dynamicPriceMulti:100, reqLevel:1, type:'buff_gold', val:2, isWeekly:true},
             gold_x3: {name:"金幣3倍卡", icon:"🎫", desc:"1小時內戰鬥金幣3倍", dynamicPriceMulti:200, reqLevel:1, type:'buff_gold', val:3, isWeekly:true},
             skin_voucher: {name:"造型解鎖券", icon:"👗", desc:"隨機抽取一款全服造型(重複退20萬金幣)", basePrice:200000, hideInShop:true, reqLevel:1, type:'skin_voucher'},
-            skin_fragment: {name:"造型解鎖券碎片", icon:"🧩", desc:"集滿100片可抽取一款隨機造型", basePrice:2000, reqLevel:1, type:'skin_fragment', isWeekly:true, weeklyLimit:10},
+            skin_fragment: {name:"造型解鎖券碎片", icon:"🧩", desc:"集滿100片可抽取一款隨機造型（僅可從試煉塔或商店取得，地下城不掉落）", basePrice:2000, reqLevel:1, type:'skin_fragment', isWeekly:true, weeklyLimit:10},
             summon_scroll: {name:"神獸召喚卷", icon:"📜", desc:"召喚限定神獸，替換先鋒並學習專屬招式", basePrice:99999999, reqLevel:80, type:'summon_scroll', isWeekly:false},
             normal_summon_scroll: {name:"普通寶可夢召喚卡", icon:"🎫", desc:"召喚強力普通寶可夢，替換先鋒並學習招式", basePrice:5000000, reqLevel:50, type:'summon_scroll_normal', isWeekly:false}
         };
@@ -2971,6 +3058,7 @@ window.MOE_DATA_STRING = `
             window.checkDailyLogin(); window.updateUI(); window.saveData(); 
             window.syncQuizFromFirebase(false); // 強制背景更新題庫
             window.initMailSystem(); // 初始化信件系統
+            window.loadBroadcastMessages(); // 載入輪播廣播訊息
             
             // 啟動 Buff 倒數計時器
             if(window.buffTimerInterval) clearInterval(window.buffTimerInterval);
@@ -3273,14 +3361,131 @@ window.MOE_DATA_STRING = `
             } catch(e) { window.showToast("回報失敗", "var(--boss)"); }
         };
 
+        // ======= 個人簡介編輯 =======
+        window.openProfileEditModal = () => {
+            window.AudioEngine.sfx.click();
+            if (!window.player.profile) window.player.profile = { bio: '', schedule: '', targetQuest: '' };
+            const bioInput = document.getElementById('profile-bio-input');
+            const schedInput = document.getElementById('profile-schedule-input');
+            const targetInput = document.getElementById('profile-target-input');
+            bioInput.value = window.player.profile.bio || '';
+            schedInput.value = window.player.profile.schedule || '';
+            targetInput.value = window.player.profile.targetQuest || '';
+            const countEl = document.getElementById('profile-bio-count');
+            if (countEl) countEl.innerText = `${bioInput.value.length} / 100`;
+            bioInput.oninput = () => { if (countEl) countEl.innerText = `${bioInput.value.length} / 100`; };
+            document.getElementById('profile-edit-modal').style.display = 'flex';
+        };
+
+        window.saveProfileEdit = () => {
+            window.AudioEngine.sfx.click();
+            if (!window.player.profile) window.player.profile = {};
+            window.player.profile.bio = document.getElementById('profile-bio-input').value.trim();
+            window.player.profile.schedule = document.getElementById('profile-schedule-input').value.trim();
+            window.player.profile.targetQuest = document.getElementById('profile-target-input').value.trim();
+            document.getElementById('profile-edit-modal').style.display = 'none';
+            window.saveData();
+            window.showToast('✅ 個人簡介已儲存！', '#2ecc71');
+        };
+
+        // ======= 管理員輪播廣播系統 =======
+        window._broadcastMessages = [];
+        window._broadcastIndex = 0;
+        window._broadcastInterval = null;
+
+        window.adminAddBroadcastRow = (text = '') => {
+            const list = document.getElementById('admin-broadcast-list');
+            if (!list) return;
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex; gap:8px; align-items:center;';
+            row.innerHTML = `<input type="text" class="input-box broadcast-msg-input" value="${text.replace(/"/g,'&quot;')}" placeholder="輸入廣播內容..." style="flex:1; padding:8px; font-size:0.9rem;">
+                <button class="btn" style="background:#e74c3c; width:auto; padding:6px 12px;" onclick="this.parentElement.remove()">✖</button>`;
+            list.appendChild(row);
+        };
+
+        window.adminSaveBroadcast = async () => {
+            const inputs = document.querySelectorAll('.broadcast-msg-input');
+            const msgs = [];
+            inputs.forEach(inp => { const v = inp.value.trim(); if (v) msgs.push(v); });
+            if (!window.db) return window.showToast('資料庫未連線', 'var(--boss)');
+            try {
+                await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'settings', 'broadcast'), { messages: msgs, updatedAt: Date.now() });
+                window._broadcastMessages = msgs;
+                document.getElementById('admin-broadcast-status').innerText = `✅ 已儲存 ${msgs.length} 條輪播訊息`;
+                window.showToast('✅ 輪播廣播已儲存！', '#2ecc71');
+            } catch(e) {
+                window.showToast('儲存失敗', 'var(--boss)');
+            }
+        };
+
+        window.loadBroadcastMessages = async () => {
+            if (!window.db) return;
+            try {
+                const snap = await window.getDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'settings', 'broadcast'));
+                if (snap.exists()) {
+                    window._broadcastMessages = snap.data().messages || [];
+                }
+            } catch(e) {}
+            window.startBroadcastRotation();
+        };
+
+        window.startBroadcastRotation = () => {
+            if (window._broadcastInterval) clearInterval(window._broadcastInterval);
+            window._broadcastIndex = 0;
+            window._broadcastInterval = setInterval(() => {
+                if (!window._broadcastMessages || window._broadcastMessages.length === 0) return;
+                const msg = window._broadcastMessages[window._broadcastIndex % window._broadcastMessages.length];
+                window._broadcastIndex++;
+                // 畫面橫幅廣播
+                window.showBroadcastBanner(`📢 ${msg}`, 'broadcast', 6000);
+                // 插入本地系統提示訊息（不寫入資料庫，不影響聊天室警語）
+                if (!window.localSysMsgs) window.localSysMsgs = [];
+                window.localSysMsgs.push({
+                    id: 'broadcast_' + Date.now(),
+                    isLocalRule: false,
+                    isBroadcast: true,
+                    displayHtml: `<div style="margin-bottom:8px; text-align:center;"><span style="font-size:0.85rem;color:#f1c40f;background:rgba(241,196,15,0.15);padding:4px 12px;border-radius:10px;border:1px solid #b8860b;display:inline-block;">📢 ${msg}</span></div>`,
+                    time: Date.now()
+                });
+                if (window.localSysMsgs.length > 30) window.localSysMsgs = window.localSysMsgs.slice(-30);
+                if (window.renderChatUI) window.renderChatUI(false);
+            }, 5 * 60 * 1000); // 每5分鐘
+        };
+
+        // 管理員開啟時讀取輪播設定
+        const _origAdminLoginForBroadcast = window.adminLogin;
+        window.adminLogin = async function() {
+            await _origAdminLoginForBroadcast.call(this);
+            // 載入輪播訊息到管理員介面
+            const list = document.getElementById('admin-broadcast-list');
+            if (list) {
+                list.innerHTML = '';
+                if (!window.db) return;
+                try {
+                    const snap = await window.getDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'settings', 'broadcast'));
+                    const msgs = (snap.exists() ? snap.data().messages : []) || [];
+                    if (msgs.length === 0) {
+                        window.adminAddBroadcastRow();
+                    } else {
+                        msgs.forEach(m => window.adminAddBroadcastRow(m));
+                    }
+                    document.getElementById('admin-broadcast-status').innerText = `目前有 ${msgs.length} 條輪播訊息`;
+                } catch(e) {
+                    window.adminAddBroadcastRow();
+                }
+            }
+        };
+
         window.broadcastLogin = async () => {
             if(!window.db || !window.user) return;
             try {
+                const targetQuest = (window.player.profile && window.player.profile.targetQuest) ? window.player.profile.targetQuest : '';
                 await window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat', 'login_' + Date.now().toString() + '_' + window.user.uid), {
                     uid: window.user.uid,
                     name: window.player.name,
                     text: 'login_event',
                     isSystem: true,
+                    targetQuest: targetQuest,
                     time: Date.now()
                 });
             } catch(e) {}
@@ -3376,9 +3581,15 @@ window.MOE_DATA_STRING = `
                         if (m.isSystem && m.text === 'login_event') {
                             if (window.sessionStartTime && m.time > window.sessionStartTime && m.uid !== window.user?.uid && !window.processedSysEvents.has(m.id)) {
                                 window.processedSysEvents.add(m.id);
-                                window.showToast(`🔔 ${m.name} 上線了，趕緊邀請他/她一起對戰吧！`, "#3498db");
+                                const questHint = m.targetQuest ? `，想打：${m.targetQuest}` : '';
+                                // 橫幅廣播（畫面中上方滑入）
+                                const bannerText = m.targetQuest
+                                    ? `✨ <b>${m.name}</b> 上線了！🎯 想打：${m.targetQuest}`
+                                    : `✨ <b>${m.name}</b> 上線了，趕緊邀請一起對戰！`;
+                                window.showBroadcastBanner(bannerText, 'login', 5000);
                             }
-                            m.displayHtml = `<div style="margin-bottom:8px; text-align:center;"><span style="font-size:0.8rem;color:#f39c12;background:rgba(243,156,18,0.2);padding:2px 8px;border-radius:10px;">✨ ${m.name} 剛剛上線了</span></div>`;
+                            const questTag = m.targetQuest ? `<span style="color:#2ecc71;"> 🎯 ${m.targetQuest}</span>` : '';
+                            m.displayHtml = `<div style="margin-bottom:8px; text-align:center;"><span style="font-size:0.8rem;color:#f39c12;background:rgba(243,156,18,0.2);padding:2px 8px;border-radius:10px;">✨ ${m.name} 剛剛上線了${questTag}</span></div>`;
                         } else {
                             if(m.time > window.lastChatTime && m.uid !== window.user?.uid) {
                                 hasNew = true;
@@ -4918,6 +5129,27 @@ window.MOE_DATA_STRING = `
             document.getElementById('pi-level').innerText = p.level;
             document.getElementById('pi-wins').innerText = p.wins || 0;
             document.getElementById('pi-losses').innerText = p.losses || 0;
+
+            // 顯示個人簡介
+            const bioSection = document.getElementById('pi-bio-section');
+            if (p.bio) {
+                bioSection.style.display = 'block';
+                bioSection.innerHTML = `📝 <span style="color:#ccc;">${p.bio}</span>`;
+            } else {
+                bioSection.style.display = 'none';
+            }
+
+            // 顯示上線時段與目標關卡
+            const extraSection = document.getElementById('pi-extra-section');
+            const scheduleEl = document.getElementById('pi-schedule');
+            const targetEl = document.getElementById('pi-target-quest');
+            if (p.schedule || p.targetQuest) {
+                extraSection.style.display = 'block';
+                scheduleEl.innerHTML = p.schedule ? `🕐 上線時段：${p.schedule}` : '';
+                targetEl.innerHTML = p.targetQuest ? `🎯 想打：${p.targetQuest}` : '';
+            } else {
+                extraSection.style.display = 'none';
+            }
             
             const historyList = p.pvpHistory || [];
             let hHtml = historyList.map(h => {
