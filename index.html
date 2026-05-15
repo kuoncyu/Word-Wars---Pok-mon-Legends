@@ -78,14 +78,41 @@ window.MOE_DATA_STRING = `
         @keyframes splashPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
 
         /* ===== 廣播橫幅 ===== */
-        #broadcast-banner { position: fixed; top: calc(var(--safe-t) + 8px); left: 50%; transform: translateX(-50%) translateY(-120%); z-index: 99000; max-width: 92vw; min-width: 260px; background: linear-gradient(90deg, #1a3a5c, #1a4a2c); border: 1.5px solid #3498db; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(52,152,219,0.4); transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), opacity 0.3s ease; opacity: 0; pointer-events: none; }
-        #broadcast-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
-        #broadcast-banner.login-type { background: linear-gradient(90deg, #1a3a5c, #0d2b3a); border-color: #3498db; }
-        #broadcast-banner.broadcast-type { background: linear-gradient(90deg, #3a2800, #1a1200); border-color: #f1c40f; box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px rgba(241,196,15,0.4); }
-        #broadcast-banner-icon { font-size: 1.3rem; flex-shrink: 0; }
-        #broadcast-banner-text { font-size: 0.88rem; color: #fff; font-weight: bold; line-height: 1.4; flex: 1; }
-        @keyframes bannerSlideIn { from { transform: translateX(-50%) translateY(-120%); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
-        @keyframes bannerSlideOut { from { transform: translateX(-50%) translateY(0); opacity: 1; } to { transform: translateX(-50%) translateY(-120%); opacity: 0; } }
+        #broadcast-banner {
+            position: fixed;
+            top: calc(var(--safe-t) + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(calc(-100% - 20px));
+            z-index: 999999;
+            max-width: 90vw;
+            min-width: 240px;
+            border-radius: 30px;
+            padding: 9px 18px 9px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.7);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+            opacity: 0;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        #broadcast-banner.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        #broadcast-banner.login-type {
+            background: linear-gradient(100deg, #0d2240 0%, #0d3320 100%);
+            border: 1.5px solid #3498db;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.7), 0 0 14px rgba(52,152,219,0.45);
+        }
+        #broadcast-banner.broadcast-type {
+            background: linear-gradient(100deg, #2a1800 0%, #1a1000 100%);
+            border: 1.5px solid #f1c40f;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.7), 0 0 14px rgba(241,196,15,0.45);
+        }
+        #broadcast-banner-icon { font-size: 1.25rem; flex-shrink: 0; }
+        #broadcast-banner-text { font-size: 0.87rem; color: #fff; font-weight: bold; line-height: 1.45; flex: 1; word-break: break-all; }
         .btn { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; width: 100%; font-weight:bold; transition: 0.2s; display: inline-block; text-align: center; text-decoration:none; }
         .btn:active { transform: scale(0.95); filter: brightness(0.8); }
         .btn:disabled { background: #555 !important; cursor: not-allowed; opacity: 0.5; border-color: #333 !important; color:#aaa; }
@@ -255,7 +282,14 @@ window.MOE_DATA_STRING = `
         .chest-draw-btn { background:#e67e22; color:#fff; border:none; border-radius:7px; padding:6px 10px; font-size:0.8rem; font-weight:bold; cursor:pointer; transition:0.15s; white-space:nowrap; }
         .chest-draw-btn:active { transform:scale(0.95); }
         .chest-draw-btn.multi { background:#9b59b6; }
-        /* 試煉塔樓層樣式 */
+        /* ===== 管理員收折區塊 ===== */
+        .admin-section { border-radius: 8px; margin-top: 10px; overflow: hidden; }
+        .admin-section-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; cursor: pointer; user-select: none; border-radius: 8px; transition: filter 0.15s; }
+        .admin-section-header:active { filter: brightness(0.85); }
+        .admin-section-header .admin-toggle-icon { font-size: 0.9rem; transition: transform 0.25s; flex-shrink: 0; margin-left: 8px; }
+        .admin-section-header.collapsed .admin-toggle-icon { transform: rotate(-90deg); }
+        .admin-section-body { background: #111; padding: 15px; border-top: 1px solid rgba(255,255,255,0.07); display: block; }
+        .admin-section-body.collapsed { display: none; }
         .tower-floor-item { background:rgba(255,255,255,0.05); border:2px solid #444; border-radius:12px; padding:12px 15px; margin-bottom:10px; display:flex; align-items:center; gap:12px; transition:0.2s; }
         .tower-floor-item.accessible { border-color:#9b59b6; background:linear-gradient(90deg, rgba(108,52,131,0.3), rgba(0,0,0,0.2)); cursor:pointer; }
         .tower-floor-item.accessible:active { transform:scale(0.98); }
@@ -553,7 +587,7 @@ window.MOE_DATA_STRING = `
             <button class="btn" style="margin-bottom: 15px; background: #8e44ad;" onclick="window.adminLogin()">🛡️ 管理員登入</button>
             <button class="btn" style="background:#555;" onclick="window.closeSettings()">關閉</button>
             <div style="margin-top: 15px; font-size: 0.85rem; color: #888; text-align: left; border-top: 1px solid #444; padding-top: 15px; line-height: 1.6;">
-                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260515</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題；個人簡介；廣播輪播系統</div>
+                <div>設計開發：郭柏宏 老師</div><div>測試校正：郭柏宏 老師</div><div>程式版本：20260515</div><div>題庫版本：20260417</div><div>更新資訊：圖鑑直接更換已擁有寶可夢；新增懸賞任務挑戰；造型圖鑑優化；試煉塔與地下城新增逃跑按鍵；修復試寶可夢半透明問題；個人簡介；廣播輪播系統<</div>
             </div>
         </div>
     </div>
@@ -563,246 +597,267 @@ window.MOE_DATA_STRING = `
         <div class="modal-box" style="padding: 25px; background:#2c3e50; border-color:#e74c3c;">
             <h2 style="color:var(--boss); margin-top:0;">🛡️ 管理員專區</h2>
             <p style="font-size:0.8rem; color:#aaa; margin-top:0;">題庫上次更新: <span id="db-last-update">從未</span></p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                <button class="btn" style="background: #444; font-size:0.9rem;" onclick="window.exportQuizData()">📄 匯出題庫</button>
-                <button class="btn" style="background: #444; font-size:0.9rem;" onclick="document.getElementById('import-file').click()">📂 匯入題庫</button>
-                <input type="file" id="import-file" style="display:none" accept=".txt,.js" onchange="window.importQuizData(event)">
-            </div>
-            <div style="display: flex; flex-direction:column; gap: 10px;">
-                <button class="btn" style="background: #2ecc71;" onclick="window.uploadQuizToFirebase()">⬆️ 上傳至雲端題庫 (Firebase)</button>
-                <button class="btn" style="background: #9b59b6;" onclick="window.viewPlayerAccounts()">👥 查看玩家帳密</button>
-                <button class="btn" style="background: #e67e22;" onclick="window.viewErrorReports()">📋 處理錯誤回報</button>
-                <div id="admin-account-list" style="max-height: 200px; overflow-y:auto; display:none; background:#111; padding:10px; border-radius:8px; margin-top:5px; font-size:0.9rem; color:#ccc;"></div>
-                <div id="admin-reports-list" style="max-height: 300px; overflow-y:auto; display:none; background:#111; padding:10px; border-radius:8px; margin-top:5px; font-size:0.9rem; color:#ccc; text-align:left;"></div>
-                
-                <!-- 新增：金手指與禮包專區 -->
-                <hr style="border-color:#444; margin: 10px 0;">
-                <h3 style="color:#f1c40f; margin-top:0; margin-bottom:10px;">👑 金手指專區</h3>
-                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #f39c12;">
-                    
-                    <input type="text" id="admin-target-acc" class="input-box" placeholder="目標帳號 (留空則修改自己)" style="width:100%; padding:8px; margin-bottom:15px; border-color:#e67e22;">
 
-                    <div style="margin-bottom:10px;">
-                        <label style="color:#aaa; font-size:0.9rem;">設定等級:</label>
-                        <div style="display:flex; gap:5px; margin-top:5px;">
-                            <input type="number" id="admin-set-level" class="input-box" style="padding:8px;" value="1">
-                            <button class="btn" style="background:#3498db; width:auto; padding:8px 15px;" onclick="window.adminSetLevel()">套用</button>
+            <div style="display: flex; flex-direction:column; gap: 0;">
+
+                <!-- ① 題庫管理 -->
+                <div class="admin-section" style="border:1px solid #555;">
+                    <div class="admin-section-header" style="background:#2d3748;" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#ccc;">📚 題庫管理</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#555;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <button class="btn" style="background: #444; font-size:0.9rem;" onclick="window.exportQuizData()">📄 匯出題庫</button>
+                            <button class="btn" style="background: #444; font-size:0.9rem;" onclick="document.getElementById('import-file').click()">📂 匯入題庫</button>
+                            <input type="file" id="import-file" style="display:none" accept=".txt,.js" onchange="window.importQuizData(event)">
+                        </div>
+                        <button class="btn" style="background: #2ecc71; width:100%;" onclick="window.uploadQuizToFirebase()">⬆️ 上傳至雲端題庫 (Firebase)</button>
+                    </div>
+                </div>
+
+                <!-- ② 玩家帳密 / 錯誤回報 -->
+                <div class="admin-section" style="border:1px solid #555;">
+                    <div class="admin-section-header" style="background:#2d3748;" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#ccc;">👥 玩家資料 / 錯誤回報</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#555;">
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <button class="btn" style="background: #9b59b6;" onclick="window.viewPlayerAccounts()">👥 查看玩家帳密</button>
+                            <button class="btn" style="background: #e67e22;" onclick="window.viewErrorReports()">📋 處理錯誤回報</button>
+                            <div id="admin-account-list" style="max-height: 200px; overflow-y:auto; display:none; background:#000; padding:10px; border-radius:8px; font-size:0.9rem; color:#ccc;"></div>
+                            <div id="admin-reports-list" style="max-height: 300px; overflow-y:auto; display:none; background:#000; padding:10px; border-radius:8px; font-size:0.9rem; color:#ccc; text-align:left;"></div>
                         </div>
                     </div>
-                    <div style="margin-bottom:15px;">
-                        <label style="color:#aaa; font-size:0.9rem;">設定金幣:</label>
-                        <div style="display:flex; gap:5px; margin-top:5px;">
-                            <input type="number" id="admin-set-gold" class="input-box" style="padding:8px;" value="10000">
-                            <button class="btn" style="background:#f1c40f; color:#000; width:auto; padding:8px 15px;" onclick="window.adminSetGold()">套用</button>
+                </div>
+
+                <!-- ③ 金手指 -->
+                <div class="admin-section" style="border:1px solid #f39c12;">
+                    <div class="admin-section-header" style="background:rgba(243,156,18,0.15);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#f1c40f;">👑 金手指專區</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#f39c12;">
+                        <input type="text" id="admin-target-acc" class="input-box" placeholder="目標帳號 (留空則修改自己)" style="width:100%; padding:8px; margin-bottom:15px; border-color:#e67e22;">
+                        <div style="margin-bottom:10px;">
+                            <label style="color:#aaa; font-size:0.9rem;">設定等級:</label>
+                            <div style="display:flex; gap:5px; margin-top:5px;">
+                                <input type="number" id="admin-set-level" class="input-box" style="padding:8px;" value="1">
+                                <button class="btn" style="background:#3498db; width:auto; padding:8px 15px;" onclick="window.adminSetLevel()">套用</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="color:#aaa; font-size:0.9rem;">設定金幣:</label>
+                            <div style="display:flex; gap:5px; margin-top:5px;">
+                                <input type="number" id="admin-set-gold" class="input-box" style="padding:8px;" value="10000">
+                                <button class="btn" style="background:#f1c40f; color:#000; width:auto; padding:8px 15px;" onclick="window.adminSetGold()">套用</button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <h4 style="color:#f39c12; margin-top:0; margin-bottom:10px; border-top:1px dashed #555; padding-top:15px;">🎁 發送全服限時禮包 (有效期限 24H)</h4>
-                    <input type="text" id="admin-mail-title" class="input-box" placeholder="禮包標題 (例: 兒童節禮包)" style="width:100%; padding:8px; margin-bottom:5px;">
-                    <textarea id="admin-mail-msg" class="input-box" placeholder="祝福訊息內容..." style="width:100%; padding:10px; margin-bottom:15px; height:80px;"></textarea>
-                    
-                    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
-                        <!-- 金幣與經驗值 -->
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <input type="number" id="admin-mail-gold" class="input-box" placeholder="金幣數量" style="padding:10px;">
-                            <input type="number" id="admin-mail-exp" class="input-box" placeholder="經驗值數量" style="padding:10px;">
+                </div>
+
+                <!-- ④ 全服禮包 -->
+                <div class="admin-section" style="border:1px solid #e67e22;">
+                    <div class="admin-section-header" style="background:rgba(230,126,34,0.15);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#e67e22;">🎁 發送全服禮包</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#e67e22;">
+                        <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">有效期限 24H，寄送後所有玩家信箱可領取</div>
+                        <input type="text" id="admin-mail-title" class="input-box" placeholder="禮包標題 (例: 兒童節禮包)" style="width:100%; padding:8px; margin-bottom:5px;">
+                        <textarea id="admin-mail-msg" class="input-box" placeholder="祝福訊息內容..." style="width:100%; padding:10px; margin-bottom:15px; height:80px;"></textarea>
+                        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:15px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <input type="number" id="admin-mail-gold" class="input-box" placeholder="金幣數量" style="padding:10px;">
+                                <input type="number" id="admin-mail-exp" class="input-box" placeholder="經驗值數量" style="padding:10px;">
+                            </div>
+                            <input type="number" id="admin-mail-candy" class="input-box" placeholder="神奇軟糖數量" style="width:100%; padding:10px;">
+                            <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid #444;">
+                                <select id="admin-mail-extra-item" class="input-box" style="padding:10px; flex: 2; font-size: 0.9rem;">
+                                    <option value="">(不附贈商店道具)</option>
+                                </select>
+                                <input type="number" id="admin-mail-extra-count" class="input-box" placeholder="數量" style="padding:10px; flex: 1;">
+                            </div>
+                            <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid #444;">
+                                <select id="admin-mail-chest-tier" class="input-box" style="padding:10px; flex: 2; font-size: 0.9rem;">
+                                    <option value="0">(不附贈寶箱)</option>
+                                    <option value="1">破舊木寶箱</option><option value="2">堅固鐵寶箱</option><option value="3">閃亮銅寶箱</option>
+                                    <option value="4">精緻銀寶箱</option><option value="5">璀璨金寶箱</option><option value="6">稀有白金寶箱</option>
+                                    <option value="7">紫水晶寶箱</option><option value="8">傳說翡翠寶箱</option><option value="9">史詩鑽石寶箱</option>
+                                    <option value="10">幻之星龍寶箱</option>
+                                </select>
+                                <input type="number" id="admin-mail-chest-count" class="input-box" placeholder="數量" style="padding:10px; flex: 1;">
+                            </div>
                         </div>
-                        
-                        <!-- 神奇軟糖 -->
-                        <input type="number" id="admin-mail-candy" class="input-box" placeholder="神奇軟糖數量" style="width:100%; padding:10px;">
-                        
-                        <!-- 商店道具下拉選單與數量 -->
-                        <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid #444;">
-                            <select id="admin-mail-extra-item" class="input-box" style="padding:10px; flex: 2; font-size: 0.9rem; text-align: left;">
-                                <option value="">(不附贈商店道具)</option>
+                        <button class="btn" style="background:#e67e22; padding: 15px; font-size: 1.2rem;" onclick="window.adminSendMail()">寄送全服禮包信件</button>
+                    </div>
+                </div>
+
+                <!-- ⑤ 個人信件 -->
+                <div class="admin-section" style="border:1px solid #2980b9;">
+                    <div class="admin-section-header" style="background:rgba(41,128,185,0.15);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#3498db;">📩 發送個人信件</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#2980b9;">
+                        <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">發送獎勵到特定帳號的信箱，玩家領取後信件立即刪除</div>
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <select id="admin-personal-mail-acc" class="input-box" style="flex:1; padding:8px; border-color:#2980b9; font-size:0.9rem;">
+                                <option value="">-- 請選擇目標帳號 --</option>
                             </select>
-                            <input type="number" id="admin-mail-extra-count" class="input-box" placeholder="數量" style="padding:10px; flex: 1;">
+                            <button class="btn" style="background:#3498db; width:auto; padding:8px 10px; white-space:nowrap;" onclick="window.loadPersonalMailDropdown()">🔄 載入</button>
                         </div>
+                        <input type="text" id="admin-personal-mail-title" class="input-box" placeholder="信件標題" style="width:100%; padding:8px; margin-bottom:5px;">
+                        <textarea id="admin-personal-mail-msg" class="input-box" placeholder="信件內容..." style="width:100%; padding:10px; margin-bottom:10px; height:60px;"></textarea>
+                        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:12px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <input type="number" id="admin-personal-gold" class="input-box" placeholder="金幣數量" style="padding:10px;">
+                                <input type="number" id="admin-personal-exp" class="input-box" placeholder="經驗值數量" style="padding:10px;">
+                            </div>
+                            <div style="display:flex; gap:10px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid #444;">
+                                <select id="admin-personal-item" class="input-box" style="padding:10px; flex:2; font-size:0.9rem;">
+                                    <option value="">(不附贈道具)</option>
+                                    <optgroup label="── 寶可夢相關 ──">
+                                        <option value="bountyFragment">🧩 寶可夢碎片（懸賞任務）</option>
+                                        <option value="rare_candy">🍬 神奇軟糖</option>
+                                    </optgroup>
+                                    <optgroup label="── 召喚券相關 ──">
+                                        <option value="summon_scroll">📜 神獸召喚卷</option>
+                                        <option value="normal_summon_scroll">🎫 普通寶可夢召喚卡</option>
+                                        <option value="skin_fragment">🧩 召喚券碎片（造型）</option>
+                                        <option value="skin_voucher">👗 造型解鎖券</option>
+                                    </optgroup>
+                                    <optgroup label="── 皇家召喚相關 ──">
+                                        <option value="royal_summon_voucher">👑 皇家召喚券（保底造型）</option>
+                                    </optgroup>
+                                    <optgroup label="── 招式學習機 ──">
+                                        <option value="tm_thunder">⚡ 招式學習機：閃電拳</option>
+                                        <option value="tm_fire">🔥 招式學習機：火焰拳</option>
+                                        <option value="tm_ice">❄️ 招式學習機：冰凍拳</option>
+                                    </optgroup>
+                                    <optgroup label="── 經驗加倍卡 ──">
+                                        <option value="exp_x2">📜 經驗 2 倍卡（1小時）</option>
+                                        <option value="exp_x3">📜 經驗 3 倍卡（1小時）</option>
+                                    </optgroup>
+                                    <optgroup label="── 金幣加倍卡 ──">
+                                        <option value="gold_x2">🎫 金幣 2 倍卡（1小時）</option>
+                                        <option value="gold_x3">🎫 金幣 3 倍卡（1小時）</option>
+                                    </optgroup>
+                                    <optgroup label="── 其他商店道具 ──">
+                                        <option value="name_card">📛 改名卡</option>
+                                        <option value="reset_card">🔄 重置卡</option>
+                                        <option value="change_char">🔀 換角卡</option>
+                                    </optgroup>
+                                </select>
+                                <input type="number" id="admin-personal-item-count" class="input-box" placeholder="數量" style="padding:10px; flex:1;">
+                            </div>
+                            <div style="display:flex; gap:10px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid #444;">
+                                <select id="admin-personal-chest-tier" class="input-box" style="padding:10px; flex:2; font-size:0.9rem;">
+                                    <option value="0">(不附贈寶箱)</option>
+                                    <option value="1">破舊木寶箱</option><option value="2">堅固鐵寶箱</option><option value="3">閃亮銅寶箱</option>
+                                    <option value="4">精緻銀寶箱</option><option value="5">璀璨金寶箱</option><option value="6">稀有白金寶箱</option>
+                                    <option value="7">紫水晶寶箱</option><option value="8">傳說翡翠寶箱</option><option value="9">史詩鑽石寶箱</option>
+                                    <option value="10">幻之星龍寶箱</option>
+                                </select>
+                                <input type="number" id="admin-personal-chest-count" class="input-box" placeholder="數量" style="padding:10px; flex:1;">
+                            </div>
+                        </div>
+                        <button class="btn" style="background:linear-gradient(135deg,#1a6e9e,#3498db); padding:13px; font-size:1.1rem;" onclick="window.adminSendPersonalMail()">📩 發送個人信件</button>
+                    </div>
+                </div>
 
-                        <!-- 寶箱下拉選單與數量 -->
-                        <div style="display: flex; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid #444;">
-                            <select id="admin-mail-chest-tier" class="input-box" style="padding:10px; flex: 2; font-size: 0.9rem; text-align: left;">
-                                <option value="0">(不附贈寶箱)</option>
-                                <option value="1">破舊木寶箱</option>
-                                <option value="2">堅固鐵寶箱</option>
-                                <option value="3">閃亮銅寶箱</option>
-                                <option value="4">精緻銀寶箱</option>
-                                <option value="5">璀璨金寶箱</option>
-                                <option value="6">稀有白金寶箱</option>
-                                <option value="7">紫水晶寶箱</option>
-                                <option value="8">傳說翡翠寶箱</option>
-                                <option value="9">史詩鑽石寶箱</option>
-                                <option value="10">幻之星龍寶箱</option>
+                <!-- ⑥ 封禁系統 -->
+                <div class="admin-section" style="border:1px solid #c0392b;">
+                    <div class="admin-section-header" style="background:rgba(192,57,43,0.15);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#e74c3c;">🔨 封禁系統</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#c0392b;">
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <select id="admin-ban-acc" class="input-box" style="flex:1; padding:8px; border-color:#e74c3c; font-size: 0.9rem;">
+                                <option value="">-- 請選擇目標帳號 --</option>
                             </select>
-                            <input type="number" id="admin-mail-chest-count" class="input-box" placeholder="數量" style="padding:10px; flex: 1;">
+                            <button class="btn" style="background:#3498db; width:auto; padding:8px 10px; white-space:nowrap;" onclick="window.loadAdminAccountDropdown()">🔄 重新載入</button>
                         </div>
-                    </div>
-                    
-                    <button class="btn" style="background:#e67e22; padding: 15px; font-size: 1.2rem;" onclick="window.adminSendMail()">寄送全服禮包信件</button>
-                </div>
-
-                <!-- 新增：發送個人信件 -->
-                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #2980b9; margin-top:10px;">
-                    <h3 style="color:#3498db; margin-top:0; margin-bottom:10px;">📩 發送個人信件（指定帳號）</h3>
-                    <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">發送獎勵到特定帳號的信箱，玩家領取後信件立即刪除</div>
-                    
-                    <!-- 目標帳號 -->
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <select id="admin-personal-mail-acc" class="input-box" style="flex:1; padding:8px; border-color:#2980b9; font-size:0.9rem;">
-                            <option value="">-- 請選擇目標帳號 --</option>
-                        </select>
-                        <button class="btn" style="background:#3498db; width:auto; padding:8px 10px; white-space:nowrap;" onclick="window.loadPersonalMailDropdown()">🔄 載入</button>
-                    </div>
-
-                    <input type="text" id="admin-personal-mail-title" class="input-box" placeholder="信件標題" style="width:100%; padding:8px; margin-bottom:5px;">
-                    <textarea id="admin-personal-mail-msg" class="input-box" placeholder="信件內容..." style="width:100%; padding:10px; margin-bottom:10px; height:60px;"></textarea>
-                    
-                    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:12px;">
-                        <!-- 金幣與經驗 -->
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <input type="number" id="admin-personal-gold" class="input-box" placeholder="金幣數量" style="padding:10px;">
-                            <input type="number" id="admin-personal-exp" class="input-box" placeholder="經驗值數量" style="padding:10px;">
-                        </div>
-                        
-                        <!-- 特殊道具下拉（含非商店道具） -->
-                        <div style="display:flex; gap:10px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid #444;">
-                            <select id="admin-personal-item" class="input-box" style="padding:10px; flex:2; font-size:0.9rem;">
-                                <option value="">(不附贈道具)</option>
-                                <optgroup label="── 寶可夢相關 ──">
-                                    <option value="bountyFragment">🧩 寶可夢碎片（懸賞任務）</option>
-                                    <option value="rare_candy">🍬 神奇軟糖</option>
-                                </optgroup>
-                                <optgroup label="── 召喚券相關 ──">
-                                    <option value="summon_scroll">📜 神獸召喚卷</option>
-                                    <option value="normal_summon_scroll">🎫 普通寶可夢召喚卡</option>
-                                    <option value="skin_fragment">🧩 召喚券碎片（造型）</option>
-                                    <option value="skin_voucher">👗 造型解鎖券</option>
-                                </optgroup>
-                                <optgroup label="── 皇家召喚相關 ──">
-                                    <option value="royal_summon_voucher">👑 皇家召喚券（保底造型）</option>
-                                </optgroup>
-                                <optgroup label="── 招式學習機 ──">
-                                    <option value="tm_thunder">⚡ 招式學習機：閃電拳</option>
-                                    <option value="tm_fire">🔥 招式學習機：火焰拳</option>
-                                    <option value="tm_ice">❄️ 招式學習機：冰凍拳</option>
-                                </optgroup>
-                                <optgroup label="── 經驗加倍卡 ──">
-                                    <option value="exp_x2">📜 經驗 2 倍卡（1小時）</option>
-                                    <option value="exp_x3">📜 經驗 3 倍卡（1小時）</option>
-                                </optgroup>
-                                <optgroup label="── 金幣加倍卡 ──">
-                                    <option value="gold_x2">🎫 金幣 2 倍卡（1小時）</option>
-                                    <option value="gold_x3">🎫 金幣 3 倍卡（1小時）</option>
-                                </optgroup>
-                                <optgroup label="── 其他商店道具 ──">
-                                    <option value="name_card">📛 改名卡</option>
-                                    <option value="reset_card">🔄 重置卡</option>
-                                    <option value="change_char">🔀 換角卡</option>
-                                </optgroup>
+                        <input type="text" id="admin-ban-reason" class="input-box" placeholder="封禁原因 (必填)" style="width:100%; padding:8px; margin-bottom:10px;">
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <select id="admin-ban-days" class="input-box" style="padding:8px; flex:1;">
+                                <option value="1">封鎖 1 天</option><option value="3">封鎖 3 天</option><option value="7">封鎖 7 天</option>
+                                <option value="14">封鎖 14 天</option><option value="30">封鎖 30 天</option><option value="36500">永久封鎖</option>
                             </select>
-                            <input type="number" id="admin-personal-item-count" class="input-box" placeholder="數量" style="padding:10px; flex:1;">
+                            <button class="btn" style="background:#c0392b; width:auto; padding:8px 15px;" onclick="window.adminBanAccount()">執行封禁</button>
                         </div>
+                        <button class="btn" style="background:#2ecc71; width:100%; padding:8px 15px;" onclick="window.adminUnbanAccount()">解除封禁</button>
+                    </div>
+                </div>
 
-                        <!-- 寶箱 -->
-                        <div style="display:flex; gap:10px; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; border:1px solid #444;">
-                            <select id="admin-personal-chest-tier" class="input-box" style="padding:10px; flex:2; font-size:0.9rem;">
-                                <option value="0">(不附贈寶箱)</option>
-                                <option value="1">破舊木寶箱</option>
-                                <option value="2">堅固鐵寶箱</option>
-                                <option value="3">閃亮銅寶箱</option>
-                                <option value="4">精緻銀寶箱</option>
-                                <option value="5">璀璨金寶箱</option>
-                                <option value="6">稀有白金寶箱</option>
-                                <option value="7">紫水晶寶箱</option>
-                                <option value="8">傳說翡翠寶箱</option>
-                                <option value="9">史詩鑽石寶箱</option>
-                                <option value="10">幻之星龍寶箱</option>
+                <!-- ⑦ 懸賞任務設定 -->
+                <div class="admin-section" style="border:1px solid #b8860b;">
+                    <div class="admin-section-header" style="background:rgba(184,134,11,0.15);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#ffd700;">🎯 懸賞任務設定</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#b8860b;">
+                        <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">設定本次懸賞任務要蒐集的寶可夢碎片（集滿100片可召喚）</div>
+                        <label style="color:#aaa; font-size:0.9rem;">目標寶可夢（選擇本次懸賞角色）：</label>
+                        <div style="display:flex; gap:8px; margin-top:6px; margin-bottom:10px; align-items:center;">
+                            <select id="admin-bounty-poke-id" class="input-box" style="flex:1; padding:8px; cursor:pointer;" onchange="window.adminPreviewBountyPoke()">
+                                <option value="">── 請選擇 ──</option>
+                                <option value="906">🌿 新葉喵（#906）</option>
+                                <option value="912">💧 潤水鴨（#912）</option>
+                                <option value="909">🔥 呆火鱷（#909）</option>
                             </select>
-                            <input type="number" id="admin-personal-chest-count" class="input-box" placeholder="數量" style="padding:10px; flex:1;">
+                        </div>
+                        <div id="admin-bounty-preview" style="display:none; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; margin-bottom:10px; text-align:center; border:1px solid #444;">
+                            <img id="admin-bounty-preview-img" src="" style="width:70px; height:70px; image-rendering:pixelated; object-fit:contain;">
+                            <div id="admin-bounty-preview-name" style="color:#ffd700; font-weight:bold; margin-top:5px;"></div>
+                        </div>
+                        <div id="admin-bounty-current" style="color:#aaa; font-size:0.85rem; margin-bottom:10px; background:rgba(255,215,0,0.08); border-radius:6px; padding:8px; border:1px solid #444;">目前設定：讀取中...</div>
+                        <div style="margin-top:12px; margin-bottom:6px;">
+                            <label style="color:#aaa; font-size:0.9rem;">活動截止時間（留空表示不設限）：</label>
+                            <input type="datetime-local" id="admin-bounty-end-time" class="input-box" style="width:100%; padding:8px; margin-top:4px; margin-bottom:6px;">
+                            <div id="admin-bounty-end-current" style="color:#aaa; font-size:0.82rem; background:rgba(255,215,0,0.06); border-radius:6px; padding:6px 8px; border:1px solid #444; margin-bottom:6px;"></div>
+                        </div>
+                        <button class="btn" style="background:linear-gradient(135deg,#b8860b,#ffd700); color:#000; font-weight:bold; padding:10px;" onclick="window.adminSetBountyTarget()">✅ 儲存懸賞設定</button>
+                        <button class="btn" style="background:#c0392b; margin-top:8px;" onclick="window.adminClearBountyTarget()">❌ 清除懸賞任務</button>
+                    </div>
+                </div>
+
+                <!-- ⑧ 試煉塔活動設定 -->
+                <div class="admin-section" style="border:1px solid #9b59b6;">
+                    <div class="admin-section-header" style="background:rgba(155,89,182,0.15);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#9b59b6;">🏯 試煉塔活動設定</span>
+                        <span class="admin-toggle-icon">▼</span>
+                    </div>
+                    <div class="admin-section-body collapsed" style="border-color:#9b59b6;">
+                        <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">設定試煉塔活動結束時間，儲存後立即開放，到期自動關閉。</div>
+                        <div id="tower-current-status" style="background:#1a1a1a; padding:8px; border-radius:5px; font-size:0.85rem; color:#ccc; margin-bottom:12px; border:1px solid #444;"></div>
+                        <label style="color:#aaa; font-size:0.9rem;">活動結束時間：</label>
+                        <input type="datetime-local" id="admin-tower-end" class="input-box" style="width:100%; padding:8px; margin-bottom:12px; margin-top:4px;">
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="background:#9b59b6; flex:1; padding:10px;" onclick="window.adminSetTowerEvent()">✅ 設定並開放</button>
+                            <button class="btn" style="background:#c0392b; flex:1; padding:10px;" onclick="window.adminClearTowerEvent()">❌ 立即關閉活動</button>
                         </div>
                     </div>
-                    
-                    <button class="btn" style="background:linear-gradient(135deg,#1a6e9e,#3498db); padding:13px; font-size:1.1rem;" onclick="window.adminSendPersonalMail()">📩 發送個人信件</button>
                 </div>
 
-                <!-- 新增：封禁系統專區 -->
-                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #c0392b; margin-top:10px;">
-                    <h3 style="color:#e74c3c; margin-top:0; margin-bottom:10px;">🔨 封禁系統</h3>
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <select id="admin-ban-acc" class="input-box" style="flex:1; padding:8px; border-color:#e74c3c; font-size: 0.9rem;">
-                            <option value="">-- 請選擇目標帳號 --</option>
-                        </select>
-                        <button class="btn" style="background:#3498db; width:auto; padding:8px 10px; white-space:nowrap;" onclick="window.loadAdminAccountDropdown()">🔄 重新載入</button>
+                <!-- ⑨ 輪播廣播設定 -->
+                <div class="admin-section" style="border:1px solid #2ecc71;">
+                    <div class="admin-section-header" style="background:rgba(46,204,113,0.12);" onclick="window.adminToggleSection(this)">
+                        <span style="font-weight:bold; color:#2ecc71;">📢 輪播廣播設定</span>
+                        <span class="admin-toggle-icon">▼</span>
                     </div>
-                    <input type="text" id="admin-ban-reason" class="input-box" placeholder="封禁原因 (必填)" style="width:100%; padding:8px; margin-bottom:10px;">
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <select id="admin-ban-days" class="input-box" style="padding:8px; flex:1;">
-                            <option value="1">封鎖 1 天</option>
-                            <option value="3">封鎖 3 天</option>
-                            <option value="7">封鎖 7 天</option>
-                            <option value="14">封鎖 14 天</option>
-                            <option value="30">封鎖 30 天</option>
-                            <option value="36500">永久封鎖</option>
-                        </select>
-                        <button class="btn" style="background:#c0392b; width:auto; padding:8px 15px;" onclick="window.adminBanAccount()">執行封禁</button>
-                    </div>
-                    <button class="btn" style="background:#2ecc71; width:100%; padding:8px 15px;" onclick="window.adminUnbanAccount()">解除封禁</button>
-                </div>
-
-                <!-- 懸賞任務設定 -->
-                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #b8860b; margin-top:10px;">
-                    <h3 style="color:#ffd700; margin-top:0; margin-bottom:10px;">🎯 懸賞任務設定</h3>
-                    <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">設定本次懸賞任務要蒐集的寶可夢碎片（集滿100片可召喚）</div>
-                    <label style="color:#aaa; font-size:0.9rem;">目標寶可夢（選擇本次懸賞角色）：</label>
-                    <div style="display:flex; gap:8px; margin-top:6px; margin-bottom:10px; align-items:center;">
-                        <select id="admin-bounty-poke-id" class="input-box" style="flex:1; padding:8px; cursor:pointer;" onchange="window.adminPreviewBountyPoke()">
-                            <option value="">── 請選擇 ──</option>
-                            <option value="906">🌿 新葉喵（#906）</option>
-                            <option value="912">💧 潤水鴨（#912）</option>
-                            <option value="909">🔥 呆火鱷（#909）</option>
-                        </select>
-                    </div>
-                    <div id="admin-bounty-preview" style="display:none; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; margin-bottom:10px; text-align:center; border:1px solid #444;">
-                        <img id="admin-bounty-preview-img" src="" style="width:70px; height:70px; image-rendering:pixelated; object-fit:contain;">
-                        <div id="admin-bounty-preview-name" style="color:#ffd700; font-weight:bold; margin-top:5px;"></div>
-                    </div>
-                    <div id="admin-bounty-current" style="color:#aaa; font-size:0.85rem; margin-bottom:10px; background:rgba(255,215,0,0.08); border-radius:6px; padding:8px; border:1px solid #444;">
-                        目前設定：讀取中...
-                    </div>
-                    <!-- 活動截止時間 -->
-                    <div style="margin-top:12px; margin-bottom:6px;">
-                        <label style="color:#aaa; font-size:0.9rem;">活動截止時間（留空表示不設限）：</label>
-                        <input type="datetime-local" id="admin-bounty-end-time" class="input-box" style="width:100%; padding:8px; margin-top:4px; margin-bottom:6px;">
-                        <div id="admin-bounty-end-current" style="color:#aaa; font-size:0.82rem; background:rgba(255,215,0,0.06); border-radius:6px; padding:6px 8px; border:1px solid #444; margin-bottom:6px;"></div>
-                    </div>
-                    <button class="btn" style="background:linear-gradient(135deg,#b8860b,#ffd700); color:#000; font-weight:bold; padding:10px;" onclick="window.adminSetBountyTarget()">✅ 儲存懸賞設定</button>
-                    <button class="btn" style="background:#c0392b; margin-top:8px;" onclick="window.adminClearBountyTarget()">❌ 清除懸賞任務</button>
-                </div>
-
-                <!-- 試煉塔活動時間設定 -->
-                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #9b59b6; margin-top:10px;">
-                    <h3 style="color:#9b59b6; margin-top:0; margin-bottom:10px;">🏯 試煉塔活動設定</h3>
-                    <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">設定試煉塔活動結束時間，儲存後立即開放，到期自動關閉。</div>
-                    <div id="tower-current-status" style="background:#1a1a1a; padding:8px; border-radius:5px; font-size:0.85rem; color:#ccc; margin-bottom:12px; border:1px solid #444;"></div>
-                    <label style="color:#aaa; font-size:0.9rem;">活動結束時間：</label>
-                    <input type="datetime-local" id="admin-tower-end" class="input-box" style="width:100%; padding:8px; margin-bottom:12px; margin-top:4px;">
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn" style="background:#9b59b6; flex:1; padding:10px;" onclick="window.adminSetTowerEvent()">✅ 設定並開放</button>
-                        <button class="btn" style="background:#c0392b; flex:1; padding:10px;" onclick="window.adminClearTowerEvent()">❌ 立即關閉活動</button>
+                    <div class="admin-section-body collapsed" style="border-color:#2ecc71;">
+                        <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">每5分鐘自動輪播一句廣播訊息（不影響聊天室警語），管理員可自行增刪。</div>
+                        <div id="admin-broadcast-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;"></div>
+                        <button class="btn" style="background:#2ecc71; color:#000; font-weight:bold; padding:8px;" onclick="window.adminAddBroadcastRow()">➕ 增加欄位</button>
+                        <button class="btn" style="background:#3498db; margin-top:8px; padding:8px;" onclick="window.adminSaveBroadcast()">💾 儲存輪播設定</button>
+                        <div id="admin-broadcast-status" style="color:#aaa; font-size:0.82rem; margin-top:6px;"></div>
                     </div>
                 </div>
 
-                <!-- 輪播廣播設定 -->
-                <div style="background:#111; padding:15px; border-radius:8px; text-align:left; border:1px solid #2ecc71; margin-top:10px;">
-                    <h3 style="color:#2ecc71; margin-top:0; margin-bottom:10px;">📢 輪播廣播設定</h3>
-                    <div style="color:#aaa; font-size:0.85rem; margin-bottom:10px;">每5分鐘自動輪播一句廣播訊息（不影響聊天室警語），管理員可自行增刪。</div>
-                    <div id="admin-broadcast-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;"></div>
-                    <button class="btn" style="background:#2ecc71; color:#000; font-weight:bold; padding:8px;" onclick="window.adminAddBroadcastRow()">➕ 增加欄位</button>
-                    <button class="btn" style="background:#3498db; margin-top:8px; padding:8px;" onclick="window.adminSaveBroadcast()">💾 儲存輪播設定</button>
-                    <div id="admin-broadcast-status" style="color:#aaa; font-size:0.82rem; margin-top:6px;"></div>
-                </div>
-
-                <button class="btn" style="background:#555; margin-top: 10px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
+                <button class="btn" style="background:#555; margin-top: 15px;" onclick="document.getElementById('admin-modal').style.display='none'">關閉</button>
             </div>
         </div>
     </div>
@@ -1436,7 +1491,6 @@ window.MOE_DATA_STRING = `
                 <div class="profile-header">
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <img id="ui-avatar" class="profile-avatar" src="" alt="Avatar" onclick="window.openPokedexModal(window.player.avatar, window.player.avatarId)" title="點擊查看寶可夢圖鑑">
-                        <div onclick="window.openSkinSwitcher()" style="font-size:0.7rem;color:var(--enhance);cursor:pointer;background:rgba(224,86,253,0.15);border:1px solid var(--enhance);border-radius:8px;padding:2px 8px;white-space:nowrap;">👗 已擁有造型</div>
                         <div onclick="window.openProfileEditModal()" style="font-size:0.7rem;color:#3498db;cursor:pointer;background:rgba(52,152,219,0.15);border:1px solid #3498db;border-radius:8px;padding:2px 8px;white-space:nowrap;margin-top:3px;">✏️ 編輯簡介</div>
                     </div>
                     <div class="profile-info">
@@ -1551,38 +1605,78 @@ window.MOE_DATA_STRING = `
             <div id="leaderboard-list"><p style="color:#888;">載入中...</p></div>
         </div>
         <div id="tab-pokedex" class="tab-page">
-            <h2 style="margin-top:0; color:var(--accent);">📖 寶可夢圖鑑</h2>
-            <div class="stat-card" style="margin-bottom:12px; padding:10px; text-align:center;">
-                <p style="font-size:1.2rem; margin:0; color:#fff; font-weight:bold;">收集進度: <span id="pokedex-progress" style="color:var(--luck)">0 / 0</span></p>
-                <p style="font-size:0.82rem; color:#aaa; margin:4px 0 0;">(獲得新的先鋒寶可夢即可解鎖進度，點擊可預覽招式)</p>
+            <h2 style="margin-top:0; color:var(--accent);">📖 圖鑑</h2>
+            <!-- 圖鑑子分頁切換 -->
+            <div style="display:flex; gap:5px; margin-bottom:15px; background:#111; padding:5px; border-radius:10px;">
+                <button id="pdx-tab-poke-btn" class="shop-tab-btn active" onclick="window.switchPokedexTab('pokemon')" style="font-size:0.9rem;">🐾 寶可夢圖鑑</button>
+                <button id="pdx-tab-skin-btn" class="shop-tab-btn" onclick="window.switchPokedexTab('skin')" style="font-size:0.9rem;">👗 造型圖鑑</button>
             </div>
-            <!-- 搜尋列 -->
-            <div class="pokedex-search-bar">
-                <input id="pokedex-search-input" type="text" placeholder="🔍 搜尋名稱 / 編號..." oninput="window.filterPokedex()">
-                <select id="pokedex-type-filter" onchange="window.filterPokedex()">
-                    <option value="">全部屬性</option>
-                    <option value="fire">🔥 火</option>
-                    <option value="water">💧 水</option>
-                    <option value="grass">🌿 草</option>
-                    <option value="electric">⚡ 電</option>
-                    <option value="ice">❄️ 冰</option>
-                    <option value="fighting">👊 格鬥</option>
-                    <option value="poison">☠️ 毒</option>
-                    <option value="psychic">🔮 超能力</option>
-                    <option value="ghost">👻 幽靈</option>
-                    <option value="dragon">🐉 龍</option>
-                    <option value="dark">🌑 惡</option>
-                    <option value="steel">⚙️ 鋼</option>
-                    <option value="flying">🌤 飛行</option>
-                    <option value="normal">⬜ 一般</option>
-                </select>
-                <select id="pokedex-unlock-filter" onchange="window.filterPokedex()">
-                    <option value="">全部</option>
-                    <option value="unlocked">✅ 已解鎖</option>
-                    <option value="locked">🔒 未解鎖</option>
-                </select>
+
+            <!-- 寶可夢圖鑑區塊 -->
+            <div id="pdx-section-pokemon">
+                <div class="stat-card" style="margin-bottom:12px; padding:10px; text-align:center;">
+                    <p style="font-size:1.2rem; margin:0; color:#fff; font-weight:bold;">收集進度: <span id="pokedex-progress" style="color:var(--luck)">0 / 0</span></p>
+                    <p style="font-size:0.82rem; color:#aaa; margin:4px 0 0;">(獲得新的先鋒寶可夢即可解鎖進度，點擊可預覽招式)</p>
+                </div>
+                <!-- 搜尋列 -->
+                <div class="pokedex-search-bar">
+                    <input id="pokedex-search-input" type="text" placeholder="🔍 搜尋名稱 / 編號..." oninput="window.filterPokedex()">
+                    <select id="pokedex-type-filter" onchange="window.filterPokedex()">
+                        <option value="">全部屬性</option>
+                        <option value="fire">🔥 火</option>
+                        <option value="water">💧 水</option>
+                        <option value="grass">🌿 草</option>
+                        <option value="electric">⚡ 電</option>
+                        <option value="ice">❄️ 冰</option>
+                        <option value="fighting">👊 格鬥</option>
+                        <option value="poison">☠️ 毒</option>
+                        <option value="psychic">🔮 超能力</option>
+                        <option value="ghost">👻 幽靈</option>
+                        <option value="dragon">🐉 龍</option>
+                        <option value="dark">🌑 惡</option>
+                        <option value="steel">⚙️ 鋼</option>
+                        <option value="flying">🌤 飛行</option>
+                        <option value="normal">⬜ 一般</option>
+                    </select>
+                    <select id="pokedex-unlock-filter" onchange="window.filterPokedex()">
+                        <option value="">全部</option>
+                        <option value="unlocked">✅ 已解鎖</option>
+                        <option value="locked">🔒 未解鎖</option>
+                    </select>
+                </div>
+                <div id="pokedex-grid" class="avatar-grid" style="grid-template-columns:repeat(4,1fr); padding-bottom:20px;"></div>
             </div>
-            <div id="pokedex-grid" class="avatar-grid" style="grid-template-columns:repeat(4,1fr); padding-bottom:20px;"></div>
+
+            <!-- 造型圖鑑區塊 -->
+            <div id="pdx-section-skin" style="display:none;">
+                <!-- 造型抽取按鈕區 -->
+                <div style="background:linear-gradient(135deg,rgba(20,10,35,0.97),rgba(10,5,20,0.98)); border:1px solid rgba(155,89,182,0.5); border-radius:14px; padding:14px; margin-bottom:14px;">
+                    <h4 style="margin:0 0 10px; color:#e056fd; font-size:0.98rem; display:flex; align-items:center; gap:6px;">✨ 造型抽取</h4>
+                    <div style="display:flex; gap:8px; margin-bottom:8px;">
+                        <div style="flex:1; background:rgba(0,0,0,0.4); border:1px solid #444; border-radius:8px; padding:8px 10px; text-align:center;">
+                            <div style="color:#e056fd; font-size:0.82rem; margin-bottom:3px;">👗 造型解鎖券</div>
+                            <div id="pdx-skin-voucher-count" style="color:#fff; font-weight:bold; font-size:1.1rem;">0</div>
+                        </div>
+                        <div style="flex:1; background:rgba(0,0,0,0.4); border:1px solid #444; border-radius:8px; padding:8px 10px; text-align:center;">
+                            <div style="color:#9b59b6; font-size:0.82rem; margin-bottom:3px;">🧩 造型碎片</div>
+                            <div id="pdx-skin-fragment-count" style="color:#fff; font-weight:bold; font-size:1.1rem;">0 / 100</div>
+                        </div>
+                    </div>
+                    <button class="btn" id="pdx-draw-voucher-btn" style="background:linear-gradient(135deg,#8e44ad,#e056fd); margin-bottom:8px; padding:10px; font-size:0.95rem;" onclick="window.pdxUseSkinVoucher()">👗 使用造型解鎖券抽取造型</button>
+                    <button class="btn" id="pdx-draw-fragment-btn" style="background:linear-gradient(135deg,#6c3483,#9b59b6); padding:10px; font-size:0.95rem;" onclick="window.pdxUseSkinFragment()">🧩 使用100片碎片抽取造型</button>
+                </div>
+                <!-- 造型收集進度 -->
+                <div class="stat-card" style="margin-bottom:12px; padding:10px; text-align:center;">
+                    <p style="font-size:1.1rem; margin:0; color:#fff; font-weight:bold;">造型收集: <span id="skin-dex-progress" style="color:var(--enhance)">0 / 0</span></p>
+                </div>
+                <!-- 已蒐集造型 -->
+                <div style="background:linear-gradient(135deg,rgba(10,20,10,0.97),rgba(5,15,5,0.98)); border:1px solid rgba(46,204,113,0.35); border-radius:14px; padding:14px; margin-bottom:14px;">
+                    <h4 style="margin:0 0 10px; color:#2ecc71; font-size:0.95rem; display:flex; align-items:center; gap:6px;">✅ 已蒐集造型 <span id="skin-owned-count" style="color:#2ecc71; font-size:0.82rem;">(0)</span></h4>
+                    <div id="skin-dex-owned" style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding-bottom:5px;"></div>
+                </div>
+                <!-- 未蒐集造型 -->
+                <div id="locked-skins-showcase" style="margin-bottom:20px;"></div>
+            </div>
         </div>
         <div id="tab-achievements" class="tab-page">
             <h2 style="margin-top:0; color:var(--accent);">🏅 成就與勳章</h2>
@@ -2123,29 +2217,54 @@ window.MOE_DATA_STRING = `
 
         window.showToast = (t, c) => { const m = document.createElement('div'); m.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${c};color:#fff;padding:10px 20px;border-radius:5px;z-index:8000;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.5);transition:opacity 0.3s;pointer-events:none;text-align:center;`; m.innerText = t; document.body.appendChild(m); setTimeout(() => { m.style.opacity = '0'; setTimeout(() => m.remove(), 300); }, 2000); };
 
-        // 廣播橫幅：在畫面中上方滑入顯示，持續數秒後自動消失
+        // 廣播橫幅：固定在畫面最上層，任何畫面都能看到，含排隊機制
         window._bannerQueue = [];
         window._bannerShowing = false;
-        window.showBroadcastBanner = (text, type = 'login', duration = 4000) => {
+        window._bannerHideTimer = null;
+
+        window.showBroadcastBanner = (text, type = 'login', duration = 5000) => {
             window._bannerQueue.push({ text, type, duration });
-            if (!window._bannerShowing) window._processBannerQueue();
+            if (!window._bannerShowing) window._nextBanner();
         };
-        window._processBannerQueue = () => {
-            if (window._bannerQueue.length === 0) { window._bannerShowing = false; return; }
+
+        window._nextBanner = () => {
+            if (window._bannerQueue.length === 0) {
+                window._bannerShowing = false;
+                return;
+            }
             window._bannerShowing = true;
             const { text, type, duration } = window._bannerQueue.shift();
             const banner = document.getElementById('broadcast-banner');
+            if (!banner) { window._bannerShowing = false; return; }
+
+            // 先確保隱藏（無動畫），換內容，再滑入
+            banner.style.transition = 'none';
+            banner.classList.remove('show');
+            // 強制 reflow
+            void banner.offsetWidth;
+
+            // 設定樣式與內容
             const iconEl = document.getElementById('broadcast-banner-icon');
             const textEl = document.getElementById('broadcast-banner-text');
-            if (!banner) { window._bannerShowing = false; return; }
-            banner.className = type === 'broadcast' ? 'broadcast-type' : 'login-type';
-            iconEl.innerText = type === 'broadcast' ? '📢' : '🔔';
-            textEl.innerHTML = text;
-            banner.classList.add('show');
+            // 先清 class 再設，避免 show 殘留
+            banner.classList.remove('login-type', 'broadcast-type');
+            banner.classList.add(type === 'broadcast' ? 'broadcast-type' : 'login-type');
+            if (iconEl) iconEl.textContent = type === 'broadcast' ? '📢' : '🔔';
+            if (textEl) textEl.innerHTML = text;
+
+            // 恢復 transition 並滑入
+            requestAnimationFrame(() => {
+                banner.style.transition = '';
+                requestAnimationFrame(() => {
+                    banner.classList.add('show');
+                });
+            });
+
+            // 定時隱藏
             clearTimeout(window._bannerHideTimer);
             window._bannerHideTimer = setTimeout(() => {
                 banner.classList.remove('show');
-                setTimeout(() => window._processBannerQueue(), 500);
+                setTimeout(window._nextBanner, 450);
             }, duration);
         };
         window.playAnim = (id, cls) => { const e = document.getElementById(id); e.classList.remove(cls); void e.offsetWidth; e.classList.add(cls); };
@@ -2735,7 +2854,28 @@ window.MOE_DATA_STRING = `
                     if(window.ACHIEVEMENTS_DB[key].check()) {
                         window.player.unlockedBadges.push(key);
                         newlyUnlocked = true;
-                        window.showToast(`🏆 解鎖新勳章：${window.ACHIEVEMENTS_DB[key].title}！`, "#f1c40f");
+                        const ach = window.ACHIEVEMENTS_DB[key];
+                        window.showToast(`🏆 解鎖新勳章：${ach.title}！`, "#f1c40f");
+                        // 5星勳章解鎖 → 廣播橫幅 + 聊天室通知
+                        if(ach.starNum === 5) {
+                            const bannerText = `🏆 <b>${window.player.name}</b> 獲得了 5⭐ 勳章【${ach.icon} ${ach.title}】！`;
+                            window.showBroadcastBanner(bannerText, 'broadcast', 6000);
+                            // 發聊天室通知
+                            if(window.db && window.user) {
+                                window.setDoc(window.doc(window.db, 'artifacts', window.appId, 'public', 'data', 'world_chat',
+                                    Date.now().toString() + '_badge_' + Math.random().toString(36).substr(2,5)), {
+                                    uid: window.user.uid,
+                                    name: window.player.name,
+                                    text: null,
+                                    time: Date.now(),
+                                    isSystem: true,
+                                    isBadge: true,
+                                    badgeIcon: ach.icon,
+                                    badgeTitle: ach.title,
+                                    badgeStars: ach.stars
+                                }).catch(e => console.warn('badge chat error:', e));
+                            }
+                        }
                     }
                 }
             });
@@ -3150,6 +3290,19 @@ window.MOE_DATA_STRING = `
         };
         
         window.importQuizData = (event) => { window.AudioEngine.sfx.click(); const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { window.saveLocalQuizData(e.target.result); window.parseQuizData(e.target.result); window.showToast("✅ 匯入成功！", "#2ecc71"); event.target.value = ''; }; reader.readAsText(file); };
+
+        window.adminToggleSection = (headerEl) => {
+            const body = headerEl.nextElementSibling;
+            if (!body) return;
+            const isCollapsed = body.classList.contains('collapsed');
+            if (isCollapsed) {
+                body.classList.remove('collapsed');
+                headerEl.classList.remove('collapsed');
+            } else {
+                body.classList.add('collapsed');
+                headerEl.classList.add('collapsed');
+            }
+        };
 
         window.adminLogin = async () => { 
             window.AudioEngine.sfx.click(); 
@@ -3582,6 +3735,12 @@ window.MOE_DATA_STRING = `
                             }
                             const questTag = m.targetQuest ? `<span style="color:#2ecc71;"> 🎯 ${m.targetQuest}</span>` : '';
                             m.displayHtml = `<div style="margin-bottom:8px; text-align:center;"><span style="font-size:0.8rem;color:#f39c12;background:rgba(243,156,18,0.2);padding:2px 8px;border-radius:10px;">✨ ${m.name} 剛剛上線了${questTag}</span></div>`;
+                        } else if (m.isSystem && m.isBadge) {
+                            // 5星勳章解鎖通知
+                            if (m.time > window.sessionStartTime && m.uid !== window.user?.uid && !window.processedSysEvents.has(m.id)) {
+                                window.processedSysEvents.add(m.id);
+                            }
+                            m.displayHtml = `<div style="margin-bottom:8px; text-align:center;"><span style="font-size:0.82rem;color:#f1c40f;background:linear-gradient(90deg,rgba(255,215,0,0.18),rgba(255,140,0,0.12));padding:4px 10px;border-radius:12px;border:1px solid rgba(241,196,15,0.4);display:inline-block;">🏆 <b>${m.name}</b> 獲得了 5⭐ 勳章【${m.badgeIcon || '🏅'} ${m.badgeTitle || '勳章'}】！</span></div>`;
                         } else {
                             if(m.time > window.lastChatTime && m.uid !== window.user?.uid) {
                                 hasNew = true;
@@ -3843,7 +4002,7 @@ window.MOE_DATA_STRING = `
         };
 
         // ======= UI 介面操作 =======
-        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); if(t === 'pokedex') window.renderPokedex(); if(t === 'achievements') window.renderAchievements(); if(t === 'battle') window.renderLockedSkinsShowcase(); };
+        window.switchTab = (t) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.tab-page').forEach(e => e.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active')); event.currentTarget.classList.add('active'); if(t === 'leaderboard') window.loadLeaderboard(); if(t === 'shop') window.renderShop(); if(t === 'pokedex') { window.renderPokedex(); const skinSec = document.getElementById('pdx-section-skin'); if(skinSec && skinSec.style.display !== 'none') window.renderSkinDex(); } if(t === 'achievements') window.renderAchievements(); };
         window.switchShopTab = (sec) => { window.AudioEngine.sfx.click(); document.querySelectorAll('.shop-tab-btn').forEach(b => b.classList.remove('active')); event.currentTarget.classList.add('active'); document.querySelectorAll('.shop-section').forEach(s => s.classList.remove('active')); document.getElementById(`shop-sec-${sec}`).classList.add('active'); };
 
         window.renderConsumables = () => {
@@ -4105,6 +4264,9 @@ window.MOE_DATA_STRING = `
             window.checkAchievements();
             window.updateUI(); window.saveData();
             document.getElementById('item-detail-modal').style.display='none';
+            // 若圖鑑造型分頁開啟中，重新整理顯示
+            const skinSec = document.getElementById('pdx-section-skin');
+            if (skinSec && skinSec.style.display !== 'none') window.renderSkinDex();
         };
 
         window.openChangeCharModal = (itemId) => {
@@ -4684,7 +4846,9 @@ window.MOE_DATA_STRING = `
 
             let mHtml = ''; for(let i=0; i<4; i++) { if(window.player.moves[i]) mHtml += `<div class="move-slot" style="cursor:pointer;" onclick="window.showToast('${window.player.moves[i].name}: ${window.player.moves[i].desc}', '#3498db')">${window.player.moves[i].name}</div>`; else mHtml += `<div class="move-slot move-empty">-</div>`; } document.getElementById('ui-moves').innerHTML = mHtml;
             window.renderConsumables(); if(document.getElementById('tab-shop').classList.contains('active')) window.renderShop();
-            window.renderLockedSkinsShowcase();
+            // 如果圖鑑造型分頁開啟中，更新造型數量顯示
+            const _skinSec = document.getElementById('pdx-section-skin');
+            if (_skinSec && _skinSec.style.display !== 'none') window.renderSkinDex();
             
             const eqSlots = document.getElementById('equipment-slots'); eqSlots.innerHTML = '';
             const slotNames = { slot1: '裝備1', slot2: '裝備2', slot3: '裝備3', slot4: '裝備4' };
@@ -9272,6 +9436,107 @@ window.MOE_DATA_STRING = `
         };
 
         // ===== 未解鎖造型剪影展示 =====
+        window.switchPokedexTab = (tab) => {
+            window.AudioEngine.sfx.click();
+            const pokeSec = document.getElementById('pdx-section-pokemon');
+            const skinSec = document.getElementById('pdx-section-skin');
+            const pokeBtn = document.getElementById('pdx-tab-poke-btn');
+            const skinBtn = document.getElementById('pdx-tab-skin-btn');
+            if (tab === 'pokemon') {
+                pokeSec.style.display = '';
+                skinSec.style.display = 'none';
+                pokeBtn.classList.add('active');
+                skinBtn.classList.remove('active');
+            } else {
+                pokeSec.style.display = 'none';
+                skinSec.style.display = '';
+                pokeBtn.classList.remove('active');
+                skinBtn.classList.add('active');
+                window.renderSkinDex();
+            }
+        };
+
+        window.renderSkinDex = () => {
+            if (!window.player || !window.SKIN_DB) return;
+
+            // 更新道具數量顯示
+            const voucherCount = window.player.consumables?.skin_voucher || 0;
+            const fragmentCount = window.player.consumables?.skin_fragment || 0;
+            const vEl = document.getElementById('pdx-skin-voucher-count');
+            const fEl = document.getElementById('pdx-skin-fragment-count');
+            if (vEl) vEl.innerText = voucherCount;
+            if (fEl) fEl.innerText = `${fragmentCount} / 100`;
+
+            const vBtn = document.getElementById('pdx-draw-voucher-btn');
+            const fBtn = document.getElementById('pdx-draw-fragment-btn');
+            if (vBtn) { vBtn.disabled = voucherCount <= 0; vBtn.style.opacity = voucherCount > 0 ? '1' : '0.45'; }
+            if (fBtn) { fBtn.disabled = fragmentCount < 100; fBtn.style.opacity = fragmentCount >= 100 ? '1' : '0.45'; }
+
+            // 整理所有非 default 造型
+            const allSkins = [];
+            const seenIds = new Set();
+            Object.keys(window.SKIN_DB).forEach(baseId => {
+                (window.SKIN_DB[baseId] || []).forEach(skin => {
+                    if (skin.id === 'default') return;
+                    if (seenIds.has(skin.id)) return;
+                    seenIds.add(skin.id);
+                    const isOwned = window.player.unlockedSkins && window.player.unlockedSkins.includes(skin.id);
+                    allSkins.push({ ...skin, baseId, isOwned });
+                });
+            });
+
+            const owned = allSkins.filter(s => s.isOwned);
+            const locked = allSkins.filter(s => !s.isOwned);
+
+            // 進度
+            const progEl = document.getElementById('skin-dex-progress');
+            if (progEl) progEl.innerText = `${owned.length} / ${allSkins.length}`;
+            const ownedCountEl = document.getElementById('skin-owned-count');
+            if (ownedCountEl) ownedCountEl.innerText = `(${owned.length})`;
+
+            // 已蒐集
+            const ownedGrid = document.getElementById('skin-dex-owned');
+            if (ownedGrid) {
+                if (owned.length === 0) {
+                    ownedGrid.innerHTML = `<div style="grid-column:span 4;text-align:center;color:#555;padding:15px 0;font-size:0.9rem;">尚未擁有任何特殊造型</div>`;
+                } else {
+                    ownedGrid.innerHTML = owned.map(skin => {
+                        const isCurrent = window.player.avatar === skin.url;
+                        const isCurrentPoke = window.player.avatarId === skin.baseId;
+                        const borderColor = isCurrent ? '#e056fd' : '#2ecc71';
+                        const clickAction = isCurrentPoke
+                            ? `window.equipSkin('${skin.url}','${skin.baseId}')`
+                            : `window.openPokedexModal('${skin.url}','${skin.baseId}')`;
+                        return `<div class="pokedex-item unlocked" style="border-color:${borderColor};" onclick="${clickAction}">
+                            ${isCurrent ? '<div style="position:absolute;top:4px;right:4px;background:rgba(224,86,253,0.9);color:#fff;font-size:0.6rem;font-weight:bold;border-radius:4px;padding:1px 5px;z-index:2;">使用中</div>' : ''}
+                            <div class="pk-img-area"><img src="${skin.url}"></div>
+                            <div class="pk-info">
+                                <div class="pk-name">${skin.name}</div>
+                            </div>
+                            <div style="background:rgba(46,204,113,0.15);color:#2ecc71;font-size:0.62rem;font-weight:bold;text-align:center;padding:3px 2px;border-top:1px solid rgba(46,204,113,0.3);">${isCurrentPoke ? '🔄 點擊更換' : '👁️ 點擊預覽'}</div>
+                        </div>`;
+                    }).join('');
+                }
+            }
+
+            // 未蒐集（用 renderLockedSkinsShowcase 邏輯）
+            window.renderLockedSkinsShowcase();
+        };
+
+        window.pdxUseSkinVoucher = () => {
+            if ((window.player.consumables?.skin_voucher || 0) <= 0) return window.showToast('沒有造型解鎖券！', 'var(--boss)');
+            window.player.consumables.skin_voucher--;
+            window.performSkinGacha();
+            window.renderSkinDex();
+        };
+
+        window.pdxUseSkinFragment = () => {
+            if ((window.player.consumables?.skin_fragment || 0) < 100) return window.showToast('碎片不足 100 片！', 'var(--boss)');
+            window.player.consumables.skin_fragment -= 100;
+            window.performSkinGacha();
+            window.renderSkinDex();
+        };
+
         window.renderLockedSkinsShowcase = () => {
             const container = document.getElementById('locked-skins-showcase');
             if (!container || !window.player) return;
@@ -9314,8 +9579,8 @@ window.MOE_DATA_STRING = `
             }, 0);
 
             container.innerHTML = `<div class="locked-skins-panel">
-                <h4>👗 特殊造型圖鑑 <span style="font-size:0.78rem;color:#888;font-weight:normal;">已解鎖 ${unlockedCount} / ${totalSkinCount}</span></h4>
-                <p style="color:#666;font-size:0.78rem;margin:0 0 10px;">以下為尚未解鎖的神秘造型，使用 <span style="color:#e056fd;">👗 造型解鎖券</span> 來抽取吧！</p>
+                <h4>🔒 未蒐集造型 <span style="font-size:0.78rem;color:#888;font-weight:normal;">(${lockedSkins.length} 款待解鎖)</span></h4>
+                <p style="color:#666;font-size:0.78rem;margin:0 0 10px;">使用 <span style="color:#e056fd;">👗 造型解鎖券</span> 或 <span style="color:#9b59b6;">🧩 碎片×100</span> 抽取隱藏造型！</p>
                 <div class="locked-skins-grid">${gridItems}</div>
             </div>`;
         };
